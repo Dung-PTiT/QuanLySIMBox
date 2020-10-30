@@ -5,90 +5,237 @@
     <meta charset="utf-8">
     <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
     <title>Quản lý Simbox</title>
+    <style>
+        .table th, .table td{
+            vertical-align: text-top !important;
+        }
+        .fas{
+            font-size: 0.75rem;
+        }
+    </style>
 </head>
 <body>
 <div class="content">
     <section class="container-fluid bg-light h-100" layout:fragment="content_body">
-        <div class="row pt-2">
-            <div class="col-2">
-                <div class="card">
-                    <div class="card-header header-elements-inline">
-                        <h6 class="card-title">Tổng quan</h6>
-                    </div>
-                    <div class="card-body">
-                        <ul class="media-list">
-                            <li class="media align-items-center">
-                                <div class="mr-2">
-                                    <i class="fas fa-sim-card"></i>
-                                </div>
-                                <div class="media-body">
-                                    <div class="text-muted">Số SIM đang hoạt động</div>
-                                </div>
-                                <div class="ml-1 align-self-center">
-                                    <span class="font-weight-bold">20</span>
-                                </div>
-                            </li>
-                            <li class="media align-items-center">
-                                <div class="mr-2">
-                                    <i class="fas fa-sd-card"></i>
-                                </div>
-                                <div class="media-body">
-                                    <div class="text-muted">Số khe SIM trống</div>
-                                </div>
-                                <div class="ml-1 align-self-center">
-                                    <span class="font-weight-bold">10</span>
-                                </div>
-                            </li>
-                            <li class="media align-items-center">
-                                <div class="mr-2">
-                                    <i class="fas fa-coins"></i>
-                                </div>
-                                <div class="media-body">
-                                    <div class="text-muted">Số SIM sắp hết tiền</div>
-                                </div>
-                                <div class="ml-1 align-self-center">
-                                    <span class="font-weight-bold">4</span>
-                                </div>
-                            </li>
-                            <li class="media align-items-center">
-                                <div class="mr-2">
-                                    <i class="fas fa-dollar-sign"></i>
-                                </div>
-                                <div class="media-body">
-                                    <div class="text-muted">Số SIM hết tiền</div>
-                                </div>
-                                <div class="ml-1 align-self-center">
-                                    <span class="font-weight-bold">5</span>
-                                </div>
-                            </li>
-                            <li class="media align-items-center">
-                                <div class="mr-2">
-                                    <i class="fas fa-stopwatch"></i>
-                                </div>
-                                <div class="media-body">
-                                    <div class="text-muted">Số SIM sắp hết hạn</div>
-                                </div>
-                                <div class="ml-1 align-self-center">
-                                    <span class="font-weight-bold">2</span>
-                                </div>
-                            </li>
-                            <li class="media align-items-center">
-                                <div class="mr-2">
-                                    <i class="far fa-calendar"></i>
-                                </div>
-                                <div class="media-body">
-                                    <div class="text-muted">Số SIM hết hạn</div>
-                                </div>
-                                <div class="ml-1 align-self-center">
-                                    <span class="font-weight-bold">8</span>
-                                </div>
-                            </li>
-                        </ul>
+        <div class="row" style="height: 100vh;">
+            <div class="col-sm-12 col-md-2 p-0" style="background-color: #f3f3f3; box-shadow: -5px 0 5px -5px #333;">
+                <div class="card-header header-elements-inline">
+                    <h6 class="card-title font-weight-bold">Tổng quan</h6>
+                </div>
+                <div class="card-body" style="padding: 0 0.75rem 0 0.75rem">
+                    <ul class="media-list">
+                        <li class="media align-items-center">
+                            <div class="mr-1">
+                                <i class="fas fa-sim-card"></i>
+                            </div>
+                            <div class="media-body">
+                                <div>Số SIM đang hoạt động</div>
+                            </div>
+                            <div class="ml-1 align-self-center">
+                                <span class="font-weight-bold">20</span>
+                            </div>
+                        </li>
+                        <li class="media align-items-center">
+                            <div class="mr-1">
+                                <i class="fas fa-sd-card"></i>
+                            </div>
+                            <div class="media-body">
+                                <div>Số khe SIM trống</div>
+                            </div>
+                            <div class="ml-1 align-self-center">
+                                <span class="font-weight-bold">10</span>
+                            </div>
+                        </li>
+                        <li class="media align-items-center">
+                            <div class="mr-1">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                            <div class="media-body">
+                                <div>Số SIM sắp hết tiền</div>
+                            </div>
+                            <div class="ml-1 align-self-center">
+                                <span class="font-weight-bold">4</span>
+                            </div>
+                        </li>
+                        <li class="media align-items-center">
+                            <div class="mr-1">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="media-body">
+                                <div>Số SIM hết tiền</div>
+                            </div>
+                            <div class="ml-1 align-self-center">
+                                <span class="font-weight-bold">5</span>
+                            </div>
+                        </li>
+                        <li class="media align-items-center">
+                            <div class="mr-1">
+                                <i class="fas fa-stopwatch"></i>
+                            </div>
+                            <div class="media-body">
+                                <div>Số SIM sắp hết hạn</div>
+                            </div>
+                            <div class="ml-1 align-self-center">
+                                <span class="font-weight-bold">2</span>
+                            </div>
+                        </li>
+                        <li class="media align-items-center">
+                            <div class="mr-1">
+                                <i class="far fa-calendar"></i>
+                            </div>
+                            <div class="media-body">
+                                <div>Số SIM hết hạn</div>
+                            </div>
+                            <div class="ml-1 align-self-center">
+                                <span class="font-weight-bold">8</span>
+                            </div>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-8 p-0">
+                <div class="card-header header-elements-inline">
+                    <h6 class="card-title font-weight-bold">
+                        <i class="fa fa-table"></i>
+                        <span class="ml-1">Danh sách SIM</span>
+                        <span class="ml-2 p-1" style="background-color: #ECF0FF;
+                            text-align: center; color: #5A72E7; border-radius: 5px">10</span>
+                    </h6>
+                    <span class="p-1" style="background-color: #ECF0FF;
+                            text-align: center; color: #5A72E7; border-radius: 5px">
+                         <i class="fas fa-th-large" style="color: #5A72E7;"></i>
+                    </span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                            <tr class="text-center">
+                                <th>STT</th>
+                                <th>SIM ID</th>
+                                <th>Nhà mạng</th>
+                                <th>Tài khoản chính</th>
+                                <th>Tài khoản phụ</th>
+                                <th>Ngày hết hạn</th>
+                                <th>Tín hiệu</th>
+                                <th>Tin nhắn</th>
+                                <th>Comm</th>
+                                <th>Hành động</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>947982</td>
+                                <td>VN và VIETTEL</td>
+                                <td>2347234</td>
+                                <td>0</td>
+                                <td>30/10/2020</td>
+                                <td>Tín hiệu</td>
+                                <td>4</td>
+                                <td>Comm3</td>
+                                <td>
+                                    <div class="list-icons">
+                                        <a href="#" class="list-icons-item"><i class="fas fa-link"></i></a>
+                                        <a href="#" class="list-icons-item"><i class="fas fa-unlink"></i></i></a>
+                                        <a href="#" class="list-icons-item"><i class="fas fa-sync"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>947982</td>
+                                <td>VN và VIETTEL</td>
+                                <td>2347234</td>
+                                <td>0</td>
+                                <td>30/10/2020</td>
+                                <td>Tín hiệu</td>
+                                <td>4</td>
+                                <td>Comm3</td>
+                                <td>
+                                    <div class="list-icons">
+                                        <a href="#" class="list-icons-item"><i class="fas fa-link"></i></a>
+                                        <a href="#" class="list-icons-item"><i class="fas fa-unlink"></i></i></a>
+                                        <a href="#" class="list-icons-item"><i class="fas fa-sync"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>947982</td>
+                                <td>VN và VIETTEL</td>
+                                <td>2347234</td>
+                                <td>0</td>
+                                <td>30/10/2020</td>
+                                <td>Tín hiệu</td>
+                                <td>4</td>
+                                <td>Comm3</td>
+                                <td>
+                                    <div class="list-icons">
+                                        <a href="#" class="list-icons-item"><i class="fas fa-link"></i></a>
+                                        <a href="#" class="list-icons-item"><i class="fas fa-unlink"></i></i></a>
+                                        <a href="#" class="list-icons-item"><i class="fas fa-sync"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-            <div class="col-8"></div>
-            <div class="col-2"></div>
+            <div class="col-sm-12 col-md-2" style="background-color: #f3f3f3">
+                <div class="card-header header-elements-inline">
+                    <h6 class="card-title font-weight-bold">
+                        <i class="fas fa-filter"></i>
+                        <span class="ml-1">Bộ lọc</span>
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="media-list">
+                        <li class="align-items-center">
+                            <div>
+                                <span>Nhập thông tin cần tìm</span>
+                                <input class="mt-1" style="width: 95%; height: 27px">
+                            </div>
+                            <div></div>
+                            <div class="mt-2">
+                                <span>Tìm kiếm theo</span>
+                                <div class="mt-1">
+                                    <select style="width: 95%; height: 27px">
+                                        <option>Tìm theo 1</option>
+                                        <option>Tìm theo 2</option>
+                                        <option>Tìm theo 3</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="mt-4">
+                                <span class="font-weight-bold">Loại mạng
+                                    <i class="fas fa-caret-down"></i>
+                                </span>
+                            <div class="mt-1">
+                                <input type="checkbox" id="loai_mang_1" name="drone" value="huey">
+                                <label for="loai_mang_1" class="ml-1">VNM và VIETTEL</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="loai_mang_2" name="drone" value="dewey">
+                                <label for="loai_mang_2" class="ml-1">VN VINAPHONE</label>
+                            </div>
+                        </li>
+                        <li class="mt-4">
+                                <span class="font-weight-bold">Số dư tài khoản
+                                    <i class="fas fa-caret-down"></i>
+                                </span>
+                        </li>
+                        <li class="mt-4">
+                                <span class="font-weight-bold">Ngày hết hạn
+                                    <i class="fas fa-caret-down"></i>
+                                </span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </section>
 </div>
