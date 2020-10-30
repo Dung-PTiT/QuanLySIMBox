@@ -1,0 +1,7 @@
+html {
+    scroll-behavior: smooth;
+}
+.logout-link:hover {
+    color: #ff0000 !important;
+    font-weight: bold;
+}

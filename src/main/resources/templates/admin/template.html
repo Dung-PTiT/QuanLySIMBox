@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet"
+          type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css">
+    <link th:href="@{/staticAdmin/global_assets/css/icons/icomoon/styles.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/staticAdmin/global_assets/css/icons/fontawesome/styles.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/staticAdmin/global_assets/css/icons/material/styles.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/staticAdmin/assets/css/bootstrap.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/staticAdmin/assets/css/bootstrap_limitless.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/staticAdmin/assets/css/layout.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/staticAdmin/assets/css/components.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/staticAdmin/assets/css/colors.min.css}" rel="stylesheet" type="text/css">
+
+    <script th:src="@{/staticAdmin/global_assets/js/main/jquery.min.js}"></script>
+    <!--    <script th:src="@{/staticAdmin/global_assets/js/main/bootstrap.min.js}"></script>-->
+    <script th:src="@{/staticAdmin/global_assets/js/main/bootstrap.confirm.min.js}"></script>
+    <script th:src="@{/staticAdmin/global_assets/js/plugins/loaders/blockui.min.js}"></script>
+    <script th:src="@{/staticAdmin/global_assets/js/plugins/ui/ripple.min.js}"></script>
+    <!--    <script th:src="@{/staticAdmin/global_assets/js/main/bootstrap.bundle.min.js}"></script>-->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/staticAdmin/global_assets/js/plugins/visualization/d3/d3.min.js}"></script>
+    <script th:src="@{/staticAdmin/global_assets/js/plugins/visualization/d3/d3_tooltip.js}"></script>
+    <script th:src="@{/staticAdmin/global_assets/js/plugins/forms/styling/switchery.min.js}"></script>
+    <script th:src="@{/staticAdmin/global_assets/js/plugins/ui/moment/moment.min.js}"></script>
+    <script th:src="@{/staticAdmin/global_assets/js/plugins/pickers/daterangepicker.js}"></script>
+    <script th:src="@{/staticAdmin/assets/js/app.js}"></script>
+    <script th:src="@{/staticAdmin/global_assets/js/demo_pages/dashboard.js}"></script>
+    <script th:src="@{/staticAdmin/global_assets/js/plugins/tables/datatables/datatables.min.js}"></script>
+    <script th:src="@{/staticAdmin/global_assets/js/plugins/forms/selects/select2.min.js}"></script>
+    <script th:src="@{/staticAdmin/global_assets/js/demo_pages/datatables_basic.js}"></script>
+    <script th:src="@{/staticAdmin/global_assets/js/plugins/uploaders/fileinput/plugins/purify.min.js}"></script>
+    <script th:src="@{/staticAdmin/global_assets/js/plugins/uploaders/fileinput/plugins/sortable.min.js}"></script>
+    <script th:src="@{/staticAdmin/global_assets/js/plugins/uploaders/fileinput/fileinput.min.js}"></script>
+    <script th:src="@{/staticAdmin/global_assets/js/demo_pages/uploader_bootstrap.js}"></script>
+    <link th:href="@{/staticClient/newlife/images/logoNewlife.png}" rel="shortcut icon">
+    <link th:href="@{/staticAdmin/custom_css/template.css}" rel="stylesheet" type="text/css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+</head>
+<body class="sidebar-xs" data-gr-c-s-loaded="true">
+<!--<body data-gr-c-s-loaded="true">-->
+<div class="navbar navbar-expand-md navbar-light navbar-static p-0"
+     style="background-color: #5A72E7; justify-content: center">
+    <span class="pt-3 pb-3 text-white font-weight-bold" style="font-size: 14px">Quản lý Simbox</span>
+</div>
+<div class="page-content">
+    <div class="sidebar sidebar-light sidebar-main sidebar-expand-md">
+        <div class="sidebar-content">
+            <div class="card card-sidebar-mobile">
+                <ul class="nav nav-sidebar" data-nav-type="accordion">
+                    <li class="nav-item">
+                        <a th:href="@{/admin/manage/dashboard}" class="nav-link">
+                            <i class="fas fa-sim-card"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/admin/manage/service}" class="nav-link">
+                            <i class="fas fa-cogs"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/admin/manage/user}" class="nav-link">
+                            <i class="fas fa-th-large"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/admin/manage/message}" class="nav-link">
+                            <i class="fas fa-info-circle"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="content-wrapper">
+        <header layout:fragment="header">
+        </header>
+        <section class="container-fluid" layout:fragment="content_body">
+        </section>
+        <div class="navbar navbar-expand-lg navbar-light" id="footer_template">
+            <div class="text-center d-lg-none w-100">
+                <button type="button" class="navbar-toggler dropdown-toggle" data-toggle="collapse"
+                        data-target="#navbar-footer">
+                    <i class="icon-unfold mr-2"></i>
+                    Footer
+                </button>
+            </div>
+            <div class="navbar-collapse collapse" id="navbar-footer">
+                <span class="navbar-text">&copy; 2020. <a th:href="@{/dashboard}">NEWLIFE</a></span>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

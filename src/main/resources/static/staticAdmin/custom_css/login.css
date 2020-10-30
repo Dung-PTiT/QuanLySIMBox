@@ -1,0 +1,12 @@
+.btn-login {
+    border: 1px solid #00aeff;
+    width: 65%;
+    margin: auto;
+    border-radius: 25px;
+}
+
+.btn-login:hover {
+    background-color: #0aa7ef;
+    color: #ffffff !important;
+    font-weight: bold;
+}
