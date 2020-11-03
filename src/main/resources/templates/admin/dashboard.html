@@ -5,19 +5,27 @@
     <meta charset="utf-8">
     <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
     <title>Quản lý Simbox</title>
+    <link th:href="@{/staticAdmin/custom_css/dashboard.css}" rel="stylesheet" type="text/css">
     <style>
-        .table th, .table td{
-            vertical-align: text-top !important;
+        .container-fluid {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
         }
-        .fas{
-            font-size: 0.75rem;
+
+        .row {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
         }
     </style>
 </head>
 <body>
 <div class="content">
-    <section class="container-fluid bg-light h-100" layout:fragment="content_body">
-        <div class="row" style="height: 100vh;">
+    <section class="bg-light h-100" layout:fragment="content_body">
+        <div class="navbar navbar-expand-md navbar-light navbar-static p-0"
+             style="background-color: #5A72E7; justify-content: center">
+            <span class="pt-2 pb-2 text-white font-weight-bold" style="font-size: 17px">Quản lý Simbox</span>
+        </div>
+        <div class="container-fluid row" style="height: 100vh;">
             <div class="col-sm-12 col-md-2 p-0" style="background-color: #f3f3f3; box-shadow: -5px 0 5px -5px #333;">
                 <div class="card-header header-elements-inline">
                     <h6 class="card-title font-weight-bold">Tổng quan</h6>
@@ -104,12 +112,62 @@
                     </h6>
                     <span class="p-1" style="background-color: #ECF0FF;
                             text-align: center; color: #5A72E7; border-radius: 5px">
-                         <i class="fas fa-th-large" style="color: #5A72E7;"></i>
+                        <div class="list-icons">
+                            <div class="dropdown">
+								<button class="list-icons-item dropdown-toggle caret-0" style="border: none"
+                                        data-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-th-large" style="color: #5A72E7;"></i>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute;
+                                will-change: transform; top: 0px; left: 0px; transform: translate3d(16px, 19px, 0px);">
+                                    <div class="dropdown-item">
+                                        <input type="checkbox">
+                                        <span class="ml-3">STT</span>
+                                    </div>
+                                     <div class="dropdown-item">
+                                        <input type="checkbox">
+                                        <span class="ml-3">SIM ID</span>
+                                    </div>
+                                     <div class="dropdown-item">
+                                        <input type="checkbox">
+                                        <span class="ml-3">Nhà mạng</span>
+                                    </div>
+                                     <div class="dropdown-item">
+                                        <input type="checkbox">
+                                        <span class="ml-3">Tài khoản chính</span>
+                                    </div>
+                                     <div class="dropdown-item">
+                                        <input type="checkbox">
+                                        <span class="ml-3">Tài khoản phụ</span>
+                                    </div>
+                                     <div class="dropdown-item">
+                                        <input type="checkbox">
+                                        <span class="ml-3">Ngày hết hạn</span>
+                                    </div>
+                                     <div class="dropdown-item">
+                                        <input type="checkbox">
+                                        <span class="ml-3">Tín hiệu</span>
+                                    </div>
+                                     <div class="dropdown-item">
+                                        <input type="checkbox">
+                                        <span class="ml-3">Tin nhắn</span>
+                                    </div>
+                                     <div class="dropdown-item">
+                                        <input type="checkbox">
+                                        <span class="ml-3">Comm</span>
+                                    </div>
+                                     <div class="dropdown-item">
+                                        <input type="checkbox">
+                                        <span class="ml-3">Hành đ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </span>
                 </div>
-                <div class="card-body p-0">
+                <div class="card-body pl-2 pr-2">
                     <div class="table-responsive">
-                        <table class="table">
+                        <table class="table table-bordered text-center">
                             <thead>
                             <tr class="text-center">
                                 <th>STT</th>
@@ -137,9 +195,13 @@
                                 <td>Comm3</td>
                                 <td>
                                     <div class="list-icons">
-                                        <a href="#" class="list-icons-item"><i class="fas fa-link"></i></a>
-                                        <a href="#" class="list-icons-item"><i class="fas fa-unlink"></i></i></a>
-                                        <a href="#" class="list-icons-item"><i class="fas fa-sync"></i></a>
+                                        <a href="#" class="list-icons-item" data-toggle="tooltip"
+                                           title="Kết nối"><i class="fas fa-link text-blue"></i></a>
+                                        <a href="#" class="list-icons-item" data-toggle="tooltip"
+                                           title="Ngắt kết nối"><i
+                                                class="fas fa-unlink text-danger"></i></i></a>
+                                        <a href="#" class="list-icons-item" data-toggle="tooltip"
+                                           title="Đồng bộ"><i class="fas fa-sync text-success"></i></a>
                                     </div>
                                 </td>
                             </tr>
@@ -155,9 +217,13 @@
                                 <td>Comm3</td>
                                 <td>
                                     <div class="list-icons">
-                                        <a href="#" class="list-icons-item"><i class="fas fa-link"></i></a>
-                                        <a href="#" class="list-icons-item"><i class="fas fa-unlink"></i></i></a>
-                                        <a href="#" class="list-icons-item"><i class="fas fa-sync"></i></a>
+                                        <a href="#" class="list-icons-item" data-toggle="tooltip"
+                                           title="Kết nối"><i class="fas fa-link text-blue"></i></a>
+                                        <a href="#" class="list-icons-item" data-toggle="tooltip"
+                                           title="Ngắt kết nối"><i
+                                                class="fas fa-unlink text-danger"></i></i></a>
+                                        <a href="#" class="list-icons-item" data-toggle="tooltip"
+                                           title="Đồng bộ"><i class="fas fa-sync text-success"></i></a>
                                     </div>
                                 </td>
                             </tr>
@@ -173,9 +239,13 @@
                                 <td>Comm3</td>
                                 <td>
                                     <div class="list-icons">
-                                        <a href="#" class="list-icons-item"><i class="fas fa-link"></i></a>
-                                        <a href="#" class="list-icons-item"><i class="fas fa-unlink"></i></i></a>
-                                        <a href="#" class="list-icons-item"><i class="fas fa-sync"></i></a>
+                                        <a href="#" class="list-icons-item" data-toggle="tooltip"
+                                           title="Kết nối"><i class="fas fa-link text-blue"></i></a>
+                                        <a href="#" class="list-icons-item" data-toggle="tooltip"
+                                           title="Ngắt kết nối"><i
+                                                class="fas fa-unlink text-danger"></i></i></a>
+                                        <a href="#" class="list-icons-item" data-toggle="tooltip"
+                                           title="Đồng bộ"><i class="fas fa-sync text-success"></i></a>
                                     </div>
                                 </td>
                             </tr>
@@ -232,6 +302,13 @@
                                 <span class="font-weight-bold">Ngày hết hạn
                                     <i class="fas fa-caret-down"></i>
                                 </span>
+                        </li>
+                        <li class="mt-4">
+                            <button class="btn btn-group bg-blue text-white"
+                                    style="width: 100%; justify-content: center; align-items: center; padding: 4px 8px">
+                                Tìm kiếm
+                                <i class="fa fa-search ml-2"></i>
+                            </button>
                         </li>
                     </ul>
                 </div>

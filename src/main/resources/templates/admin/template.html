@@ -37,17 +37,18 @@
     <script th:src="@{/staticAdmin/global_assets/js/plugins/uploaders/fileinput/plugins/sortable.min.js}"></script>
     <script th:src="@{/staticAdmin/global_assets/js/plugins/uploaders/fileinput/fileinput.min.js}"></script>
     <script th:src="@{/staticAdmin/global_assets/js/demo_pages/uploader_bootstrap.js}"></script>
-    <link th:href="@{/staticClient/newlife/images/logoNewlife.png}" rel="shortcut icon">
+    <link th:href="@{/staticAdmin/images/logoNewlife.png}" rel="shortcut icon">
     <link th:href="@{/staticAdmin/custom_css/template.css}" rel="stylesheet" type="text/css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <style>
+        .font-size-18{
+            font-size: 18px !important;
+        }
+    </style>
 </head>
 <body class="sidebar-xs" data-gr-c-s-loaded="true">
 <!--<body data-gr-c-s-loaded="true">-->
-<div class="navbar navbar-expand-md navbar-light navbar-static p-0"
-     style="background-color: #5A72E7; justify-content: center">
-    <span class="pt-3 pb-3 text-white font-weight-bold" style="font-size: 14px">Quản lý Simbox</span>
-</div>
 <div class="page-content">
     <div class="sidebar sidebar-light sidebar-main sidebar-expand-md">
         <div class="sidebar-content">
@@ -60,22 +61,22 @@
                     </li>
                     <li class="nav-item mt-2">
                         <a href="#" class="nav-link">
-                            <i class="fas fa-sim-card"></i>
+                            <i class="fas fa-sim-card font-size-18"></i>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="#" class="nav-link">
-                            <i class="fas fa-cogs"></i>
+                            <i class="fas fa-cogs font-size-18"></i>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="#" class="nav-link">
-                            <i class="fas fa-th-large"></i>
+                            <i class="fas fa-th-large font-size-18"></i>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="#" class="nav-link">
-                            <i class="fas fa-info-circle"></i>
+                            <i class="fas fa-info-circle font-size-18"></i>
                         </a>
                     </li>
                 </ul>
@@ -85,7 +86,7 @@
     <div class="content-wrapper">
         <header layout:fragment="header">
         </header>
-        <section class="container-fluid" layout:fragment="content_body">
+        <section layout:fragment="content_body">
         </section>
         <div class="navbar navbar-expand-lg navbar-light" id="footer_template">
             <div class="text-center d-lg-none w-100">

@@ -3471,7 +3471,7 @@ a.breadcrumb-elements-item, a.breadcrumb-item {
 }
 
 .media.card-body, .media:first-child {
-    margin-top: 0
+    margin-top: 0;
 }
 
 .media-list {

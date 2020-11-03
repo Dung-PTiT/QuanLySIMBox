@@ -1,0 +1,12 @@
+.table th {
+    vertical-align: text-top !important;
+    padding: 12px 2px 12px 2px !important;
+}
+
+.fas {
+    font-size: 0.9rem;
+}
+
+td {
+    padding: 12px 2px 12px 2px !important;
+}
