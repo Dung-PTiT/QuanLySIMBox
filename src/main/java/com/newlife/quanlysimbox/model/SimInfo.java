@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 public class SimInfo {
 
-    public String commName;
+    public String commName = "";
     public String simId = "";
     public String nhaMang = "";
-    public long taiKhoanChinh = 0;
-    public long taiKhoanPhu = 0;
+    public long taiKhoanChinh = -1;
+    public long taiKhoanPhu = -1;
     public String ngayHetHan = "";
     public Float tinHieu = 0f;
     public int lastMsgId = -1;
@@ -16,4 +16,8 @@ public class SimInfo {
     public String deviceCode = "";
     public boolean isConnected = false;
 
+    public boolean isSapHetTien = false;
+    public boolean isHetTien = false;
+    public boolean isSapHetHan = false;
+    public boolean isHetHan = false;
 }

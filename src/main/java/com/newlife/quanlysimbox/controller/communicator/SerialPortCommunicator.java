@@ -9,10 +9,15 @@ import gnu.io.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.TooManyListenersException;
+import java.util.concurrent.TimeUnit;
 
-public class SerialPortCommunicator extends SimInfo implements SerialPortEventListener {
+public class SerialPortCommunicator implements SerialPortEventListener {
 
     public enum SerialPortStatus {
         SLEEPING,
@@ -21,9 +26,11 @@ public class SerialPortCommunicator extends SimInfo implements SerialPortEventLi
 
     public int TIMEOUT = 2000;
     public int SLEEP_TIME = 3000;
-    public int READ_SIGNAL_TIME = 3;
+    public int READ_SIGNAL_TIME = 10;
     public int PORT_SPEED = 115200;
-    public int MGS_MAX_SIZE = 5;
+    public int MGS_MAX_SIZE = 20;
+    public long SAP_HET_TIEN = 2000;
+    public long SAP_HET_HAN = 5;
 
     public SerialPortStatus status;
     public CommPortIdentifier commPortIdentifier;
@@ -34,16 +41,19 @@ public class SerialPortCommunicator extends SimInfo implements SerialPortEventLi
     public OutputStream output = null;
     public boolean isInsertedSim = false;
     public boolean isEnablePort = false;
+    public Calendar calendar;
+    public SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     public boolean isStop = false;
     public boolean isFinishReadMsg = true;
     public String lastCmd = "";
     public String outString = "";
     public ArrayList<String> messageLineList = new ArrayList<>();
+    public SimInfo simInfo = new SimInfo();
 
     public SerialPortCommunicator(CommPortIdentifier commPortIdentifier) {
         this.commPortIdentifier = commPortIdentifier;
-        this.commName = commPortIdentifier.getName();
+        this.simInfo.commName = commPortIdentifier.getName();
     }
 
     public boolean connect() {
@@ -53,7 +63,7 @@ public class SerialPortCommunicator extends SimInfo implements SerialPortEventLi
             serialPort.notifyOnDataAvailable(true);
             serialPort.setSerialPortParams(PORT_SPEED, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
             serialPort.addEventListener(this);
-            isConnected = true;
+            simInfo.isConnected = true;
             return true;
         } catch (PortInUseException e) {
             e.printStackTrace();
@@ -75,7 +85,7 @@ public class SerialPortCommunicator extends SimInfo implements SerialPortEventLi
                 serialPort.close();
                 if (input != null) input.close();
                 if (output != null) output.close();
-                isConnected = false;
+                simInfo.isConnected = false;
                 return true;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -144,8 +154,8 @@ public class SerialPortCommunicator extends SimInfo implements SerialPortEventLi
             if (outString.startsWith("+CSQ")) {
                 try {
                     String[] splits = outString.split(":");
-                    tinHieu = Float.valueOf(splits[1].trim().replaceAll(",", "."));
-                    System.out.println(commName + " tinhieu: " + tinHieu);
+                    simInfo.tinHieu = Float.valueOf(splits[1].trim().replaceAll(",", "."));
+                    System.out.println(simInfo.commName + " tinhieu: " + simInfo.tinHieu);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -156,8 +166,8 @@ public class SerialPortCommunicator extends SimInfo implements SerialPortEventLi
                 isInsertedSim = false;
             } else {
                 isInsertedSim = true;
-                simId = outString;
-                System.out.println(commName + " : sim id : " + simId);
+                simInfo.simId = outString;
+                System.out.println(simInfo.commName + " : sim id : " + simInfo.simId);
                 runCmd(Contract.NETWORK);
             }
         } else if (lastCmd.equals(Contract.NETWORK)) {
@@ -165,28 +175,32 @@ public class SerialPortCommunicator extends SimInfo implements SerialPortEventLi
                 String[] splits = outString.split(",");
                 if (splits.length == 3) {
                     String network = splits[2].replaceAll("\"", "");
-                    nhaMang = network;
-                    System.out.println(commName + " : network: " + network);
-                    runCmd(Contract.BALANCE);
+                    simInfo.nhaMang = network;
+                    System.out.println(simInfo.commName + " : network: " + network);
+//                    runCmd(Contract.BALANCE);
+                    repeatReadingSimInfo();
                 }
             }
         } else if (lastCmd.equals(Contract.BALANCE) && !outString.equals("OK")) {
             if (!outString.equals("ERROR")) {
-                if (nhaMang.equals("VN VINAPHONE")) {
+                if (simInfo.nhaMang.equals("VN VINAPHONE")) {
                     long[] tk = VinaUtil.getBalanceVINA(outString);
-                    taiKhoanChinh = tk[0];
-                    taiKhoanPhu = tk[1];
-                    ngayHetHan = VinaUtil.ngayHetHanVina(outString);
-                    System.out.println(commName + " : taikhoanchinh: " + taiKhoanChinh + ", taikhoanphu: " + taiKhoanPhu + ", ngayhethan: " + ngayHetHan);
-                } else if (nhaMang.equals("")) {
+                    simInfo.taiKhoanChinh = tk[0];
+                    simInfo.taiKhoanPhu = tk[1];
+                    simInfo.ngayHetHan = VinaUtil.ngayHetHanVina(outString);
+                    System.out.println(simInfo.commName + " : taikhoanchinh: " + simInfo.taiKhoanChinh
+                            + ", taikhoanphu: " + simInfo.taiKhoanPhu
+                            + ", ngayhethan: " + simInfo.ngayHetHan);
+                } else if (simInfo.nhaMang.equals("")) {
 
                 }
+                updateSimAccount();
             }
-            repeatReadingSimInfo();
+//            repeatReadingSimInfo();
         }
     }
 
-    public void repeatReadingSimInfo(){
+    public void repeatReadingSimInfo() {
         status = SerialPortStatus.SLEEPING;
         lastCmd = "";
         if (!isStop) {
@@ -205,15 +219,15 @@ public class SerialPortCommunicator extends SimInfo implements SerialPortEventLi
                             }
                         }
                     }
-                    if (messagesList == null) {
+                    if (simInfo.messagesList == null) {
                         startUpdateAllMessage();
                     }
                     Thread.sleep(SLEEP_TIME);
                     while (!isFinishReadMsg) {
                         Thread.sleep(200);
                     }
-                    if (messagesList!=null && messagesList.size() > MGS_MAX_SIZE) {
-                        for (Messages messages : messagesList) {
+                    if (simInfo.messagesList != null && simInfo.messagesList.size() > MGS_MAX_SIZE) {
+                        for (Messages messages : simInfo.messagesList) {
                             runCmd(Contract.DELETE_MGS + messages.id);
                             Thread.sleep(400);
                         }
@@ -228,7 +242,7 @@ public class SerialPortCommunicator extends SimInfo implements SerialPortEventLi
 
     public void updateMessageList(String outString) {
         try {
-            lastMsgId = Integer.valueOf(outString.split(",")[1]);
+            simInfo.lastMsgId = Integer.valueOf(outString.split(",")[1]);
             System.out.println("---> new message: " + outString);
             startUpdateAllMessage();
         } catch (Exception e) {
@@ -282,9 +296,47 @@ public class SerialPortCommunicator extends SimInfo implements SerialPortEventLi
             }
         }
         messageLineList.clear();
-        messagesList = tempList;
-        if(lastMsgId==-1 && !messagesList.isEmpty()) lastMsgId = messagesList.get(messagesList.size()-1).id;
-        System.out.println("size: " + messagesList.size());
+        simInfo.messagesList = tempList;
+        if (simInfo.lastMsgId == -1 && !simInfo.messagesList.isEmpty())
+            simInfo.lastMsgId = simInfo.messagesList.get(simInfo.messagesList.size() - 1).id;
+        System.out.println("size: " + simInfo.messagesList.size());
+    }
+
+    public void updateSimAccount() {
+        if (simInfo.taiKhoanChinh != -1 && simInfo.taiKhoanPhu != -1) {
+            long total = simInfo.taiKhoanChinh + simInfo.taiKhoanPhu;
+            if (total == 0) {
+                simInfo.isHetTien = true;
+                simInfo.isSapHetTien = false;
+            } else if (total <= SAP_HET_TIEN) {
+                simInfo.isHetTien = false;
+                simInfo.isSapHetTien = true;
+            }
+        } else {
+            simInfo.isSapHetTien = false;
+            simInfo.isHetTien = false;
+        }
+        if (!simInfo.ngayHetHan.isEmpty()) {
+            try {
+                Date expDate = dateFormat.parse(simInfo.ngayHetHan);
+                Date curentDate = new Date();
+                long diffInMillies = Math.abs(expDate.getTime() - curentDate.getTime());
+                if (diffInMillies <= 0) {
+                    simInfo.isHetHan = true;
+                    simInfo.isSapHetHan = false;
+                } else {
+                    simInfo.isHetHan = false;
+                    long diff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+                    if (diff <= SAP_HET_HAN) simInfo.isSapHetHan = true;
+                    else simInfo.isSapHetHan = false;
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        } else {
+            simInfo.isSapHetHan = false;
+            simInfo.isHetHan = false;
+        }
     }
 
     public boolean writeSerial(String data) {
@@ -298,9 +350,5 @@ public class SerialPortCommunicator extends SimInfo implements SerialPortEventLi
     public void runCmd(String cmd) {
         lastCmd = cmd;
         writeSerial(cmd);
-    }
-
-    public SimInfo toSimInfo() {
-        return this;
     }
 }

@@ -13,8 +13,8 @@ public class VinaUtil {
     }
 
     public static long[] getBalanceVINA(String outString) {
-        long tkChinh = 0;
-        long tkPhu = 0;
+        long tkChinh = -1;
+        long tkPhu = -1;
         String[] splits = outString.split(",");
         for (int i = 0; i < splits.length; i++) {
             String content = splits[i];
