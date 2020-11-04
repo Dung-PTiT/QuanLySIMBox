@@ -5,6 +5,7 @@ import com.newlife.quanlysimbox.model.Messages;
 import com.newlife.quanlysimbox.model.SimInfo;
 import com.newlife.quanlysimbox.util.VinaUtil;
 import gnu.io.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +17,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TooManyListenersException;
 import java.util.concurrent.TimeUnit;
+
 
 public class SerialPortCommunicator implements SerialPortEventListener {
 

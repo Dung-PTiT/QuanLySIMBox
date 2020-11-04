@@ -5,7 +5,8 @@
     <meta charset="utf-8">
     <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
     <title>Quản lý Simbox</title>
-    <link th:href="@{/staticAdmin/custom_css/dashboard.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/simbox_css/simbox.css}" rel="stylesheet" type="text/css">
+    <script th:src="@{/simbox_js/simbox.js}"></script>
     <style>
         .container-fluid {
             padding-left: 0 !important;
@@ -16,7 +17,20 @@
             margin-left: 0 !important;
             margin-right: 0 !important;
         }
+
+        .btn-action {
+            border: none;
+            border-radius: 10px;
+            background-color: #fff;
+        }
+
     </style>
+    <script>
+        $("input:checkbox").click(function(){
+            var column = "."+$(this).attr("name");
+            $(column).toggle();
+        });
+    </script>
 </head>
 <body>
 <div class="content">
@@ -40,7 +54,7 @@
                                 <div>Số SIM đang hoạt động</div>
                             </div>
                             <div class="ml-1 align-self-center">
-                                <span class="font-weight-bold">20</span>
+                                <span class="font-weight-bold" id="span_sim_hoat_dong"></span>
                             </div>
                         </li>
                         <li class="media align-items-center">
@@ -51,7 +65,7 @@
                                 <div>Số khe SIM trống</div>
                             </div>
                             <div class="ml-1 align-self-center">
-                                <span class="font-weight-bold">10</span>
+                                <span class="font-weight-bold" id="span_khe_sim_trong"></span>
                             </div>
                         </li>
                         <li class="media align-items-center">
@@ -62,7 +76,7 @@
                                 <div>Số SIM sắp hết tiền</div>
                             </div>
                             <div class="ml-1 align-self-center">
-                                <span class="font-weight-bold">4</span>
+                                <span class="font-weight-bold" id="span_sim_sap_het_tien"></span>
                             </div>
                         </li>
                         <li class="media align-items-center">
@@ -73,7 +87,7 @@
                                 <div>Số SIM hết tiền</div>
                             </div>
                             <div class="ml-1 align-self-center">
-                                <span class="font-weight-bold">5</span>
+                                <span class="font-weight-bold" id="span_sim_het_tien"></span>
                             </div>
                         </li>
                         <li class="media align-items-center">
@@ -84,7 +98,7 @@
                                 <div>Số SIM sắp hết hạn</div>
                             </div>
                             <div class="ml-1 align-self-center">
-                                <span class="font-weight-bold">2</span>
+                                <span class="font-weight-bold" id="span_sim_sap_het_han"></span>
                             </div>
                         </li>
                         <li class="media align-items-center">
@@ -95,7 +109,7 @@
                                 <div>Số SIM hết hạn</div>
                             </div>
                             <div class="ml-1 align-self-center">
-                                <span class="font-weight-bold">8</span>
+                                <span class="font-weight-bold" id="span_sim_het_han"></span>
                             </div>
                         </li>
                     </ul>
@@ -108,7 +122,7 @@
                         <i class="fa fa-table"></i>
                         <span class="ml-1">Danh sách SIM</span>
                         <span class="ml-2 p-1" style="background-color: #ECF0FF;
-                            text-align: center; color: #5A72E7; border-radius: 5px">10</span>
+                            text-align: center; color: #5A72E7; border-radius: 5px" id="span_tong_so_sim"></span>
                     </h6>
                     <span class="p-1" style="background-color: #ECF0FF;
                             text-align: center; color: #5A72E7; border-radius: 5px">
@@ -121,44 +135,44 @@
                                 <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute;
                                 will-change: transform; top: 0px; left: 0px; transform: translate3d(16px, 19px, 0px);">
                                     <div class="dropdown-item">
-                                        <input type="checkbox">
+                                        <input type="checkbox" name="stt">
                                         <span class="ml-3">STT</span>
                                     </div>
                                      <div class="dropdown-item">
-                                        <input type="checkbox">
+                                        <input type="checkbox" name="simID">
                                         <span class="ml-3">SIM ID</span>
                                     </div>
                                      <div class="dropdown-item">
-                                        <input type="checkbox">
+                                        <input type="checkbox" name="nhaMang">
                                         <span class="ml-3">Nhà mạng</span>
                                     </div>
                                      <div class="dropdown-item">
-                                        <input type="checkbox">
+                                        <input type="checkbox" name="taiKhoanChinh">
                                         <span class="ml-3">Tài khoản chính</span>
                                     </div>
                                      <div class="dropdown-item">
-                                        <input type="checkbox">
+                                        <input type="checkbox" name="taiKhoanPhu">
                                         <span class="ml-3">Tài khoản phụ</span>
                                     </div>
                                      <div class="dropdown-item">
-                                        <input type="checkbox">
+                                        <input type="checkbox" name="ngayHetHan">
                                         <span class="ml-3">Ngày hết hạn</span>
                                     </div>
                                      <div class="dropdown-item">
-                                        <input type="checkbox">
+                                        <input type="checkbox" name="tinHieu">
                                         <span class="ml-3">Tín hiệu</span>
                                     </div>
                                      <div class="dropdown-item">
-                                        <input type="checkbox">
+                                        <input type="checkbox" name="tinNhan">
                                         <span class="ml-3">Tin nhắn</span>
                                     </div>
-                                     <div class="dropdown-item">
+                                     <div class="dropdown-item" name="comm">
                                         <input type="checkbox">
                                         <span class="ml-3">Comm</span>
                                     </div>
                                      <div class="dropdown-item">
-                                        <input type="checkbox">
-                                        <span class="ml-3">Hành đ</span>
+                                        <input type="checkbox" name="hanhDong">
+                                        <span class="ml-3">Hành động</span>
                                     </div>
                                 </div>
                             </div>
@@ -170,85 +184,19 @@
                         <table class="table table-bordered text-center">
                             <thead>
                             <tr class="text-center">
-                                <th>STT</th>
-                                <th>SIM ID</th>
-                                <th>Nhà mạng</th>
-                                <th>Tài khoản chính</th>
-                                <th>Tài khoản phụ</th>
-                                <th>Ngày hết hạn</th>
-                                <th>Tín hiệu</th>
-                                <th>Tin nhắn</th>
-                                <th>Comm</th>
-                                <th>Hành động</th>
+                                <th class="stt">STT</th>
+                                <th class="simID">SIM ID</th>
+                                <th class="nhaMang">Nhà mạng</th>
+                                <th class="taiKhoanChinh">Tài khoản chính</th>
+                                <th class="taiKhoanPhu">Tài khoản phụ</th>
+                                <th class="ngayHetHan">Ngày hết hạn</th>
+                                <th class="tinHieu">Tín hiệu</th>
+                                <th class="tinNhan">Tin nhắn</th>
+                                <th class="comm">Comm</th>
+                                <th class="hanhDong">Hành động</th>
                             </tr>
                             </thead>
-                            <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>947982</td>
-                                <td>VN và VIETTEL</td>
-                                <td>2347234</td>
-                                <td>0</td>
-                                <td>30/10/2020</td>
-                                <td>Tín hiệu</td>
-                                <td>4</td>
-                                <td>Comm3</td>
-                                <td>
-                                    <div class="list-icons">
-                                        <a href="#" class="list-icons-item" data-toggle="tooltip"
-                                           title="Kết nối"><i class="fas fa-link text-blue"></i></a>
-                                        <a href="#" class="list-icons-item" data-toggle="tooltip"
-                                           title="Ngắt kết nối"><i
-                                                class="fas fa-unlink text-danger"></i></i></a>
-                                        <a href="#" class="list-icons-item" data-toggle="tooltip"
-                                           title="Đồng bộ"><i class="fas fa-sync text-success"></i></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>1</td>
-                                <td>947982</td>
-                                <td>VN và VIETTEL</td>
-                                <td>2347234</td>
-                                <td>0</td>
-                                <td>30/10/2020</td>
-                                <td>Tín hiệu</td>
-                                <td>4</td>
-                                <td>Comm3</td>
-                                <td>
-                                    <div class="list-icons">
-                                        <a href="#" class="list-icons-item" data-toggle="tooltip"
-                                           title="Kết nối"><i class="fas fa-link text-blue"></i></a>
-                                        <a href="#" class="list-icons-item" data-toggle="tooltip"
-                                           title="Ngắt kết nối"><i
-                                                class="fas fa-unlink text-danger"></i></i></a>
-                                        <a href="#" class="list-icons-item" data-toggle="tooltip"
-                                           title="Đồng bộ"><i class="fas fa-sync text-success"></i></a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>1</td>
-                                <td>947982</td>
-                                <td>VN và VIETTEL</td>
-                                <td>2347234</td>
-                                <td>0</td>
-                                <td>30/10/2020</td>
-                                <td>Tín hiệu</td>
-                                <td>4</td>
-                                <td>Comm3</td>
-                                <td>
-                                    <div class="list-icons">
-                                        <a href="#" class="list-icons-item" data-toggle="tooltip"
-                                           title="Kết nối"><i class="fas fa-link text-blue"></i></a>
-                                        <a href="#" class="list-icons-item" data-toggle="tooltip"
-                                           title="Ngắt kết nối"><i
-                                                class="fas fa-unlink text-danger"></i></i></a>
-                                        <a href="#" class="list-icons-item" data-toggle="tooltip"
-                                           title="Đồng bộ"><i class="fas fa-sync text-success"></i></a>
-                                    </div>
-                                </td>
-                            </tr>
+                            <tbody id="bang_sim_box">
                             </tbody>
                         </table>
                     </div>

@@ -126,7 +126,7 @@ public class CommPortIdentifierManager {
         return communicator.simInfo;
     }
 
-    public void reconnectToComm(String commName) {
+    public boolean reconnectToComm(String commName) {
         new Thread(() -> {
             try {
                 disConnectToComm(commName);
@@ -136,6 +136,7 @@ public class CommPortIdentifierManager {
                 e.printStackTrace();
             }
         }).start();
+        return true;
     }
 
 }

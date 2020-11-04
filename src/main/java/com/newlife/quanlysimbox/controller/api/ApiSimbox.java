@@ -15,23 +15,26 @@ public class ApiSimbox {
     @Autowired
     CommPortIdentifierManager manager;
 
+    // lấy tất cả dữ liệu tổng quan, ds sim
     @GetMapping("/api/getSimStatistic")
     public ApiResponse<SimStatistic> getSimStatistic() {
         return new ApiResponse<>(true, manager.getSimStatistic());
     }
 
-    @PostMapping(path = "/api/connect")
+    // gọi connect theo cổng comm
+    @PostMapping("/api/connect")
     public ApiResponse<SimInfo> connectToComm(@RequestParam("commName") String commName) {
         return new ApiResponse<>(true, manager.connectToComm(commName));
     }
 
-    @PostMapping(path = "/api/disconnect")
+    @PostMapping("/api/disconnect")
     public ApiResponse<SimInfo> disconnectToComm(@RequestParam("commName") String commName) {
         return new ApiResponse<>(true, manager.disConnectToComm(commName));
     }
 
-    @PostMapping(path = "/api/reconnect")
-    public ApiResponse<String> reconnectToComm(@RequestParam("commName") String commName) {
-        return new ApiResponse<>(true, "reviced");
+    // mở lại kết nối
+    @PostMapping("/api/reconnect")
+    public ApiResponse<Boolean> reconnectToComm(@RequestParam("commName") String commName) {
+        return new ApiResponse<>(true, manager.reconnectToComm(commName));
     }
 }
