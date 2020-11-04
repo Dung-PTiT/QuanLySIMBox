@@ -31,7 +31,7 @@ public class ApiSimbox {
     }
 
     @PostMapping(path = "/api/reconnect")
-    public ApiResponse<String> reconnectToComm(@RequestParam("commName") String commName) {
-        return new ApiResponse<>(true, "reviced");
+    public ApiResponse<Boolean> reconnectToComm(@RequestParam("commName") String commName) {
+        return new ApiResponse<>(true, manager.reconnectToComm(commName));
     }
 }
