@@ -8,7 +8,7 @@ public class DashboardController {
 
     @GetMapping("/")
     public String goToDashboard() {
-        return "admin/dashboard";
+        return "admin/simbox";
     }
 
 }
