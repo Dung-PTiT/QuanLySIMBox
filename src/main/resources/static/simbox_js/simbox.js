@@ -46,7 +46,7 @@ function showTable(data) {
             '                                <td class="hanhDong"><div>\n' + genBtnConnect(simInfo.isConnected, simInfo.commName) +
             genBtnDisconnect(simInfo.isConnected, simInfo.commName) +
             '                                        <button id="btn_reload" class="btn-action" data-toggle="tooltip"\n' +
-            '                                                title="Đồng bộ" onclick="reloadSIM(' + simInfo.commName.substring(3) + ')">\n' +
+            '                                                title="Đồng bộ" onclick="reloadSIM(' + String(simInfo.commName) + ')">\n' +
             '                                            <i class="fas fa-sync text-success"></i>\n' +
             '                                        </button>\n' +
             '                                    </div>\n' +
@@ -57,13 +57,13 @@ function showTable(data) {
 }
 
 function connectSIM(commName) {
-    var commValue = 'COM' + commName;
+    // var commValue = 'COM' + commName;
     $.ajax({
         type: "POST",
         url: "/api/connect",
         dataType: "json",
         data: {
-            "commName": commValue
+            "commName": commName
         },
         success: function () {
             location.reload();
@@ -72,13 +72,13 @@ function connectSIM(commName) {
 }
 
 function disconnectSIM(commName) {
-    var commValue = 'COM' + commName;
+    // var commValue = 'COM' + commName;
     $.ajax({
         type: "POST",
         url: "/api/disconnect",
         dataType: "json",
         data: {
-            "commName": commValue
+            "commName": commName
         },
         success: function () {
             location.reload();
@@ -87,13 +87,13 @@ function disconnectSIM(commName) {
 }
 
 function reloadSIM(commName) {
-    var commValue = 'COM' + commName;
+    // var commValue = 'COM' + commName;
     $.ajax({
         type: "POST",
         url: "/api/reconnect",
         dataType: "json",
         data: {
-            "commName": commValue
+            "commName": commName
         },
         success: function () {
             location.reload();
@@ -104,12 +104,12 @@ function reloadSIM(commName) {
 function genBtnConnect(status, commName) {
     if (status == true) {
         var btnConnect = '<button id="btn_connect" class="btn-action" data-toggle="tooltip"\n' +
-            'title="Đang kết nối" onclick="connectSIM(' + commName.substring(3) + ')" disabled>\n' +
+            'title="Đang kết nối" onclick="connectSIM(' + String(simInfo.commName) + ')" disabled>\n' +
             '<i class="fas fa-link v"></i>\n';
         return btnConnect;
     } else {
         var btnConnect = '<button id="btn_connect" class="btn-action" data-toggle="tooltip"\n' +
-            'title="Kết nối" onclick="connectSIM(' + commName.substring(3) + ')">\n' +
+            'title="Kết nối" onclick="connectSIM(' + String(simInfo.commName) + ')">\n' +
             '<i class="fas fa-link text-blue"></i>\n';
         return btnConnect;
     }
@@ -118,13 +118,13 @@ function genBtnConnect(status, commName) {
 function genBtnDisconnect(status, commName) {
     if (status == true) {
         var btnDisconnect = '<button id="btn_disconnect" class="btn-action" data-toggle="tooltip"\n' +
-            'title="Ngắt kết nối" onclick="disconnectSIM(' + commName.substring(3) + ')">\n' +
+            'title="Ngắt kết nối" onclick="disconnectSIM(' + String(simInfo.commName) + ')">\n' +
             '<i class="fas fa-unlink text-danger"></i>\n' +
             '</button>\n';
         return btnDisconnect;
     } else {
         var btnDisconnect = '<button id="btn_connect" class="btn-action" data-toggle="tooltip"\n' +
-            'title="Kết nối" onclick="disconnectSIM(' + commName.substring(3) + ')" disabled>\n' +
+            'title="Kết nối" onclick="disconnectSIM(' + String(simInfo.commName) + ')" disabled>\n' +
             '<i class="fas fa-unlink text-grey"></i>\n';
         return btnDisconnect;
     }
