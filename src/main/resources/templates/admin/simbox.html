@@ -25,12 +25,6 @@
         }
 
     </style>
-    <script>
-        $("input:checkbox").click(function(){
-            var column = "."+$(this).attr("name");
-            $(column).toggle();
-        });
-    </script>
 </head>
 <body>
 <div class="content">
@@ -132,7 +126,8 @@
                                         data-toggle="dropdown" aria-expanded="false">
                                     <i class="fas fa-th-large" style="color: #5A72E7;"></i>
                                 </button>
-                                <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute;
+                                <div id="grpChkBox" class="dropdown-menu dropdown-menu-right " x-placement="bottom-end"
+                                     style="position: absolute;
                                 will-change: transform; top: 0px; left: 0px; transform: translate3d(16px, 19px, 0px);">
                                     <div class="dropdown-item">
                                         <input type="checkbox" name="stt">
@@ -181,7 +176,7 @@
                 </div>
                 <div class="card-body pl-2 pr-2">
                     <div class="table-responsive">
-                        <table class="table table-bordered text-center">
+                        <table id="table_sim_box" class="table table-bordered text-center">
                             <thead>
                             <tr class="text-center">
                                 <th class="stt">STT</th>
@@ -262,8 +257,43 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="messageSIM_popup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-info">
+                        <h5 class="modal-title" id="modal_add_edit_title">Danh sách tin nhắn</h5>
+                        <button type="button" class="close text-danger" data-dismiss="modal">×</button>
+                    </div>
+                    <form id="form_add_edit_user">
+                        <div class="modal-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered text-center">
+                                    <thead>
+                                    <tr class="text-center">
+                                        <th>STT</th>
+                                        <th>ID</th>
+                                        <th>Static</th>
+                                        <th>Số điện thoại</th>
+                                        <th>Thời gian</th>
+                                        <th>Nội dung</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="message_sim_box_table">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="form_close" class="btn btn-secondary mr-1 float-right bg-danger"
+                                    data-dismiss="modal">Đóng
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </section>
-</div>
 </div>
 </body>
 </html>

@@ -1,8 +1,12 @@
-package com.newlife.quanlysimbox.controller.communicator;
+package com.newlife.quanlysimbox.communicator;
 
+import com.newlife.quanlysimbox.model.Messages;
 import com.newlife.quanlysimbox.model.SimInfo;
 import com.newlife.quanlysimbox.model.SimStatistic;
+import com.newlife.quanlysimbox.repository.MessagesRepository;
+import com.newlife.quanlysimbox.repository.SimInfoRepository;
 import gnu.io.CommPortIdentifier;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -10,6 +14,11 @@ import java.util.Enumeration;
 
 @Service
 public class CommPortIdentifierManager {
+
+    @Autowired
+    SimInfoRepository simInfoRepository;
+    @Autowired
+    MessagesRepository messagesRepository;
 
     public ArrayList<SerialPortCommunicator> commPortList = findAllCommPort();
 
@@ -137,6 +146,21 @@ public class CommPortIdentifierManager {
             }
         }).start();
         return true;
+    }
+
+    public void saveSimInfo(SimInfo simInfo) {
+        new Thread(() -> {
+            try {
+                SimInfo infoCloned = (SimInfo) simInfo.clone();
+                simInfoRepository.save(infoCloned);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    public void saveMessages(ArrayList<Messages> messagesList){
+        new Thread(() -> messagesRepository.saveAll(messagesList)).start();
     }
 
 }

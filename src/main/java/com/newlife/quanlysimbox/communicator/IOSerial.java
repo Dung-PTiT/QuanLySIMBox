@@ -1,4 +1,4 @@
-package com.newlife.quanlysimbox.controller.communicator;
+package com.newlife.quanlysimbox.communicator;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,13 +1,11 @@
-package com.newlife.quanlysimbox.controller.api;
+package com.newlife.quanlysimbox.api;
 
-import com.newlife.quanlysimbox.controller.communicator.CommPortIdentifierManager;
+import com.newlife.quanlysimbox.communicator.CommPortIdentifierManager;
 import com.newlife.quanlysimbox.model.ApiResponse;
 import com.newlife.quanlysimbox.model.SimInfo;
 import com.newlife.quanlysimbox.model.SimStatistic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
 
 @RestController
 public class ApiSimbox {

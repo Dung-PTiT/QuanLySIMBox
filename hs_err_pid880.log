@@ -34,9 +34,9 @@ C  [rxtxSerial.dll+0x5b00]
 Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
 j  gnu.io.RXTXPort.readByte()I+0
 j  gnu.io.RXTXPort$SerialInputStream.read()I+61
-j  com.newlife.quanlysimbox.controller.communicator.IOSerial.readSerial()Ljava/lang/String;+9
-j  com.newlife.quanlysimbox.controller.communicator.SerialPortCommunicator.readSerial()Ljava/lang/String;+4
-j  com.newlife.quanlysimbox.controller.communicator.SerialPortCommunicator.serialEvent(Lgnu/io/SerialPortEvent;)V+2
+j  com.newlife.quanlysimbox.communicator.IOSerial.readSerial()Ljava/lang/String;+9
+j  com.newlife.quanlysimbox.communicator.SerialPortCommunicator.readSerial()Ljava/lang/String;+4
+j  com.newlife.quanlysimbox.communicator.SerialPortCommunicator.serialEvent(Lgnu/io/SerialPortEvent;)V+2
 j  gnu.io.RXTXPort.sendEvent(IZ)Z+382
 v  ~StubRoutines::call_stub
 j  gnu.io.RXTXPort.eventLoop()V+0

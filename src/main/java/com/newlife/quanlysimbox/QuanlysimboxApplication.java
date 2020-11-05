@@ -1,6 +1,6 @@
 package com.newlife.quanlysimbox;
 
-import com.newlife.quanlysimbox.controller.communicator.CommPortIdentifierManager;
+import com.newlife.quanlysimbox.communicator.CommPortIdentifierManager;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
