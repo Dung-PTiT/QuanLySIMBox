@@ -5,9 +5,7 @@ import com.newlife.quanlysimbox.model.SimStatistic;
 import gnu.io.CommPortIdentifier;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Enumeration;
 
 @Service
@@ -31,7 +29,7 @@ public class CommPortIdentifierManager {
         while (ports.hasMoreElements()) {
             CommPortIdentifier indIdentifier = (CommPortIdentifier) ports.nextElement();
             if (indIdentifier.getPortType() == CommPortIdentifier.PORT_SERIAL) {
-                list.add(new SerialPortCommunicator(indIdentifier));
+                list.add(new SerialPortCommunicator(this, indIdentifier));
             }
         }
         return list;
@@ -111,6 +109,7 @@ public class CommPortIdentifierManager {
                 if (communicator.initIOStream()) {
                     communicator.isStop = false;
                     communicator.startTracking();
+                    System.out.println("connect to: " + commName);
                 }
             }
         }
@@ -122,6 +121,7 @@ public class CommPortIdentifierManager {
         if (communicator != null && communicator.simInfo.isConnected) {
             communicator.isStop = true;
             communicator.disconnect();
+            System.out.println("disconnect to: " + commName);
         }
         return communicator.simInfo;
     }
