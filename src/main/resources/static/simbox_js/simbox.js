@@ -291,6 +291,8 @@ function showMessageList(simID) {
 
 function getValueSelect() {
     var selectItem = $("#selectSearch").val();
+    $("#inputSIMID").val('');
+    $("#inputComm").val('');
     if (selectItem == 1) {
         $('.div-select').hide();
         $("#search_sim_id").show();
@@ -315,6 +317,21 @@ function removeDisabled() {
         $("#so_tien_lon_hon").val('');
         $("#so_tien_lon_hon").prop('disabled', true);
     }
+
+    if ($('#ngay_bat_dau').is(":checked") == true) {
+        $('#gia_tri_ngay_bat_dau').removeAttr("disabled");
+    }
+    if ($('#ngay_bat_dau').is(":checked") == false) {
+        $("#gia_tri_ngay_bat_dau").val('');
+        $("#gia_tri_ngay_bat_dau").prop('disabled', true);
+    }
+    if ($('#ngay_ket_thuc').is(":checked") == true) {
+        $('#gia_tri_ngay_ket_thuc').removeAttr("disabled");
+    }
+    if ($('#ngay_ket_thuc').is(":checked") == false) {
+        $("#gia_tri_ngay_ket_thuc").val('');
+        $("#gia_tri_ngay_ket_thuc").prop('disabled', true);
+    }
     timKiem();
 }
 
@@ -330,57 +347,39 @@ function timKiem() {
     var ngay_bat_dau = ($('#ngay_bat_dau').is(":checked") == true) ? $('#gia_tri_ngay_bat_dau').val() : 0;
     var ngay_ket_thuc = ($('#ngay_ket_thuc').is(":checked") == true) ? $('#gia_tri_ngay_ket_thuc').val() : 0;
 
+    var simObject = new Object({
+        simID: 0,
+        comm: '',
+        loaiMang: [],
+        tienNhoHon: 0,
+        tienLonHon: 0,
+        ngayBatDau: 0,
+        ngayKetThuc: 0
+    });
+    if (loai_mang_1 != 0) {
+        simObject.loaiMang.push(loai_mang_1);
+    }
+    if (loai_mang_2 != 0) {
+        simObject.loaiMang.push(loai_mang_2);
+    }
+    if (tien_nho_hon != 0) {
+        simObject.tienNhoHon = tien_nho_hon;
+    }
+    if (tien_lon_hon != 0) {
+        simObject.tienLonHon = tien_lon_hon;
+    }
+    if (ngay_bat_dau != 0) {
+        simObject.ngayBatDau = ngay_bat_dau;
+    }
+    if (ngay_ket_thuc != 0) {
+        simObject.ngayKetThuc = ngay_ket_thuc;
+    }
+
     if (selectedOptionVal == 0) {
-        var simObject = new Object({
-            loaiMang: [],
-            tienNhoHon: 0,
-            tienLonHon: 0,
-            ngayBatDau: 0,
-            ngayKetThuc: 0
-        });
-        if (loai_mang_1 != 0) {
-            simObject.loaiMang.push(loai_mang_1);
-        }
-        if (loai_mang_2 != 0) {
-            simObject.loaiMang.push(loai_mang_2);
-        }
-        if (tien_nho_hon != 0) {
-            simObject.tienNhoHon = tien_nho_hon;
-        }
-        if (tien_lon_hon != 0) {
-            simObject.tienLonHon = tien_lon_hon;
-        }
-        if (ngay_bat_dau != 0) {
-            simObject.ngayBatDau = ngay_bat_dau;
-        }
-        if (ngay_ket_thuc != 0) {
-            simObject.ngayKetThuc = ngay_ket_thuc;
-        }
         var resultList = [];
         for (var i = 0; i < data.length; i++) {
             var simInfo = data[i];
-            for (var j = 0; j < simObject.loaiMang.length; j++) {
-                if (simObject.loaiMang[j].includes(simInfo.nhaMang)) {
-                    if (simObject.tienNhoHon == 0 && simObject.tienLonHon == 0) {
-                        resultList.push(simInfo);
-                    }
-                    if (simObject.tienNhoHon != 0 && simObject.tienLonHon == 0) {
-                        if (simInfo.taiKhoanChinh <= simObject.tienNhoHon) {
-                            resultList.push(simInfo);
-                        }
-                    }
-                    if (simObject.tienNhoHon == 0 && simObject.tienLonHon != 0) {
-                        if (simInfo.taiKhoanChinh >= simObject.tienLonHon) {
-                            resultList.push(simInfo);
-                        }
-                    }
-                    if (simObject.tienNhoHon != 0 && simObject.tienLonHon != 0) {
-                        if (simObject.tienLonHon <= simInfo.taiKhoanChinh && simInfo.taiKhoanChinh <= simObject.tienNhoHon) {
-                            resultList.push(simInfo);
-                        }
-                    }
-                }
-            }
+            check_money_date(simInfo, simObject, resultList);
         }
         if (resultList.length != 0) {
             showTableFilter(resultList);
@@ -388,61 +387,14 @@ function timKiem() {
             $("#bang_sim_box").empty();
         }
     } else if (selectedOptionVal == 1) {
-        var simObject = new Object({
-            simID: 0,
-            loaiMang: [],
-            tienNhoHon: 0,
-            tienLonHon: 0,
-            ngayBatDau: 0,
-            ngayKetThuc: 0
-        });
         if (simID != 0 ? simID : swal("Lỗi", "Sim ID trống", "warning")) {
             simObject.simID = simID;
-            if (loai_mang_1 != 0) {
-                simObject.loaiMang.push(loai_mang_1);
-            }
-            if (loai_mang_2 != 0) {
-                simObject.loaiMang.push(loai_mang_2);
-            }
-            if (tien_nho_hon != 0) {
-                simObject.tienNhoHon = tien_nho_hon;
-            }
-            if (tien_lon_hon != 0) {
-                simObject.tienLonHon = tien_lon_hon;
-            }
-            if (ngay_bat_dau != 0) {
-                simObject.ngayBatDau = ngay_bat_dau;
-            }
-            if (ngay_ket_thuc != 0) {
-                simObject.ngayKetThuc = ngay_ket_thuc;
-            }
 
             var resultList = [];
             for (var i = 0; i < data.length; i++) {
                 var simInfo = data[i];
                 if (simInfo.simId.includes(simObject.simID)) {
-                    for (var j = 0; j < simObject.loaiMang.length; j++) {
-                        if (simObject.loaiMang[j].includes(simInfo.nhaMang)) {
-                            if (simObject.tienNhoHon == 0 && simObject.tienLonHon == 0) {
-                                resultList.push(simInfo);
-                            }
-                            if (simObject.tienNhoHon != 0 && simObject.tienLonHon == 0) {
-                                if (simInfo.taiKhoanChinh <= simObject.tienNhoHon) {
-                                    resultList.push(simInfo);
-                                }
-                            }
-                            if (simObject.tienNhoHon == 0 && simObject.tienLonHon != 0) {
-                                if (simInfo.taiKhoanChinh >= simObject.tienLonHon) {
-                                    resultList.push(simInfo);
-                                }
-                            }
-                            if (simObject.tienNhoHon != 0 && simObject.tienLonHon != 0) {
-                                if (simObject.tienLonHon <= simInfo.taiKhoanChinh && simInfo.taiKhoanChinh <= simObject.tienNhoHon) {
-                                    resultList.push(simInfo);
-                                }
-                            }
-                        }
-                    }
+                    check_money_date(simInfo, simObject, resultList);
                 }
             }
             if (resultList.length != 0) {
@@ -452,62 +404,13 @@ function timKiem() {
             }
         }
     } else if (selectedOptionVal == 2) {
-        var commObject = new Object({
-            comm: '',
-            loaiMang: [],
-            tienNhoHon: 0,
-            tienLonHon: 0,
-            ngayBatDau: '',
-            ngayKetThuc: ''
-        });
-
         if (comm != 0 ? comm : swal("Lỗi", "Tên coom trống", "warning")) {
-            commObject.comm = comm;
-            if (loai_mang_1 != 0) {
-                commObject.loaiMang.push(loai_mang_1);
-            }
-            if (loai_mang_2 != 0) {
-                commObject.loaiMang.push(loai_mang_2);
-            }
-            if (tien_nho_hon != 0) {
-                commObject.tienNhoHon = tien_nho_hon;
-            }
-            if (tien_lon_hon != 0) {
-                commObject.tienLonHon = tien_lon_hon;
-            }
-            if (ngay_bat_dau != 0) {
-                commObject.ngayBatDau = ngay_bat_dau;
-            }
-            if (ngay_ket_thuc != 0) {
-                commObject.ngayKetThuc = ngay_ket_thuc;
-            }
-
+            simObject.comm = comm;
             var resultList = [];
             for (var i = 0; i < data.length; i++) {
                 var simInfo = data[i];
-                if (simInfo.commName.includes(commObject.comm)) {
-                    for (var j = 0; j < commObject.loaiMang.length; j++) {
-                        if (commObject.loaiMang[j].includes(simInfo.nhaMang)) {
-                            if (commObject.tienNhoHon == 0 && commObject.tienLonHon == 0) {
-                                resultList.push(simInfo);
-                            }
-                            if (commObject.tienNhoHon != 0 && commObject.tienLonHon == 0) {
-                                if (simInfo.taiKhoanChinh <= commObject.tienNhoHon) {
-                                    resultList.push(simInfo);
-                                }
-                            }
-                            if (commObject.tienNhoHon == 0 && commObject.tienLonHon != 0) {
-                                if (simInfo.taiKhoanChinh >= commObject.tienLonHon) {
-                                    resultList.push(simInfo);
-                                }
-                            }
-                            if (commObject.tienNhoHon != 0 && commObject.tienLonHon != 0) {
-                                if (commObject.tienLonHon <= simInfo.taiKhoanChinh && simInfo.taiKhoanChinh <= commObject.tienNhoHon) {
-                                    resultList.push(simInfo);
-                                }
-                            }
-                        }
-                    }
+                if (simInfo.commName.includes(simObject.comm)) {
+                    check_money_date(simInfo, simObject, resultList);
                 }
             }
             if (resultList.length != 0) {
@@ -519,8 +422,131 @@ function timKiem() {
     }
 }
 
-function filterChange() {
-    timKiem();
+function check_money_date(simInfo, simObject, resultList) {
+    for (var j = 0; j < simObject.loaiMang.length; j++) {
+        if (simObject.loaiMang[j].includes(simInfo.nhaMang)) {
+            if (simObject.tienNhoHon == 0 && simObject.tienLonHon == 0) {
+                if (simObject.ngayBatDau == 0 && simObject.ngayKetThuc == 0) {
+                    resultList.push(simInfo);
+                }
+                if (simObject.ngayBatDau != 0 && simObject.ngayKetThuc == 0) {
+                    var date1 = formatDate(simInfo.ngayHetHan);
+                    var date2 = formatDate(simObject.ngayBatDau);
+                    if (date1 <= date2) {
+                        resultList.push(simInfo);
+                    }
+                }
+                if (simObject.ngayBatDau == 0 && simObject.ngayKetThuc != 0) {
+                    var date1 = formatDate(simInfo.ngayHetHan);
+                    var date2 = formatDate(simObject.ngayKetThuc);
+                    if (date1 >= date2) {
+                        resultList.push(simInfo);
+                    }
+                }
+                if (simObject.ngayBatDau != 0 && simObject.ngayKetThuc != 0) {
+                    var date1 = formatDate(simInfo.ngayHetHan);
+                    var date2 = formatDate(simObject.ngayBatDau);
+                    var date3 = formatDate(simObject.ngayKetThuc);
+                    if (date3 <= date1 && date1 <= date2) {
+                        resultList.push(simInfo);
+                    }
+                }
+            }
+            if (simObject.tienNhoHon != 0 && simObject.tienLonHon == 0) {
+                if (simInfo.taiKhoanChinh <= simObject.tienNhoHon) {
+                    if (simObject.ngayBatDau == 0 && simObject.ngayKetThuc == 0) {
+                        resultList.push(simInfo);
+                    }
+                    if (simObject.ngayBatDau != 0 && simObject.ngayKetThuc == 0) {
+                        var date1 = formatDate(simInfo.ngayHetHan);
+                        var date2 = formatDate(simObject.ngayBatDau);
+                        if (date1 <= date2) {
+                            resultList.push(simInfo);
+                        }
+                    }
+                    if (simObject.ngayBatDau == 0 && simObject.ngayKetThuc != 0) {
+                        var date1 = formatDate(simInfo.ngayHetHan);
+                        var date2 = formatDate(simObject.ngayKetThuc);
+                        if (date1 >= date2) {
+                            resultList.push(simInfo);
+                        }
+                    }
+                    if (simObject.ngayBatDau != 0 && simObject.ngayKetThuc != 0) {
+                        var date1 = formatDate(simInfo.ngayHetHan);
+                        var date2 = formatDate(simObject.ngayBatDau);
+                        var date3 = formatDate(simObject.ngayKetThuc);
+                        if (date3 <= date1 && date1 <= date2) {
+                            resultList.push(simInfo);
+                        }
+                    }
+                }
+            }
+            if (simObject.tienNhoHon == 0 && simObject.tienLonHon != 0) {
+                if (simInfo.taiKhoanChinh >= simObject.tienLonHon) {
+                    if (simObject.ngayBatDau == 0 && simObject.ngayKetThuc == 0) {
+                        resultList.push(simInfo);
+                    }
+                    if (simObject.ngayBatDau != 0 && simObject.ngayKetThuc == 0) {
+                        var date1 = formatDate(simInfo.ngayHetHan);
+                        var date2 = formatDate(simObject.ngayBatDau);
+                        if (date1 <= date2) {
+                            resultList.push(simInfo);
+                        }
+                    }
+                    if (simObject.ngayBatDau == 0 && simObject.ngayKetThuc != 0) {
+                        var date1 = formatDate(simInfo.ngayHetHan);
+                        var date2 = formatDate(simObject.ngayKetThuc);
+                        if (date1 >= date2) {
+                            resultList.push(simInfo);
+                        }
+                    }
+                    if (simObject.ngayBatDau != 0 && simObject.ngayKetThuc != 0) {
+                        var date1 = formatDate(simInfo.ngayHetHan);
+                        var date2 = formatDate(simObject.ngayBatDau);
+                        var date3 = formatDate(simObject.ngayKetThuc);
+                        if (date3 <= date1 && date1 <= date2) {
+                            resultList.push(simInfo);
+                        }
+                    }
+                }
+            }
+            if (simObject.tienNhoHon != 0 && simObject.tienLonHon != 0) {
+                if (simObject.tienLonHon <= simInfo.taiKhoanChinh && simInfo.taiKhoanChinh <= simObject.tienNhoHon) {
+                    if (simObject.ngayBatDau == 0 && simObject.ngayKetThuc == 0) {
+                        resultList.push(simInfo);
+                    }
+                    if (simObject.ngayBatDau != 0 && simObject.ngayKetThuc == 0) {
+                        var date1 = formatDate(simInfo.ngayHetHan);
+                        var date2 = formatDate(simObject.ngayBatDau);
+                        if (date1 <= date2) {
+                            resultList.push(simInfo);
+                        }
+                    }
+                    if (simObject.ngayBatDau == 0 && simObject.ngayKetThuc != 0) {
+                        var date1 = formatDate(simInfo.ngayHetHan);
+                        var date2 = formatDate(simObject.ngayKetThuc);
+                        if (date1 >= date2) {
+                            resultList.push(simInfo);
+                        }
+                    }
+                    if (simObject.ngayBatDau != 0 && simObject.ngayKetThuc != 0) {
+                        var date1 = formatDate(simInfo.ngayHetHan);
+                        var date2 = formatDate(simObject.ngayBatDau);
+                        var date3 = formatDate(simObject.ngayKetThuc);
+                        if (date3 <= date1 && date1 <= date2) {
+                            resultList.push(simInfo);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+function formatDate(date) {
+    var parts = date.split("/");
+    var date = new Date(parts[1] + "/" + parts[0] + "/" + parts[2]);
+    return date.getTime();
 }
 
 function showTableFilter(data) {
