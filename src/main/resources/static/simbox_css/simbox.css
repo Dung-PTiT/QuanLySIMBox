@@ -10,3 +10,21 @@
 td {
     padding: 12px 2px 12px 2px !important;
 }
+
+.dateInput {
+    border: 1px solid #ddd;
+    text-align: center;
+    background-color: #FFFFFF;
+    border-radius: 7px;
+}
+
+.filterInput {
+    border: 1px solid #ddd;
+    text-align: center;
+    background-color: #FFFFFF;
+    border-radius: 7px;
+}
+
+.display-hide{
+    display: none;
+}

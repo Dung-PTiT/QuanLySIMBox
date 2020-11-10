@@ -44,8 +44,8 @@ public class SimInfo implements Serializable, Cloneable {
     @Column(name = "is_connected")
     public boolean isConnected = false;
 
-    @Column(name = "device_code")
-    public String deviceCode = "";
+    @Column(name = "device_id")
+    public String deviceId = "";
 
     @Transient
     public ArrayList<Messages> messagesList = null;

@@ -141,7 +141,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
         outString = readSerial();
         if (outString.isEmpty() || outString.startsWith("AT")) return;
 
-//        System.out.println(outString);
+        System.out.println(outString);
         if (outString.equals("^SYSSTART")) {
             isStop = true;
             lastCmd = "";
@@ -207,8 +207,8 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                     simInfo.nhaMang = network;
                     simInfo.time = TimeUtil.getTime();
                     System.out.println(simInfo.commName + " : network: " + network);
-                    runCmd(Contract.BALANCE);
-//                    repeatReadingSimInfo();
+//                    runCmd(Contract.BALANCE);
+                    repeatReadingSimInfo();
                 }
             }
         } else if (lastCmd.equals(Contract.BALANCE) && !outString.equals("OK")) {
@@ -227,7 +227,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                 }
                 updateSimAccount();
             }
-            repeatReadingSimInfo();
+//            repeatReadingSimInfo();
         }
     }
 
@@ -387,7 +387,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
     }
 
     public void runCmd(String cmd) {
-//        System.out.println(cmd);
+        System.out.println(cmd);
         lastCmd = cmd;
         writeSerial(cmd);
     }

@@ -191,8 +191,7 @@
                                 <th class="hanhDong">Hành động</th>
                             </tr>
                             </thead>
-                            <tbody id="bang_sim_box">
-                            </tbody>
+                            <tbody id="bang_sim_box"></tbody>
                         </table>
                     </div>
                 </div>
@@ -204,54 +203,98 @@
                         <span class="ml-1">Bộ lọc</span>
                     </h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-0">
                     <ul class="media-list">
                         <li class="align-items-center">
                             <div>
-                                <span>Nhập thông tin cần tìm</span>
-                                <input class="mt-1" style="width: 95%; height: 27px">
-                            </div>
-                            <div></div>
-                            <div class="mt-2">
                                 <span>Tìm kiếm theo</span>
                                 <div class="mt-1">
-                                    <select style="width: 95%; height: 27px">
-                                        <option>Tìm theo 1</option>
-                                        <option>Tìm theo 2</option>
-                                        <option>Tìm theo 3</option>
+                                    <select style="width: 95%; height: 27px" id="selectSearch"
+                                            class="selectSearch filterInput" name="selectSearch"
+                                            onchange="getValueSelect()">
+                                        <option value="0" selected disabled>Tất cả</option>
+                                        <option value="1">SIM ID</option>
+                                        <option value="2">COMM</option>
                                     </select>
                                 </div>
                             </div>
+                            <div></div>
+                            <div class="mt-2">
+                                <div id="search_sim_id" class="div-select">
+                                    <span>Nhập SIM ID</span>
+                                    <input id="inputSIMID" class="mt-1 filterInput" style="width: 95%; height: 27px"
+                                           onchange="timKiem()"
+                                           type="number">
+                                </div>
+                                <div id="search_comm" class="div-select">
+                                    <span>Chọn Comm</span>
+                                    <input class="mt-1 filterInput" style="width: 95%; height: 27px"
+                                           onchange="timKiem()"
+                                           id="inputComm">
+                                </div>
+                                <div id="search_input">
+                                    <span>Nhập thông tin</span>
+                                    <input class="mt-1 filterInput"
+                                           style="width: 95%; height: 27px; background-color: #f9f9f9" disabled>
+                                </div>
+                            </div>
                         </li>
-                        <li class="mt-4">
+                        <!--                        <li class="mt-3">-->
+                        <!--                            <button class="btn btn-group bg-blue text-white" onclick="timKiem()" id="btn_search"-->
+                        <!--                                    style="width: 100%; justify-content: center; align-items: center; padding: 4px 8px">-->
+                        <!--                                Tìm kiếm-->
+                        <!--                                <i class="fa fa-search ml-2"></i>-->
+                        <!--                            </button>-->
+                        <!--                        </li>-->
+                        <li class="mt-3">
                                 <span class="font-weight-bold">Loại mạng
                                     <i class="fas fa-caret-down"></i>
                                 </span>
                             <div class="mt-1">
-                                <input type="checkbox" id="loai_mang_1" name="drone" value="huey">
-                                <label for="loai_mang_1" class="ml-1">VNM và VIETTEL</label>
+                                <input type="checkbox" id="loai_mang_1" checked onchange="timKiem()">
+                                <label for="loai_mang_1" class="ml-1">VNM and VIETTEL</label>
                             </div>
                             <div>
-                                <input type="checkbox" id="loai_mang_2" name="drone" value="dewey">
+                                <input type="checkbox" id="loai_mang_2" checked onchange="timKiem()">
                                 <label for="loai_mang_2" class="ml-1">VN VINAPHONE</label>
                             </div>
                         </li>
-                        <li class="mt-4">
-                                <span class="font-weight-bold">Số dư tài khoản
-                                    <i class="fas fa-caret-down"></i>
-                                </span>
+                        <li class="mt-3">
+                            <div>
+                                <span class="font-weight-bold">Số dư tài khoản<i
+                                        class="fas fa-caret-down ml-1"></i></span>
+                                <div class="mt-1">
+                                    <input type="checkbox" id="tien_lon_hon" onchange="removeDisabled()">
+                                    <span class="pl-1">Lớn hơn</span>
+                                    <input class="ml-1 filterInput" style="width: 55%; height: 27px; background-color: #f9f9f9" type="number"
+                                           id="so_tien_lon_hon" onchange="timKiem()" disabled>
+                                </div>
+                                <div class="mt-1">
+                                    <input type="checkbox" id="tien_nho_hon" onchange="removeDisabled()">
+                                    <span class="pl-1">Nhỏ hơn</span>
+                                    <input class="ml-1 filterInput" style="width: 55%; height: 27px; background-color: #f9f9f9" type="number"
+                                           id="so_tien_nho_hon" onchange="timKiem()" disabled>
+                                </div>
+                            </div>
                         </li>
-                        <li class="mt-4">
-                                <span class="font-weight-bold">Ngày hết hạn
-                                    <i class="fas fa-caret-down"></i>
-                                </span>
-                        </li>
-                        <li class="mt-4">
-                            <button class="btn btn-group bg-blue text-white"
-                                    style="width: 100%; justify-content: center; align-items: center; padding: 4px 8px">
-                                Tìm kiếm
-                                <i class="fa fa-search ml-2"></i>
-                            </button>
+                        <li class="mt-3">
+                            <span class="font-weight-bold">Ngày hết hạn<i class="fas fa-caret-down ml-1"></i></span>
+                            <div class="mt-1">
+                                <input type="checkbox" id="ngay_ket_thuc" onchange="removeDisabled()">
+                                <span class="pl-1">Lớn hơn</span>
+                                <input class="ml-1 dateInput" id="gia_tri_ngay_ket_thuc"
+                                       onchange="timKiem()"
+                                       type="text" disabled
+                                       readonly style="width: 55%; height: 27px; background-color: #f9f9f9">
+                            </div>
+                            <div class="mt-1">
+                                <input type="checkbox" id="ngay_bat_dau" onchange="removeDisabled()">
+                                <span class="pl-1">Nhỏ hơn</span>
+                                <input class="ml-1 dateInput" id="gia_tri_ngay_bat_dau"
+                                       onchange="timKiem()"
+                                       type="text" disabled
+                                       readonly style="width: 55%; height: 27px; background-color: #f9f9f9">
+                            </div>
                         </li>
                     </ul>
                 </div>
