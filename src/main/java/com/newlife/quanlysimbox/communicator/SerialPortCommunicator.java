@@ -1,8 +1,8 @@
 package com.newlife.quanlysimbox.communicator;
 
 import com.newlife.quanlysimbox.Contract;
-import com.newlife.quanlysimbox.model.Messages;
-import com.newlife.quanlysimbox.model.SimInfo;
+import com.newlife.quanlysimbox.model.simbox.Messages;
+import com.newlife.quanlysimbox.model.simbox.SimInfo;
 import com.newlife.quanlysimbox.util.TimeUtil;
 import com.newlife.quanlysimbox.util.VinaUtil;
 import gnu.io.*;

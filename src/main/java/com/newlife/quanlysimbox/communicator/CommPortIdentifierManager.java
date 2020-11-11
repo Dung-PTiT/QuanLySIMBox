@@ -1,8 +1,8 @@
 package com.newlife.quanlysimbox.communicator;
 
-import com.newlife.quanlysimbox.model.Messages;
-import com.newlife.quanlysimbox.model.SimInfo;
-import com.newlife.quanlysimbox.model.SimStatistic;
+import com.newlife.quanlysimbox.model.simbox.Messages;
+import com.newlife.quanlysimbox.model.simbox.SimInfo;
+import com.newlife.quanlysimbox.model.simbox.SimStatistic;
 import com.newlife.quanlysimbox.repository.MessagesRepository;
 import com.newlife.quanlysimbox.repository.SimInfoRepository;
 import gnu.io.CommPortIdentifier;

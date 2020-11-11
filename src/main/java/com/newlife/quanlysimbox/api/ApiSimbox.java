@@ -1,11 +1,14 @@
 package com.newlife.quanlysimbox.api;
 
 import com.newlife.quanlysimbox.communicator.CommPortIdentifierManager;
-import com.newlife.quanlysimbox.model.ApiResponse;
-import com.newlife.quanlysimbox.model.SimInfo;
-import com.newlife.quanlysimbox.model.SimStatistic;
+import com.newlife.quanlysimbox.model.simbox.ApiResponse;
+import com.newlife.quanlysimbox.model.simbox.SimInfo;
+import com.newlife.quanlysimbox.model.simbox.SimStatistic;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ApiSimbox {

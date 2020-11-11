@@ -1,4 +1,4 @@
-package com.newlife.quanlysimbox.model;
+package com.newlife.quanlysimbox.model.simbox;
 
 import java.util.ArrayList;
 
