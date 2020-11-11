@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" >
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -38,7 +38,7 @@
     <script th:src="@{/global_assets/js/plugins/uploaders/fileinput/fileinput.min.js}"></script>
     <script th:src="@{/global_assets/js/demo_pages/uploader_bootstrap.js}"></script>
     <link th:href="@{/images/logoNewlife.png}" rel="shortcut icon">
-    <link th:href="@{/simbox_css/template.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/css/template.css}" rel="stylesheet" type="text/css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script type="text/javascript"
@@ -57,22 +57,22 @@
 <body class="sidebar-xs" data-gr-c-s-loaded="true">
 <!--<body data-gr-c-s-loaded="true">-->
 <div class="page-content">
-    <div class="sidebar sidebar-light sidebar-main sidebar-expand-md">
+    <div class="sidebar sidebar-light sidebar-main sidebar-expand-md" style="z-index: 101!important;">
         <div class="sidebar-content">
             <div class="card card-sidebar-mobile">
                 <ul class="nav nav-sidebar" data-nav-type="accordion">
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a href="" class="nav-link">
                             <i class="fas fa-circle" style="font-size: 33px; color: #5AE7A0"></i>
                         </a>
                     </li>
                     <li class="nav-item mt-2">
-                        <a href="#" class="nav-link">
+                        <a th:href="@{/simbox}" class="nav-link">
                             <i class="fas fa-sim-card font-size-18"></i>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
+                        <a th:href="@{/device}" class="nav-link">
                             <i class="fas fa-cogs font-size-18"></i>
                         </a>
                     </li>

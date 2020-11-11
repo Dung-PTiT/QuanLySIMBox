@@ -1,0 +1,44 @@
+.table th {
+    vertical-align: text-top !important;
+    padding: 8px 2px 8px 2px !important;
+}
+
+.fas {
+    font-size: 0.9rem;
+}
+
+td {
+    padding: 8px 2px 8px 2px !important;
+}
+
+.dateInput {
+    border: 1px solid #ddd;
+    text-align: center;
+    background-color: #FFFFFF;
+    border-radius: 7px;
+}
+
+.filterInput {
+    border: 1px solid #ddd;
+    text-align: center;
+    background-color: #FFFFFF;
+    border-radius: 7px;
+}
+
+.display-hide{
+    display: none;
+}
+
+.btn-filter{
+    padding: 6px 10px 6px 10px !important;
+    border: 1px solid #dddddd !important;
+    border-radius: 5px !important;
+    text-transform: none;
+}
+
+.table-responsive-1 {
+    display: block;
+    width: 100%;
+    -webkit-overflow-scrolling: touch
+}
+

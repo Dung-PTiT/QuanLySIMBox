@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{template}">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+    <title>Quản lý thiết bị</title>
+    <link th:href="@{/css/device.css}" rel="stylesheet" type="text/css">
+    <script th:src="@{/js/device.js}"></script>
+    <style>
+        .container-fluid {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+
+        .row {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+
+        .btn-action {
+            border: none;
+            border-radius: 10px;
+            background-color: #fff;
+        }
+
+    </style>
+</head>
+<body>
+<div class="content">
+    <section class="bg-light h-100" layout:fragment="content_body">
+        <div class="row" style="height: 100vh; background-color: #ffffff;">
+            <div class="col-sm-12 col-md-12">
+                <div class="card-header">
+                    <h5 class="card-title font-weight-bold mb-2">Quản lý thiết bị</h5>
+                    <div style="justify-content: space-between; display: flex">
+                        <span class="card-title" style="display: flex">
+                            <ul class="nav nav-tabs nav-tabs-bottom border-bottom-0 mb-0">
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link pl-0 active" data-toggle="tab">
+                                        <span class="text-dark font-weight-bold">Tất cả</span>
+                                        <span class="badge badge-info badge-pill ml-2">30</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item ml-3">
+                                    <a href="#" class="nav-link pl-0" data-toggle="tab">
+                                        <span class="text-dark font-weight-bold">Đang hoạt động</span>
+                                        <span class="badge badge-success badge-pill ml-2">20</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item ml-3">
+                                    <a href="#" class="nav-link pl-0" data-toggle="tab">
+                                        <span class="text-dark font-weight-bold">Đang tắt</span>
+                                        <span class="badge badge-dark badge-pill ml-2">10</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </span>
+                        <div>
+                            <p>
+                                <span class="text-grey">CPU used: </span>
+                                <span class="font-weight-bold">40%</span></p>
+                            <p>
+                                <span class="text-grey">RAM used: </span>
+                                <span class="font-weight-bold">30%</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row mt-1">
+                        <div class="col-12 pl-0">
+                            <div class="btn-group justify-content-center">
+                                <a href="#" class="btn btn-filter dropdown-toggle legitRipple"
+                                   data-toggle="dropdown">
+                                    Khay hành động
+                                </a>
+                                <div class="dropdown-menu">
+                                    <div class="dropdown-item">
+                                        <fa class="fa fa-sync mr-3 text-success"></fa>
+                                        <span>Khởi động lại</span>
+                                    </div>
+                                    <div class="dropdown-item">
+                                        <fa class="fa fa-power-off mr-3 text-danger"></fa>
+                                        <span>Tắt</span>
+                                    </div>
+                                    <div class="dropdown-item">
+                                        <fa class="fa fa-power-off mr-3 text-blue"></fa>
+                                        <span>Bật</span>
+                                    </div>
+                                    <div class="dropdown-submenu" data-toggle="modal"
+                                         data-target="#modal_chay_kich_ban">
+                                        <div class="dropdown-item">
+                                            <fa class="fa fa-play mr-3 text-success"></fa>
+                                            <span>Chạy kịch bản</span>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown-item">
+                                        <fa class="fa fa-trash-alt mr-3 text-grey"></fa>
+                                        <span>Xóa thiết bị</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ml-3 btn-group justify-content-center">
+                                <button class="btn btn-filter legitRipple">
+                                    <fa class="fa fa-plus-circle mr-2 text-info"></fa>
+                                    <span>Thêm thiết bị</span>
+                                </button>
+                            </div>
+                            <div class="ml-3 btn-group justify-content-center">
+                                <div class="form-group-feedback form-group-feedback-right" style="display: flex">
+                                    <input type="text" class="btn-filter"
+                                           placeholder="Tìm kiếm thiết bị" autocomplete="off" style="width: 260px;">
+                                    <button class="btn legitRipple"
+                                            style="left: -50px; border-radius: 3px; height: 34px">
+                                        <i class="icon-search4 pb-1"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive-1">
+                        <table class="table table-bordered text-center">
+                            <thead>
+                            <tr class="text-center" style="background-color: #f2f2f2">
+                                <th>
+                                    <input type="checkbox"/>
+                                    <span class="ml-2">STT</span>
+                                </th>
+                                <th>Device ID</th>
+                                <th>Status</th>
+                                <th>Tài khoản</th>
+                                <th>App</th>
+                                <th>Tiến trình</th>
+                                <th>Kịch bản</th>
+                                <th>Sim ID</th>
+                                <th>Hành động</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>
+                                    <input type="checkbox"/>
+                                    <span class="ml-2">1</span>s
+                                </td>
+                                <td>127.0.0.1:8080</td>
+                                <td><span class="badge bg-blue">Running</span></td>
+                                <td>Account 1</td>
+                                <td>
+                                    <img th:src="@{./images/brands/facebook.png}" class="rounded-circle" width="20"
+                                         height="20">
+                                    <span class="ml-2">Facebook</span>
+                                </td>
+                                <td>
+                                    <div class="progress rounded-round" style=" height:0.8rem">
+                                        <div class="progress-bar bg-success" style="width: 85%;">
+                                            <span>85%</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>fa-01</td>
+                                <td>7478237984</td>
+                                <td>
+                                    <div class="list-icons">
+                                        <div class="dropdown">
+                                            <a href="#" class="list-icons-item dropdown-toggle" data-toggle="dropdown"
+                                               aria-expanded="false">
+                                                <i class="icon-more"></i>
+                                            </a>
+                                            <div class="dropdown-menu" x-placement="bottom-start"
+                                                 style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 19px, 0px);">
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-mobile"></i>
+                                                    Phone
+                                                </a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-play4"></i>
+                                                    Play</a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-square"></i>
+                                                    Stop</a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-close2"></i>
+                                                    Turn off</a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-exit"></i>
+                                                    Shut down</a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-info3"></i>
+                                                    Log</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="checkbox"/>
+                                    <span class="ml-2">1</span>s
+                                </td>
+                                <td>127.0.0.1:8080</td>
+                                <td><span class="badge bg-blue">Running</span></td>
+                                <td>Account 1</td>
+                                <td>
+                                    <img th:src="@{./images/brands/facebook.png}" class="rounded-circle" width="20"
+                                         height="20">
+                                    <span class="ml-2">Facebook</span>
+                                </td>
+                                <td>
+                                    <div class="progress rounded-round" style=" height:0.8rem">
+                                        <div class="progress-bar bg-success" style="width: 85%;">
+                                            <span>85%</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>fa-01</td>
+                                <td>7478237984</td>
+                                <td>
+                                    <div class="list-icons">
+                                        <div class="dropdown">
+                                            <a href="#" class="list-icons-item dropdown-toggle" data-toggle="dropdown"
+                                               aria-expanded="false">
+                                                <i class="icon-more"></i>
+                                            </a>
+                                            <div class="dropdown-menu" x-placement="bottom-start"
+                                                 style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 19px, 0px);">
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-mobile"></i>
+                                                    Phone
+                                                </a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-play4"></i>
+                                                    Play</a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-square"></i>
+                                                    Stop</a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-close2"></i>
+                                                    Turn off</a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-exit"></i>
+                                                    Shut down</a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-info3"></i>
+                                                    Log</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="checkbox"/>
+                                    <span class="ml-2">1</span>s
+                                </td>
+                                <td>127.0.0.1:8080</td>
+                                <td><span class="badge bg-blue">Running</span></td>
+                                <td>Account 1</td>
+                                <td>
+                                    <img th:src="@{./images/brands/facebook.png}" class="rounded-circle" width="20"
+                                         height="20">
+                                    <span class="ml-2">Facebook</span>
+                                </td>
+                                <td>
+                                    <div class="progress rounded-round" style=" height:0.8rem">
+                                        <div class="progress-bar bg-success" style="width: 85%;">
+                                            <span>85%</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>fa-01</td>
+                                <td>7478237984</td>
+                                <td>
+                                    <div class="list-icons">
+                                        <div class="dropdown">
+                                            <a href="#" class="list-icons-item dropdown-toggle" data-toggle="dropdown"
+                                               aria-expanded="false">
+                                                <i class="icon-more"></i>
+                                            </a>
+                                            <div class="dropdown-menu" x-placement="bottom-start"
+                                                 style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 19px, 0px);">
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-mobile"></i>
+                                                    Phone
+                                                </a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-play4"></i>
+                                                    Play</a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-square"></i>
+                                                    Stop</a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-close2"></i>
+                                                    Turn off</a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-exit"></i>
+                                                    Shut down</a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-info3"></i>
+                                                    Log</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="checkbox"/>
+                                    <span class="ml-2">1</span>s
+                                </td>
+                                <td>127.0.0.1:8080</td>
+                                <td><span class="badge bg-blue">Running</span></td>
+                                <td>Account 1</td>
+                                <td>
+                                    <img th:src="@{./images/brands/facebook.png}" class="rounded-circle" width="20"
+                                         height="20">
+                                    <span class="ml-2">Facebook</span>
+                                </td>
+                                <td>
+                                    <div class="progress rounded-round" style=" height:0.8rem">
+                                        <div class="progress-bar bg-success" style="width: 85%;">
+                                            <span>85%</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>fa-01</td>
+                                <td>7478237984</td>
+                                <td>
+                                    <div class="list-icons">
+                                        <div class="dropdown">
+                                            <a href="#" class="list-icons-item dropdown-toggle" data-toggle="dropdown"
+                                               aria-expanded="false">
+                                                <i class="icon-more"></i>
+                                            </a>
+                                            <div class="dropdown-menu" x-placement="bottom-start"
+                                                 style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 19px, 0px);">
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-mobile"></i>
+                                                    Phone
+                                                </a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-play4"></i>
+                                                    Play</a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-square"></i>
+                                                    Stop</a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-close2"></i>
+                                                    Turn off</a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-exit"></i>
+                                                    Shut down</a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-info3"></i>
+                                                    Log</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="checkbox"/>
+                                    <span class="ml-2">1</span>s
+                                </td>
+                                <td>127.0.0.1:8080</td>
+                                <td><span class="badge bg-blue">Running</span></td>
+                                <td>Account 1</td>
+                                <td>
+                                    <img th:src="@{./images/brands/facebook.png}" class="rounded-circle" width="20"
+                                         height="20">
+                                    <span class="ml-2">Facebook</span>
+                                </td>
+                                <td>
+                                    <div class="progress rounded-round" style=" height:0.8rem">
+                                        <div class="progress-bar bg-success" style="width: 85%;">
+                                            <span>85%</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>fa-01</td>
+                                <td>7478237984</td>
+                                <td>
+                                    <div class="list-icons">
+                                        <div class="dropdown">
+                                            <a href="#" class="list-icons-item dropdown-toggle" data-toggle="dropdown"
+                                               aria-expanded="false">
+                                                <i class="icon-more"></i>
+                                            </a>
+                                            <div class="dropdown-menu" x-placement="bottom-start"
+                                                 style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 19px, 0px);">
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-mobile"></i>
+                                                    Phone
+                                                </a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-play4"></i>
+                                                    Play</a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-square"></i>
+                                                    Stop</a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-close2"></i>
+                                                    Turn off</a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-exit"></i>
+                                                    Shut down</a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-info3"></i>
+                                                    Log</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="checkbox"/>
+                                    <span class="ml-2">1</span>s
+                                </td>
+                                <td>127.0.0.1:8080</td>
+                                <td><span class="badge bg-blue">Running</span></td>
+                                <td>Account 1</td>
+                                <td>
+                                    <img th:src="@{./images/brands/facebook.png}" class="rounded-circle" width="20"
+                                         height="20">
+                                    <span class="ml-2">Facebook</span>
+                                </td>
+                                <td>
+                                    <div class="progress rounded-round" style=" height:0.8rem">
+                                        <div class="progress-bar bg-success" style="width: 85%;">
+                                            <span>85%</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>fa-01</td>
+                                <td>7478237984</td>
+                                <td>
+                                    <div class="list-icons">
+                                        <div class="dropdown">
+                                            <a href="#" class="list-icons-item dropdown-toggle" data-toggle="dropdown"
+                                               aria-expanded="false">
+                                                <i class="icon-more"></i>
+                                            </a>
+                                            <div class="dropdown-menu" x-placement="bottom-start"
+                                                 style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 19px, 0px);">
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-mobile"></i>
+                                                    Phone
+                                                </a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-play4"></i>
+                                                    Play</a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-square"></i>
+                                                    Stop</a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-close2"></i>
+                                                    Turn off</a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-exit"></i>
+                                                    Shut down</a>
+                                                <a href="#" class="dropdown-item">
+                                                    <i class="icon-info3"></i>
+                                                    Log</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="modal_chay_kich_ban" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modal_add_edit_title">Chạy kịch bản (<span>3</span>)
+                        </h5>
+                        <button type="button" class="close text-danger" data-dismiss="modal">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mt-3" style="display: flex; align-items: center">
+                            <div>
+                                <h6>Kịch bản</h6>
+                            </div>
+                            <div class="ml-3 btn-group justify-content-center">
+                                <a href="#" class="btn btn-filter dropdown-toggle legitRipple"
+                                   data-toggle="dropdown">
+                                    Chọn
+                                </a>
+                                <div class="dropdown-menu">
+                                    <div class="dropdown-item">
+                                        <span>1</span>
+                                    </div>
+                                    <div class="dropdown-item">
+                                        <span>2</span>
+                                    </div>
+                                    <div class="dropdown-item">
+                                        <span>3</span>
+                                    </div>
+                                    <div class="dropdown-item">
+                                        <span>4</span>
+                                    </div>
+                                    <div class="dropdown-item">
+                                        <span>5</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4" style="display: flex; justify-content: space-between">
+                            <div>
+                                <h6>Chọn tài khoản cho mỗi thiết bị</h6>
+                            </div>
+                            <div>
+                                <a href="" class="text-primary">Auto</a>
+                                <a href="" class="text-primary ml-2">Reset</a>
+                            </div>
+                        </div>
+                        <form id="form_add_edit_user">
+                            <div class="modal-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th>
+                                                <span class="pl-2">Device</span>
+                                            </th>
+                                            <th>
+                                                <span class="pl-2">Account</span>
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td>
+                                                <span class="pl-2">127.0.0.1:8080</span>
+                                            </td>
+                                            <td style="display:flex; align-items: center; justify-content: space-between">
+                                                <div>
+                                                    <span class="pl-2">4238442034042_GG</span>
+                                                </div>
+                                                <button class="btn legitRipple">
+                                                    <fa class="fa fa-pencil-alt"></fa>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span class="pl-2">127.0.0.1:8080</span>
+                                            </td>
+                                            <td style="display:flex; align-items: center; justify-content: space-between">
+                                                <div>
+                                                    <span class="pl-2">4238442034042_GG</span>
+                                                </div>
+                                                <button class="btn legitRipple">
+                                                    <fa class="fa fa-pencil-alt"></fa>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span class="pl-2">127.0.0.1:8080</span>
+                                            </td>
+                                            <td style="display:flex; align-items: center; justify-content: space-between">
+                                                <div>
+                                                    <span class="pl-2">4238442034042_GG</span>
+                                                </div>
+                                                <button class="btn legitRipple">
+                                                    <fa class="fa fa-pencil-alt"></fa>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary mr-1 float-right">Chạy</button>
+                        <button type="button" id="form_close" class="btn btn-secondary mr-1 float-right bg-danger"
+                                data-dismiss="modal">Đóng
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>
