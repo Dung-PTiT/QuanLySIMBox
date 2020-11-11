@@ -1,74 +1,4 @@
-var dataOriginal = {
-    "success": true,
-    "data": {
-        "simDangHoatDong": 2,
-        "kheTrong": 14,
-        "simSapHetTien": 0,
-        "simHetTien": 0,
-        "simSapHetHan": 0,
-        "simHetHan": 0,
-        "simInfoList": [
-            {
-                "commName": "COM25",
-                "simId": "452048834505162",
-                "nhaMang": "VNM and VIETTEL",
-                "taiKhoanChinh": 30000,
-                "taiKhoanPhu": 10000,
-                "ngayHetHan": "06/11/2020",
-                "tinHieu": 30.99,
-                "lastMsgId": 1,
-                "messagesList": [
-                    {
-                        "id": 1,
-                        "status": "REC READ",
-                        "sdt": "+84354576363",
-                        "time": "20/11/0217:04:51+28",
-                        "content": "New"
-                    }
-                ],
-                "deviceCode": "",
-                "isConnected": true,
-                "isSapHetTien": false,
-                "isHetTien": true,
-                "isSapHetHan": true,
-                "isHetHan": false
-            },
-            {
-                "commName": "COM26",
-                "simId": "452021115286823",
-                "nhaMang": "VN VINAPHONE",
-                "taiKhoanChinh": 124124,
-                "taiKhoanPhu": 12123,
-                "ngayHetHan": "06/11/2020",
-                "tinHieu": 31.99,
-                "lastMsgId": 2,
-                "messagesList": [
-                    {
-                        "id": 1,
-                        "status": "REC READ",
-                        "sdt": "+84354576363",
-                        "time": "20/11/0310:00:29+28",
-                        "content": "Good morning"
-                    },
-                    {
-                        "id": 2,
-                        "status": "REC READ",
-                        "sdt": "+84354576363",
-                        "time": "20/11/0313:20:58+28",
-                        "content": "Nice"
-                    }
-                ],
-                "deviceCode": "",
-                "isConnected": true,
-                "isSapHetTien": true,
-                "isHetTien": false,
-                "isSapHetHan": true,
-                "isHetHan": true
-            }
-        ]
-    }
-};
-
+var dataOriginal;
 $(function () {
     var date_input = $('.dateInput');
     date_input.datepicker({
@@ -82,19 +12,18 @@ $(function () {
 });
 
 function getData() {
-    // $.ajax({
-    //     type: "GET",
-    //     url: "/api/getSimStatistic",
-    //     dataType: "json",
-    //     success: function (data) {
-    setTimeout(function () {
-        getData();
-    }, 2000);
-    timKiem();
-    //         showTable(dataOriginal);
-    //     }
-    // });
-    // showTable(dataOriginal.data);
+    $.ajax({
+        type: "GET",
+        url: "/api/getSimStatistic",
+        dataType: "json",
+        success: function (data) {
+            dataOriginal = data.data;
+            setTimeout(function () {
+                getData();
+            }, 5000);
+            timKiem();
+        }
+    });
 }
 
 //checkbox
@@ -265,7 +194,7 @@ function removeDisabled() {
 }
 
 function timKiem() {
-    var data = dataOriginal.data.simInfoList;
+    var data = dataOriginal.simInfoList;
     var selectedOptionVal = ($('#selectSearch').val() != null) ? $('#selectSearch').val() : 0;
     var simID = ($('#inputSIMID').val() != '') ? $('#inputSIMID').val().trim() : 0;
     var comm = ($('#inputComm').val() != '') ? $('#inputComm').val().trim() : 0;
@@ -439,12 +368,12 @@ function showTableFilter(data) {
 
     $("#bang_sim_box").empty();
     $("#span_tong_so_sim").html(data.length);
-    $("#span_sim_hoat_dong").html(data.simDangHoatDong);
-    $("#span_khe_sim_trong").html(data.kheTrong);
-    $("#span_sim_sap_het_tien").html(data.simSapHetTien);
-    $("#span_sim_het_tien").html(data.simHetTien);
-    $("#span_sim_sap_het_han").html(data.simSapHetHan);
-    $("#span_sim_het_han").html(data.simHetHan);
+    $("#span_sim_hoat_dong").html(dataOriginal.simDangHoatDong);
+    $("#span_khe_sim_trong").html(dataOriginal.kheTrong);
+    $("#span_sim_sap_het_tien").html(dataOriginal.simSapHetTien);
+    $("#span_sim_het_tien").html(dataOriginal.simHetTien);
+    $("#span_sim_sap_het_han").html(dataOriginal.simSapHetHan);
+    $("#span_sim_het_han").html(dataOriginal.simHetHan);
 
     var contentString = "";
     for (var i = 0; i < data.length; i++) {
@@ -506,3 +435,5 @@ function showTableFilter(data) {
     }
     $("#bang_sim_box").html(contentString);
 }
+
+
