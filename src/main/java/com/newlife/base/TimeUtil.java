@@ -1,4 +1,4 @@
-package com.newlife.quanlysimbox.util;
+package com.newlife.base;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,17 +24,5 @@ public class TimeUtil {
             e.printStackTrace();
         }
         return result;
-    }
-
-    public static void main(String[] args) {
-        try {
-            String strTime = "20/11/03 13:20:58+28";
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yy/MM/dd HH:mm:ss");
-            Date date = dateFormat.parse(strTime);
-            dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
-            System.out.println(dateFormat.format(date));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

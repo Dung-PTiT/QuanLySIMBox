@@ -1,7 +1,5 @@
 package com.newlife.quanlysimbox.model;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
