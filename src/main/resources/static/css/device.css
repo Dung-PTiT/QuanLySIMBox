@@ -25,11 +25,11 @@ td {
     border-radius: 7px;
 }
 
-.display-hide{
+.display-hide {
     display: none;
 }
 
-.btn-filter{
+.btn-filter {
     padding: 6px 10px 6px 10px !important;
     border: 1px solid #dddddd !important;
     border-radius: 5px !important;
@@ -40,5 +40,35 @@ td {
     display: block;
     width: 100%;
     -webkit-overflow-scrolling: touch
+}
+
+#selectNumberRecord {
+    padding: 6px;
+    border-radius: 7px;
+    border: 1px solid #dddddd !important;
+}
+
+.pagination {
+    display: inline-block;
+}
+
+.pagination a {
+    color: black;
+    float: left;
+    padding: 4px 6px;
+    text-decoration: none;
+    transition: background-color .3s;
+    border: 1px solid #ddd;
+    margin: 0 4px;
+}
+
+.pagination a.active {
+    background-color: #6ec9e4;
+    color: white;
+    border: 1px solid #6ec9e4;
+}
+
+.pagination a:hover:not(.active) {
+    background-color: #ddd;
 }
 
