@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{admin/template}">
+      layout:decorate="~{template}">
 <head>
     <meta charset="utf-8">
     <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
     <title>Quản lý Simbox</title>
-    <link th:href="@{/simbox_css/simbox.css}" rel="stylesheet" type="text/css">
-    <script th:src="@{/simbox_js/simbox.js}"></script>
+    <link th:href="@{/css/simbox.css}" rel="stylesheet" type="text/css">
+    <script th:src="@{/js/simbox.js}"></script>
     <style>
         .container-fluid {
             padding-left: 0 !important;
@@ -30,8 +30,8 @@
 <div class="content">
     <section class="bg-light h-100" layout:fragment="content_body">
         <div class="navbar navbar-expand-md navbar-light navbar-static p-0"
-             style="background-color: #5A72E7; justify-content: center">
-            <span class="pt-2 pb-2 text-white font-weight-bold" style="font-size: 17px">Quản lý Simbox</span>
+             style="justify-content: center">
+            <span class="pt-2 pb-2 font-weight-bold" style="font-size: 17px">Quản lý Simbox</span>
         </div>
         <div class="container-fluid row" style="height: 100vh;">
             <div class="col-sm-12 col-md-2 p-0" style="background-color: #f3f3f3; box-shadow: -5px 0 5px -5px #333;">

@@ -6,9 +6,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class DashboardController {
 
-    @GetMapping("/")
+    @GetMapping({"/","/simbox"})
+    public String goToSimbox() {
+        return "simbox";
+    }
+
+    @GetMapping("/device")
     public String goToDashboard() {
-        return "admin/simbox";
+        return "device";
     }
 
 }
