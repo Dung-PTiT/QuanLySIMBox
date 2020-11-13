@@ -1,6 +1,4 @@
-package com.newlife.quanlysimbox.model.simbox;
-
-import jdk.nashorn.internal.ir.annotations.Ignore;
+package com.newlife.quanlysimbox.model;
 
 import javax.persistence.*;
 import java.io.Serializable;

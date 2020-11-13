@@ -1,4 +1,4 @@
-package com.newlife.quanlysimbox.model.simbox;
+package com.newlife.base;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class ApiResponse<T> {
     private Boolean success;
     private T data;
+    private String error;
 }

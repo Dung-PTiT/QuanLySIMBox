@@ -1,6 +1,6 @@
 package com.newlife.quanlysimbox.repository;
 
-import com.newlife.quanlysimbox.model.simbox.Messages;
+import com.newlife.quanlysimbox.model.Messages;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

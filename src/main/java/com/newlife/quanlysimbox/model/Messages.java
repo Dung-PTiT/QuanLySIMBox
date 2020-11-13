@@ -1,4 +1,4 @@
-package com.newlife.quanlysimbox.model.simbox;
+package com.newlife.quanlysimbox.model;
 
 import lombok.Data;
 
