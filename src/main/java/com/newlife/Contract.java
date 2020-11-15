@@ -24,5 +24,7 @@ public class Contract {
 
 
     // auto tool
-    public static String AUTO_TOOL = "";
+    public static String AUTO_TOOL_FOLDER = "C:\\Users\\tiz\\source\\repos\\ToolTest\\ToolTest\\bin\\x86\\Debug\\netcoreapp3.1";
+    public static String AUTO_TOOL = "ToolTest.exe";
+
 }
