@@ -6,7 +6,10 @@ import com.newlife.quanlymayao_android.communicator.DeviceManager;
 import com.newlife.quanlymayao_android.model.Device;
 import com.newlife.quanlymayao_android.model.DeviceStatistic;
 import com.newlife.quanlymayao_android.model.DeviceStatus;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -26,7 +29,7 @@ public class DeviceApi {
         return deviceManager.turnOffDevice(deviceId);
     }
 
-    @PostMapping("/api/run_script_one_device")
+    @PostMapping(value = "/api/run_script_one_device", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<DeviceStatistic> runScriptOneDevice(@RequestBody RequestScript requestScript) {
         return deviceManager.runScript(requestScript.deviceId, requestScript.scriptId, requestScript.accountId);
     }
@@ -112,18 +115,20 @@ public class DeviceApi {
         return new ApiResponse<>(true, statisticList, "Xoá thành công " + success + ", thất bại " + (total - success));
     }
 
-    static class RequestScript {
-        String deviceId;
-        Integer scriptId;
-        Long accountId;
-    }
 
-    static class RequestScriptList {
-        ArrayList<RequestScript> list = new ArrayList<>();
-    }
 
-    static class DeviceIdList {
-        ArrayList<String> deviceIdList = new ArrayList<>();
-    }
+}
 
+class RequestScript {
+    String deviceId;
+    Integer scriptId;
+    Long accountId;
+}
+
+class RequestScriptList {
+    ArrayList<RequestScript> list = new ArrayList<>();
+}
+
+class DeviceIdList {
+    ArrayList<String> deviceIdList = new ArrayList<>();
 }

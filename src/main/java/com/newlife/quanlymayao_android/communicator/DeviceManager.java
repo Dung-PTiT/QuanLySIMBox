@@ -20,6 +20,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DeviceManager {
@@ -58,6 +59,7 @@ public class DeviceManager {
                     try {
                         deviceStatus.time = System.currentTimeMillis();
                         deviceStatusRepository.save(deviceStatus.clone());
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -116,7 +118,9 @@ public class DeviceManager {
                 return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị bận");
             } else if (!deviceStatus.isActive) {
                 deviceStatus.isStarting = true;
-                CmdUtil.runCmdWithoutOutput(Contract.NOX + " -clone:" + deviceStatus.device.noxId);
+                String cmd = Contract.NOX + " -clone:" + deviceStatus.device.noxId;
+                System.out.println(cmd);
+                CmdUtil.runCmdWithoutOutput(cmd);
                 return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
             } else {
                 return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị đã hoạt động");
@@ -171,7 +175,7 @@ public class DeviceManager {
     public DeviceStatus getDeviceStatus(String deviceId) {
         DeviceStatus deviceStatus = null;
         for (DeviceStatus dv : dvStatusList) {
-            if (dv.device.deviceId.equals(deviceId)) {
+            if (dv.device.deviceId.trim().equals(deviceId)) {
                 deviceStatus = dv;
                 break;
             }
@@ -184,10 +188,12 @@ public class DeviceManager {
         if (deviceStatus == null) {
             return new ApiResponse<>(false, new DeviceStatistic(), "Không tìm thấy thiết bị");
         } else {
-            Script script = scriptReponsitory.getOne(scriptId);
-            Account account = accountRepository.getOne(accountId);
+            Script script = scriptReponsitory.findById(scriptId).orElse(null);
+            Account account = accountRepository.findById(accountId).orElse(null);
 
-            if (!script.name.isEmpty() && !account.username.isEmpty()) {
+            if (script == null || account == null)
+                return new ApiResponse<>(false, deviceStatus.toStatistic(), "Không thể chạy kịch bản");
+            else if (!script.name.isEmpty() && !account.username.isEmpty()) {
                 if (!deviceStatus.isActive) {
                     return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị hiện không hoạt động");
                 } else if (deviceStatus.isStarting || deviceStatus.isBusy) {
@@ -207,9 +213,10 @@ public class DeviceManager {
             try {
                 String cmd = Contract.AUTO_TOOL + " " + script.name + " " + deviceStatus.device.deviceId + " "
                         + account.username + " " + account.password + " " + account.simId;
-                deviceStatus.status = "running";
                 ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", cmd);
+                builder.directory(new File(Contract.AUTO_TOOL_FOLDER));
                 builder.redirectErrorStream(true);
+                deviceStatus.status = "running";
                 Process p = builder.start();
                 BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
                 String line;
@@ -218,12 +225,13 @@ public class DeviceManager {
                     if (line == null) {
                         break;
                     }
+                    System.out.println(line);
                     if (line.startsWith("Action:")) {
                         deviceStatus.action = line.substring(7);
                     }
                     if (line.startsWith("Progress:")) {
                         try {
-                            deviceStatus.progress = Integer.parseInt(line.substring(9));
+                            deviceStatus.progress = Integer.parseInt(line.substring(9).trim());
                             if (deviceStatus.progress == 100) {
                                 deviceStatus.status = "complete";
                             }
