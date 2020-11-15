@@ -35,7 +35,6 @@ public class DeviceApi {
     }
 
     @PostMapping("/api/run_script_multi_device")
-    @JsonInclude(value = JsonInclude.Include.NON_NULL)
     public ArrayList<ApiResponse<DeviceStatistic>> runScriptMultiDevice(@RequestBody RequestScriptList requestList) {
         ArrayList<ApiResponse<DeviceStatistic>> deviceList = new ArrayList<>();
         requestList.list.forEach(request -> {

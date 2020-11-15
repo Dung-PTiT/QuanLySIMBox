@@ -59,7 +59,6 @@ public class DeviceManager {
                     try {
                         deviceStatus.time = System.currentTimeMillis();
                         deviceStatusRepository.save(deviceStatus.clone());
-
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

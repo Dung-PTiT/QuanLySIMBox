@@ -18,7 +18,7 @@ public class Device implements Serializable {
 
     public Device() {
     }
-
+    
     public Device(int id) {
         this.id = id;
         this.noxId = "Nox_"+id;
