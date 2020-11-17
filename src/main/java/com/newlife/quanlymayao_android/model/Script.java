@@ -12,5 +12,5 @@ public class Script {
     @GeneratedValue(strategy = GenerationType.AUTO)
     public int id;
     public String name;
-    public String type;
+    public String app;
 }

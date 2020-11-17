@@ -7,8 +7,8 @@ import java.io.Serializable;
 @Table(name = "device_status")
 public class DeviceStatus implements Serializable, Cloneable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public Long id;
 
     public long time;
     public String status = "";
@@ -23,17 +23,20 @@ public class DeviceStatus implements Serializable, Cloneable {
     @Column(name = "is_busy")
     public boolean isBusy;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "nox_id")
+    @ManyToOne
+    @JoinColumn(name = "device_id")
     public Device device;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "account_id")
     public Account account;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "script_id")
     public Script script;
+
+    @Transient
+    public Process process;
 
     public DeviceStatus() {
     }
@@ -47,9 +50,10 @@ public class DeviceStatus implements Serializable, Cloneable {
                 device.deviceId,
                 status,
                 time,
+                device.noxIndex,
                 isActive,
                 account == null ? "" : account.username,
-                account == null ? "" : account.app,
+                account == null ? "" : script.app,
                 action,
                 progress,
                 info,
