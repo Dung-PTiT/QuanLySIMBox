@@ -23,6 +23,45 @@
             border-radius: 10px;
             background-color: #fff;
         }
+
+        .dropdown-menu {
+            min-width: 10.25rem !important;
+        }
+
+        #overlay_spinner_1 {
+            position: absolute;
+            display: none;
+            background: rgba(219, 232, 232, 0.6);
+        }
+
+        .cv-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 4px #fff solid;
+            border-top: 4px #f93b4a solid;
+            border-radius: 50%;
+            animation: sp-anime 0.8s infinite linear;
+        }
+
+        @keyframes sp-anime {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(359deg);
+            }
+        }
+
+        .divDisabled {
+            pointer-events: none;
+            color: #c7c7c7;
+        }
     </style>
 <body>
 <div class="content">
@@ -34,33 +73,34 @@
                     <div style="justify-content: space-between; display: flex">
                         <span class="card-title" style="display: flex">
                             <ul class="nav nav-tabs nav-tabs-bottom border-bottom-0 mb-0">
-                                <li class="nav-item">
+                                <li class="nav-item" onclick="showTab('all')">
                                     <a href="#" class="nav-link pl-0 active" data-toggle="tab">
                                         <span class="text-dark font-weight-bold">Tất cả</span>
-                                        <span class="badge badge-info badge-pill ml-2">30</span>
+                                        <span class="badge badge-info badge-pill ml-2" id="device_all"></span>
                                     </a>
                                 </li>
-                                <li class="nav-item ml-3">
+                                <li class="nav-item ml-3" onclick="showTab('on')">
                                     <a href="#" class="nav-link pl-0" data-toggle="tab">
                                         <span class="text-dark font-weight-bold">Đang hoạt động</span>
-                                        <span class="badge badge-success badge-pill ml-2">20</span>
+                                        <span class="badge badge-success badge-pill ml-2" id="device_on"></span>
                                     </a>
                                 </li>
-                                <li class="nav-item ml-3">
+                                <li class="nav-item ml-3" onclick="showTab('off')">
                                     <a href="#" class="nav-link pl-0" data-toggle="tab">
                                         <span class="text-dark font-weight-bold">Đang tắt</span>
-                                        <span class="badge badge-dark badge-pill ml-2">10</span>
+                                        <span class="badge badge-dark badge-pill ml-2" id="device_off"></span>
                                     </a>
                                 </li>
+                                <span id="device_status" style="display: none">all</span>
                             </ul>
                         </span>
                         <div>
                             <p>
                                 <span class="text-grey">CPU used: </span>
-                                <span class="font-weight-bold">40%</span></p>
+                                <span class="font-weight-bold" id="cpu">40</span>%</p>
                             <p>
                                 <span class="text-grey">RAM used: </span>
-                                <span class="font-weight-bold">30%</span>
+                                <span class="font-weight-bold" id="ram">30</span>%
                             </p>
                         </div>
                     </div>
@@ -73,42 +113,58 @@
                                         Khay hành động
                                     </a>
                                     <div class="dropdown-menu">
-                                        <div class="dropdown-item">
-                                            <fa class="fa fa-sync mr-3 text-success"></fa>
+                                        <div class="dropdown-item divDisabled" id="restartDevice">
+                                            <fa class="fa fa-sync mr-2"></fa>
                                             <span>Khởi động lại</span>
+                                            <span class="ml-2" style="position: absolute;right: 10px;"
+                                                  id="restartDeviceNumber"></span>
                                         </div>
-                                        <div class="dropdown-item">
-                                            <fa class="fa fa-power-off mr-3 text-danger"></fa>
+                                        <div class="dropdown-item divDisabled" id="turnOffDevice">
+                                            <fa class="fa fa-power-off mr-2"></fa>
                                             <span>Tắt</span>
+                                            <span style="position: absolute;right: 10px;"
+                                                  id="turnOffDeviceNumber"></span>
                                         </div>
-                                        <div class="dropdown-item">
-                                            <fa class="fa fa-power-off mr-3 text-blue"></fa>
+                                        <div class="dropdown-item divDisabled" id="turnOnDevice">
+                                            <fa class="fa fa-power-off mr-2"></fa>
                                             <span>Bật</span>
+                                            <span style="position: absolute;right: 10px;"
+                                                  id="turnOnDeviceNumber"></span>
                                         </div>
-                                        <div class="dropdown-submenu" data-toggle="modal"
-                                             data-target="#modal_chay_kich_ban">
-                                            <div class="dropdown-item">
-                                                <fa class="fa fa-play mr-3 text-success"></fa>
-                                                <span>Chạy kịch bản</span>
-                                            </div>
+                                        <div class="dropdown-item divDisabled" data-toggle="modal"
+                                             data-target="#modal_chay_kich_ban" id="runScriptDevice">
+                                            <fa class="fa fa-play mr-2"></fa>
+                                            <span>Chạy kịch bản</span>
+                                            <span style="position: absolute;right: 10px;"
+                                                  id="runScriptDeviceNumber"></span>
                                         </div>
-                                        <div class="dropdown-item">
-                                            <fa class="fa fa-trash-alt mr-3 text-grey"></fa>
+                                        <div class="dropdown-item divDisabled" id="deleteDevice">
+                                            <fa class="fa fa-trash-alt mr-2"></fa>
                                             <span>Xóa thiết bị</span>
+                                            <span style="position: absolute;right: 10px;"
+                                                  id="deleteDeviceNumber"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ml-3 btn-group align-items-center justify-content-center">
+                                    <div>
+                                        <button id="btnShowAddDeviceModal" class="btn btn-filter legitRipple"
+                                                onclick="showAddDeviceModal()">
+                                            <fa class="fa fa-plus-circle mr-2 text-info"></fa>
+                                            <span>Thêm thiết bị</span>
+                                        </button>
+                                    </div>
+                                    <div id="overlay_spinner_1">
+                                        <div class="cv-spinner">
+                                            <span class="spinner"></span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="ml-3 btn-group justify-content-center">
-                                    <button class="btn btn-filter legitRipple">
-                                        <fa class="fa fa-plus-circle mr-2 text-info"></fa>
-                                        <span>Thêm thiết bị</span>
-                                    </button>
-                                </div>
-                                <div class="ml-3 btn-group justify-content-center">
                                     <div class="form-group-feedback form-group-feedback-right" style="display: flex">
-                                        <input type="text" class="btn-filter"
+                                        <input id="search_input" type="text" class="btn-filter"
                                                placeholder="Tìm kiếm thiết bị" autocomplete="off" style="width: 260px;">
-                                        <button class="btn legitRipple"
+                                        <button onclick="getData()" class="btn legitRipple"
                                                 style="left: -50px; border-radius: 3px; height: 34px">
                                             <i class="icon-search4 pb-1"></i>
                                         </button>
@@ -132,8 +188,7 @@
                             <thead>
                             <tr class="text-center" style="background-color: #f2f2f2">
                                 <th>
-                                    <input type="checkbox" id="select_all"/>
-                                    <span class="ml-2">STT</span>
+                                    <input type="checkbox" id="select_all" onclick="getDeviceIdList()"/>
                                 </th>
                                 <th>Device ID</th>
                                 <th>Status</th>
@@ -145,117 +200,62 @@
                                 <th>Hành động</th>
                             </tr>
                             </thead>
-                            <tbody>
-                            <tr>
-                                <td>
-                                    <input class="checkbox" type="checkbox">
-                                    <span class="ml-2">1</span>
-                                </td>
-                                <td>127.0.0.1:8080</td>
-                                <td><span class="badge bg-blue">Running</span></td>
-                                <td>Account 1</td>
-                                <td>
-                                    <img th:src="@{./images/brands/facebook.png}" class="rounded-circle" width="20"
-                                         height="20">
-                                    <span class="ml-2">Facebook</span>
-                                </td>
-                                <td>
-                                    <div class="progress rounded-round" style=" height:0.8rem">
-                                        <div class="progress-bar bg-success" style="width: 85%;">
-                                            <span>85%</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>fa-01</td>
-                                <td>7478237984</td>
-                                <td>
-                                    <div class="list-icons">
-                                        <div class="dropdown">
-                                            <a href="#" class="list-icons-item dropdown-toggle" data-toggle="dropdown"
-                                               aria-expanded="false">
-                                                <i class="icon-more"></i>
-                                            </a>
-                                            <div class="dropdown-menu" x-placement="bottom-start"
-                                                 style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 19px, 0px);">
-                                                <a href="#" class="dropdown-item">
-                                                    <i class="icon-mobile"></i>
-                                                    Phone
-                                                </a>
-                                                <a href="#" class="dropdown-item">
-                                                    <i class="icon-play4"></i>
-                                                    Play</a>
-                                                <a href="#" class="dropdown-item">
-                                                    <i class="icon-square"></i>
-                                                    Stop</a>
-                                                <a href="#" class="dropdown-item">
-                                                    <i class="icon-close2"></i>
-                                                    Turn off</a>
-                                                <a href="#" class="dropdown-item">
-                                                    <i class="icon-exit"></i>
-                                                    Shut down</a>
-                                                <a href="#" class="dropdown-item">
-                                                    <i class="icon-info3"></i>
-                                                    Log</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <input class="checkbox" type="checkbox">
-                                    <span class="ml-2">1</span>
-                                </td>
-                                <td>127.0.0.1:8080</td>
-                                <td><span class="badge bg-blue">Running</span></td>
-                                <td>Account 1</td>
-                                <td>
-                                    <img th:src="@{./images/brands/facebook.png}" class="rounded-circle" width="20"
-                                         height="20">
-                                    <span class="ml-2">Facebook</span>
-                                </td>
-                                <td>
-                                    <div class="progress rounded-round" style=" height:0.8rem">
-                                        <div class="progress-bar bg-success" style="width: 85%;">
-                                            <span>85%</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>fa-01</td>
-                                <td>7478237984</td>
-                                <td>
-                                    <div class="list-icons">
-                                        <div class="dropdown">
-                                            <a href="#" class="list-icons-item dropdown-toggle" data-toggle="dropdown"
-                                               aria-expanded="false">
-                                                <i class="icon-more"></i>
-                                            </a>
-                                            <div class="dropdown-menu" x-placement="bottom-start"
-                                                 style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 19px, 0px);">
-                                                <a href="#" class="dropdown-item">
-                                                    <i class="icon-mobile"></i>
-                                                    Phone
-                                                </a>
-                                                <a href="#" class="dropdown-item">
-                                                    <i class="icon-play4"></i>
-                                                    Play</a>
-                                                <a href="#" class="dropdown-item">
-                                                    <i class="icon-square"></i>
-                                                    Stop</a>
-                                                <a href="#" class="dropdown-item">
-                                                    <i class="icon-close2"></i>
-                                                    Turn off</a>
-                                                <a href="#" class="dropdown-item">
-                                                    <i class="icon-exit"></i>
-                                                    Shut down</a>
-                                                <a href="#" class="dropdown-item">
-                                                    <i class="icon-info3"></i>
-                                                    Log</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
+                            <tbody id="device_table_body">
+                            <!--                            <tr>-->
+                            <!--                                <td>-->
+                            <!--                                    <input class="checkbox" type="checkbox">-->
+                            <!--                                    <span class="ml-2">1</span>-->
+                            <!--                                </td>-->
+                            <!--                                <td>127.0.0.1:8080</td>-->
+                            <!--                                <td><span class="badge bg-blue">Running</span></td>-->
+                            <!--                                <td>Account 1</td>-->
+                            <!--                                <td>-->
+                            <!--                                    <img th:src="@{./images/brands/facebook.png}" class="rounded-circle" width="20"-->
+                            <!--                                         height="20">-->
+                            <!--                                    <span class="ml-2">Facebook</span>-->
+                            <!--                                </td>-->
+                            <!--                                <td>-->
+                            <!--                                    <div class="progress rounded-round" style=" height:0.8rem">-->
+                            <!--                                        <div class="progress-bar bg-success" style="width: 85%;">-->
+                            <!--                                            <span class="text-center">85%</span>-->
+                            <!--                                        </div>-->
+                            <!--                                    </div>-->
+                            <!--                                </td>-->
+                            <!--                                <td>fa-01</td>-->
+                            <!--                                <td>7478237984</td>-->
+                            <!--                                <td>-->
+                            <!--                                    <div class="list-icons">-->
+                            <!--                                        <div class="dropdown">-->
+                            <!--                                            <a href="#" class="list-icons-item dropdown-toggle" data-toggle="dropdown"-->
+                            <!--                                               aria-expanded="false">-->
+                            <!--                                                <i class="icon-more"></i>-->
+                            <!--                                            </a>-->
+                            <!--                                            <div class="dropdown-menu" x-placement="bottom-start"-->
+                            <!--                                                 style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 19px, 0px);">-->
+                            <!--                                                <a href="#" class="dropdown-item">-->
+                            <!--                                                    <i class="icon-mobile"></i>-->
+                            <!--                                                    Phone-->
+                            <!--                                                </a>-->
+                            <!--                                                <a href="#" class="dropdown-item">-->
+                            <!--                                                    <i class="icon-play4"></i>-->
+                            <!--                                                    Play</a>-->
+                            <!--                                                <a href="#" class="dropdown-item">-->
+                            <!--                                                    <i class="icon-square"></i>-->
+                            <!--                                                    Stop</a>-->
+                            <!--                                                <a href="#" class="dropdown-item">-->
+                            <!--                                                    <i class="icon-close2"></i>-->
+                            <!--                                                    Turn off</a>-->
+                            <!--                                                <a href="#" class="dropdown-item">-->
+                            <!--                                                    <i class="icon-exit"></i>-->
+                            <!--                                                    Shut down</a>-->
+                            <!--                                                <a href="#" class="dropdown-item">-->
+                            <!--                                                    <i class="icon-info3"></i>-->
+                            <!--                                                    Log</a>-->
+                            <!--                                            </div>-->
+                            <!--                                        </div>-->
+                            <!--                                    </div>-->
+                            <!--                                </td>-->
+                            <!--                            </tr>-->
                             </tbody>
                         </table>
                         <div id="demo" class="row mt-2 justify-content-between">
@@ -387,6 +387,34 @@
                         <button type="button" id="form_close" class="btn btn-secondary mr-1 float-right bg-danger"
                                 data-dismiss="modal">Đóng
                         </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="addDevice_popup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true" style="top: 180px!important;">
+            <div class="modal-dialog" role="document" style="width: 300px">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h6 class="modal-title" id="exampleModalLabel">Thêm thiết bị</h6>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group row">
+                                <label for="inputNumberDevice" class="col-4 col-form-label">Số lượng</label>
+                                <div class="col-8s">
+                                    <input type="number" class="form-control" id="inputNumberDevice"
+                                           placeholder="Ví dụ: 1,2,3">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-primary p-1" onclick="addDevice()">Thêm</button>
+                        <button type="button" class="btn btn-danger p-1" data-dismiss="modal">Đóng</button>
                     </div>
                 </div>
             </div>
