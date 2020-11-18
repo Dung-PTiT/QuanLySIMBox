@@ -29,9 +29,9 @@
         }
 
         #overlay_spinner_1 {
-            position: absolute;
-            display: none;
-            background: rgba(219, 232, 232, 0.6);
+            /*position: absolute;*/
+            /*display: none;*/
+            background: #ffffff;
         }
 
         .cv-spinner {
@@ -43,8 +43,8 @@
         .spinner {
             width: 18px;
             height: 18px;
-            border: 4px #fff solid;
-            border-top: 4px #f93b4a solid;
+            border: 4px #c7c7c7 solid;
+            border-top: 4px #0010f9 solid;
             border-radius: 50%;
             animation: sp-anime 0.8s infinite linear;
         }
@@ -61,6 +61,15 @@
         .divDisabled {
             pointer-events: none;
             color: #c7c7c7;
+        }
+
+        .btn-action-device {
+            border: none;
+            border-radius: 5px;
+            background-color: #ffffff;
+            padding: 2px;
+            margin-left: 2px;
+            margin-right: 2px;
         }
     </style>
 <body>
@@ -119,13 +128,15 @@
                                             <span class="ml-2" style="position: absolute;right: 10px;"
                                                   id="restartDeviceNumber"></span>
                                         </div>
-                                        <div class="dropdown-item divDisabled" id="turnOffDevice">
+                                        <div class="dropdown-item divDisabled" id="turnOffDevice"
+                                             onclick="turnoffMultiDevice()">
                                             <fa class="fa fa-power-off mr-2"></fa>
                                             <span>Tắt</span>
                                             <span style="position: absolute;right: 10px;"
                                                   id="turnOffDeviceNumber"></span>
                                         </div>
-                                        <div class="dropdown-item divDisabled" id="turnOnDevice">
+                                        <div class="dropdown-item divDisabled" id="turnOnDevice"
+                                             onclick="turnOnMultiDevice()">
                                             <fa class="fa fa-power-off mr-2"></fa>
                                             <span>Bật</span>
                                             <span style="position: absolute;right: 10px;"
@@ -138,7 +149,8 @@
                                             <span style="position: absolute;right: 10px;"
                                                   id="runScriptDeviceNumber"></span>
                                         </div>
-                                        <div class="dropdown-item divDisabled" id="deleteDevice">
+                                        <div class="dropdown-item divDisabled" id="deleteDevice"
+                                        onclick="deleteDevice()">
                                             <fa class="fa fa-trash-alt mr-2"></fa>
                                             <span>Xóa thiết bị</span>
                                             <span style="position: absolute;right: 10px;"
@@ -154,11 +166,11 @@
                                             <span>Thêm thiết bị</span>
                                         </button>
                                     </div>
-                                    <div id="overlay_spinner_1">
-                                        <div class="cv-spinner">
-                                            <span class="spinner"></span>
-                                        </div>
-                                    </div>
+                                    <!--                                    <div id="overlay_spinner_1">-->
+                                    <!--                                        <div class="cv-spinner">-->
+                                    <!--                                            <span class="spinner"></span>-->
+                                    <!--                                        </div>-->
+                                    <!--                                    </div>-->
                                 </div>
                                 <div class="ml-3 btn-group justify-content-center">
                                     <div class="form-group-feedback form-group-feedback-right" style="display: flex">
@@ -198,6 +210,7 @@
                                 <th>Kịch bản</th>
                                 <th>Sim ID</th>
                                 <th>Hành động</th>
+                                <th style="width: 14%">Tác vụ</th>
                             </tr>
                             </thead>
                             <tbody id="device_table_body">
@@ -225,33 +238,25 @@
                             <!--                                <td>7478237984</td>-->
                             <!--                                <td>-->
                             <!--                                    <div class="list-icons">-->
-                            <!--                                        <div class="dropdown">-->
-                            <!--                                            <a href="#" class="list-icons-item dropdown-toggle" data-toggle="dropdown"-->
-                            <!--                                               aria-expanded="false">-->
-                            <!--                                                <i class="icon-more"></i>-->
-                            <!--                                            </a>-->
-                            <!--                                            <div class="dropdown-menu" x-placement="bottom-start"-->
-                            <!--                                                 style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 19px, 0px);">-->
-                            <!--                                                <a href="#" class="dropdown-item">-->
-                            <!--                                                    <i class="icon-mobile"></i>-->
-                            <!--                                                    Phone-->
-                            <!--                                                </a>-->
-                            <!--                                                <a href="#" class="dropdown-item">-->
-                            <!--                                                    <i class="icon-play4"></i>-->
-                            <!--                                                    Play</a>-->
-                            <!--                                                <a href="#" class="dropdown-item">-->
-                            <!--                                                    <i class="icon-square"></i>-->
-                            <!--                                                    Stop</a>-->
-                            <!--                                                <a href="#" class="dropdown-item">-->
-                            <!--                                                    <i class="icon-close2"></i>-->
-                            <!--                                                    Turn off</a>-->
-                            <!--                                                <a href="#" class="dropdown-item">-->
-                            <!--                                                    <i class="icon-exit"></i>-->
-                            <!--                                                    Shut down</a>-->
-                            <!--                                                <a href="#" class="dropdown-item">-->
-                            <!--                                                    <i class="icon-info3"></i>-->
-                            <!--                                                    Log</a>-->
-                            <!--                                            </div>-->
+                            <!--                                        <div x-placement="bottom-start">-->
+                            <!--                                            <button class="btn btn-action-device" title="Xem màn hình">-->
+                            <!--                                                <i class="icon-mobile text-primary"></i>-->
+                            <!--                                            </button>-->
+                            <!--                                            <button class="btn btn-action-device" title="Chạy">-->
+                            <!--                                                <i class="icon-play4 text-success"></i>-->
+                            <!--                                            </button>-->
+                            <!--                                            <button class="btn btn-action-device" title="Tạm dừng">-->
+                            <!--                                                <i class="icon-square text-danger"></i>-->
+                            <!--                                            </button>-->
+                            <!--                                            <button class="btn btn-action-device" title="Bật">-->
+                            <!--                                                <i class="icon-close2 text-primary"></i>-->
+                            <!--                                            </button>-->
+                            <!--                                            <button class="btn btn-action-device" title="Kịch bản">-->
+                            <!--                                                <i class="icon-cog text-dark"></i>-->
+                            <!--                                            </button>-->
+                            <!--                                            <button class="btn btn-action-device" title="Xem log">-->
+                            <!--                                                <i class="icon-info3 text-info"></i>-->
+                            <!--                                            </button>-->
                             <!--                                        </div>-->
                             <!--                                    </div>-->
                             <!--                                </td>-->
