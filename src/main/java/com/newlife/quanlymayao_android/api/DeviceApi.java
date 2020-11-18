@@ -101,33 +101,21 @@ public class DeviceApi {
             }
         }
         ManageDeviceResponse response = deviceManager.getManageDeviceResponse(deviceId, page, size);
-        response.messageList.add("Thêm thành công " + success + ", thất bại " + (amount - success));
+        response.message = "Thêm thành công " + success + ", thất bại " + (amount - success);
         return response;
     }
 
     @PostMapping("/api/delete_device")
-    public ManageDeviceResponse deleteDevice(@RequestBody DeviceIdList deviceIdList,
-                                             @RequestParam(name = "deviceId", required = false, defaultValue = "") String deviceId,
-                                             @RequestParam("page") int page,
-                                             @RequestParam("size") int size) {
-        int total = deviceIdList.deviceIdList.size();
+    public ManageDeviceResponse deleteDevice(@RequestBody ManageDeviceList manageDeviceList) {
+        int total = manageDeviceList.deviceIdList.size();
         int success = 0;
-        for (String id : deviceIdList.deviceIdList) {
+        for (String id : manageDeviceList.deviceIdList) {
             if (deviceManager.deleteDevice(id)) {
                 success += 1;
-
-                for (DeviceStatus deviceStatus : deviceManager.dvStatusList) {
-                    try {
-                        deviceStatus.time = System.currentTimeMillis();
-                        deviceManager.deviceStatusRepository.save(deviceStatus.clone());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
             }
         }
-        ManageDeviceResponse response = deviceManager.getManageDeviceResponse(deviceId, page, size);
-        response.messageList.add("Xoá thành công " + success + ", thất bại " + (total - success));
+        ManageDeviceResponse response = deviceManager.getManageDeviceResponse(manageDeviceList.filterDeviceId, manageDeviceList.page, manageDeviceList.size);
+        response.message = "Xoá thành công " + success + ", thất bại " + (total - success);
         return response;
     }
 
@@ -137,12 +125,12 @@ public class DeviceApi {
     }
 
     @GetMapping("/api/get_all_script")
-    public List<Script> getAllScrip(){
+    public List<Script> getAllScrip() {
         return deviceManager.scriptReponsitory.findAll();
     }
 
     @PostMapping("/api/find_account")
-    public List<Account> findAccount(@RequestParam(name = "appName") String appName){
+    public List<Account> findAccount(@RequestParam(name = "appName") String appName) {
         return deviceManager.accountRepository.findAccountByType(appName);
     }
 
@@ -164,4 +152,12 @@ class RequestScriptList implements Serializable {
 @Data
 class DeviceIdList implements Serializable {
     ArrayList<String> deviceIdList = new ArrayList<>();
+}
+
+@Data
+class ManageDeviceList{
+    ArrayList<String> deviceIdList = new ArrayList<>();
+    String filterDeviceId;
+    int page;
+    int size;
 }

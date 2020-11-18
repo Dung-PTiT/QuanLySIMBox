@@ -54,16 +54,13 @@ public class DeviceManager {
     }
 
     public void saveDeviceStatusToDb() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for (DeviceStatus deviceStatus : dvStatusList) {
-                    try {
-                        deviceStatus.time = System.currentTimeMillis();
-                        deviceStatusRepository.save(deviceStatus.clone());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+        new Thread(() -> {
+            for (DeviceStatus deviceStatus : dvStatusList) {
+                try {
+                    deviceStatus.time = System.currentTimeMillis();
+                    deviceStatusRepository.save(deviceStatus.clone());
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }).start();
@@ -115,12 +112,13 @@ public class DeviceManager {
     public ApiResponse<DeviceStatistic> turnOnDevice(String deviceId) {
         DeviceStatus deviceStatus = getDeviceStatus(deviceId);
         if (deviceStatus != null) {
-            if (deviceStatus.isBusy || deviceStatus.isStarting) {
+            if (deviceStatus.isStarting) {
                 return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị bận (" + deviceId + ")");
             } else if (!deviceStatus.isActive) {
                 String cmd = Contract.NOX + " -clone:" + deviceStatus.device.noxId + " -resolution:720x1280 -performance:middle -root:false";
                 CmdUtil.runCmdWithoutOutput(cmd);
                 deviceStatus.isStarting = true;
+                saveDeviceStatusToDb();
                 return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
             } else {
                 return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị đang hoạt động (" + deviceId + ")");
@@ -131,38 +129,36 @@ public class DeviceManager {
     public ApiResponse<DeviceStatistic> turnOffDevice(String deviceId) {
         DeviceStatus deviceStatus = getDeviceStatus(deviceId);
         if (deviceStatus != null) {
-            if (deviceStatus.isBusy || deviceStatus.isStarting) {
+            if (deviceStatus.isStarting) {
                 return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị bận (" + deviceId + ")");
             } else if (deviceStatus.isActive) {
                 String cmd = Contract.NOX + " -clone:" + deviceStatus.device.noxId + " -quit";
                 CmdUtil.runCmdWithoutOutput(cmd);
                 deviceStatus.isActive = false;
-                deviceStatus.isStarting = false;
-                deviceStatus.status = "";
-                deviceStatus.account = null;
-                deviceStatus.script = null;
-                deviceStatus.progress = 0;
-                deviceStatus.process = null;
+                deviceStatus.clear();
+                if(deviceStatus.account != null) {
+                    deviceStatus.account.status = "free";
+                    accountRepository.save(deviceStatus.account);
+                }
+                saveDeviceStatusToDb();
                 return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
             } else {
                 return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị hiện không hoạt động (" + deviceId + ")");
             }
-        } else return new ApiResponse<>(false, new DeviceStatistic(), "Không tìm thấy thiết bị (" + deviceId + ")");
+        } else {
+            return new ApiResponse<>(false, new DeviceStatistic(), "Không tìm thấy thiết bị (" + deviceId + ")");
+        }
     }
 
     public ApiResponse<DeviceStatistic> stopScriptDevice(String deviceId) {
         DeviceStatus deviceStatus = getDeviceStatus(deviceId);
         if (deviceStatus != null) {
-            if (deviceStatus.isBusy || deviceStatus.isStarting) {
+            if (deviceStatus.isStarting) {
                 return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị bận (" + deviceId + ")");
             } else if (deviceStatus.isActive) {
-                if (deviceStatus.process != null && deviceStatus.process.isAlive()) {
-                    deviceStatus.process.destroy();
-                }
+                deviceStatus.status = "stopped";
+                saveDeviceStatusToDb();
                 exitApp(deviceStatus);
-                deviceStatus.status = "free";
-                deviceStatus.progress = 0;
-
                 return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
             } else {
                 return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị hiện không hoạt động (" + deviceId + ")");
@@ -173,18 +169,14 @@ public class DeviceManager {
     public ApiResponse<DeviceStatistic> startScriptDevice(String deviceId) {
         DeviceStatus deviceStatus = getDeviceStatus(deviceId);
         if (deviceStatus != null) {
-            if (deviceStatus.isBusy || deviceStatus.isStarting) {
+            if (deviceStatus.isStarting) {
                 return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị bận (" + deviceId + ")");
             } else if (deviceStatus.isActive) {
-                if(deviceStatus.script == null || deviceStatus.account == null){
+                if (deviceStatus.script == null || deviceStatus.account == null) {
                     return new ApiResponse<>(false, deviceStatus.toStatistic(), "Không thể chạy kịch bản (" + deviceId + ")");
-                }else {
-                    if(deviceStatus.process!=null && deviceStatus.process.isAlive()){
-                        return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị đang chạy kịch bản (" + deviceId + ")");
-                    } else {
-                        runScript(deviceStatus, deviceStatus.script, deviceStatus.account);
-                        return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
-                    }
+                } else {
+                    runScript(deviceStatus, deviceStatus.script, deviceStatus.account);
+                    return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
                 }
             } else {
                 return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị hiện không hoạt động (" + deviceId + ")");
@@ -216,7 +208,7 @@ public class DeviceManager {
             else if (!script.name.isEmpty() && !account.username.isEmpty()) {
                 if (!deviceStatus.isActive) {
                     return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị hiện không hoạt động (" + deviceId + ")");
-                } else if (deviceStatus.isStarting || deviceStatus.isBusy) {
+                } else if (deviceStatus.isStarting) {
                     return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị hiện đang bận (" + deviceId + ")");
                 } else {
                     runScript(deviceStatus, script, account);
@@ -238,16 +230,16 @@ public class DeviceManager {
                 builder.redirectErrorStream(true);
                 deviceStatus.status = "running";
                 deviceStatus.isActive = true;
-                deviceStatus.isBusy = false;
                 deviceStatus.isStarting = false;
                 deviceStatus.script = script;
                 deviceStatus.account = account;
                 deviceStatus.progress = 0;
                 account.status = "using";
+                saveDeviceStatusToDb();
                 accountRepository.save(account);
 
-                deviceStatus.process = builder.start();
-                BufferedReader r = new BufferedReader(new InputStreamReader(deviceStatus.process.getInputStream()));
+                Process process = builder.start();
+                BufferedReader r = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 String line;
                 while (true) {
                     line = r.readLine();
@@ -284,12 +276,14 @@ public class DeviceManager {
     public ApiResponse<DeviceStatistic> restartDevice(String deviceId) {
         DeviceStatus deviceStatus = getDeviceStatus(deviceId);
         if (deviceStatus != null) {
-            if (deviceStatus.isBusy || deviceStatus.isStarting) {
+            if (deviceStatus.isStarting) {
                 return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị bận (" + deviceId + ")");
             } else if (deviceStatus.isActive) {
                 CmdUtil.runCmdWithoutOutput(Contract.NOX + " -quit:" + deviceStatus.device.noxId);
                 deviceStatus.isActive = false;
                 deviceStatus.isStarting = true;
+                deviceStatus.clear();
+                saveDeviceStatusToDb();
                 CmdUtil.runCmdWithoutOutput(Contract.NOX + " -clone:" + deviceStatus.device.noxId);
                 return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
             } else {
@@ -359,7 +353,16 @@ public class DeviceManager {
                     e.printStackTrace();
                 }
             }
-            if (deleteSuccess) dvStatusList.remove(deviceStatus);
+            if (deleteSuccess) {
+                try {
+                    deviceStatus.time = System.currentTimeMillis();
+                    deviceStatus.isDeleted = true;
+                    dvStatusList.remove(deviceStatus);
+                    deviceStatusRepository.save(deviceStatus.clone());
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
             return deleteSuccess;
         } else
             return false;
@@ -410,7 +413,7 @@ public class DeviceManager {
             String cmd = Contract.AUTO_TOOL + " Exit " + deviceStatus.device.deviceId;
             ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", cmd);
             builder.directory(new File(Contract.AUTO_TOOL_FOLDER));
-            deviceStatus.process = builder.start();
+            builder.start();
         } catch (Exception e) {
             e.printStackTrace();
         }

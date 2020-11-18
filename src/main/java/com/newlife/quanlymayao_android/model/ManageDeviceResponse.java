@@ -11,5 +11,5 @@ public class ManageDeviceResponse {
     public String cpu = "NaN";
     public String ram = "NaN";
     public ArrayList<DeviceStatistic> deviceStatistics = new ArrayList<>();
-    public ArrayList<String> messageList = new ArrayList<>();
+    public String message = "";
 }

@@ -21,7 +21,7 @@ public interface DeviceStatusRepository extends JpaRepository<DeviceStatus, Long
             "   WHERE :time - s.time <= :limitTime" +
             "   AND d.device.deviceId like %:deviceId%" +
             "   GROUP BY d.device.deviceId" +
-            ")")
+            ") and s.isDeleted = false")
     ArrayList<DeviceStatus> findDeviceStatusLast(@Param("time") long time,
                                                  @Param("limitTime") long limitTime,
                                                  @Param("deviceId") String deviceId, Pageable pageable);

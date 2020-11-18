@@ -20,8 +20,8 @@ public class DeviceStatus implements Serializable, Cloneable {
     public boolean isActive;
     @Column(name = "is_starting")
     public boolean isStarting;
-    @Column(name = "is_busy")
-    public boolean isBusy;
+    @Column(name = "is_deleted")
+    public boolean isDeleted = false;
 
     @ManyToOne
     @JoinColumn(name = "device_id")
@@ -34,9 +34,6 @@ public class DeviceStatus implements Serializable, Cloneable {
     @ManyToOne
     @JoinColumn(name = "script_id")
     public Script script;
-
-    @Transient
-    public Process process;
 
     public DeviceStatus() {
     }
@@ -59,8 +56,19 @@ public class DeviceStatus implements Serializable, Cloneable {
                 info,
                 script == null ? "" : script.name,
                 account == null ? "" : account.simId,
-                isBusy
+                isStarting
         );
+    }
+
+    public void clear(){
+        status = "";
+        info = "";
+        action = "";
+        info = "";
+        isStarting = false;
+        progress = 0;
+        account = null;
+        script = null;
     }
 
     public DeviceStatus clone() throws CloneNotSupportedException {
