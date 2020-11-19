@@ -1,6 +1,10 @@
 package com.newlife;
 
 public class Contract {
+    // time
+    public static long SAVE_DEVICE_STATUS_TIME = 10000;
+    public static long READ_DEVICE_STATUS_TIME = SAVE_DEVICE_STATUS_TIME + 3000;
+
     // at
     public static String SIM_ID = "AT+CIMI";
     public static String NETWORK = "AT+COPS?";
@@ -24,5 +28,12 @@ public class Contract {
 
 
     // auto tool
-    public static String AUTO_TOOL = "";
+    public static String AUTO_TOOL_FOLDER = "C:\\Users\\tiz\\source\\repos\\ToolTest\\ToolTest\\bin\\x86\\Debug\\netcoreapp3.1";
+    public static String AUTO_TOOL = "ToolTest.exe";
+
+    // icon
+    public static String FACEBOOK_ICON = "./images/brands/facebook.png";
+    public static String ZALO_ICON = "./images/brands/zalo.png";
+    public static String YOUTUBE_ICON = "./images/brands/youtube.png";
+
 }

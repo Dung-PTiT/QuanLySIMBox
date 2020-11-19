@@ -1,39 +1,42 @@
 package com.newlife.quanlymayao_android.api;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.newlife.base.ApiResponse;
 import com.newlife.quanlymayao_android.communicator.DeviceManager;
-import com.newlife.quanlymayao_android.model.Device;
-import com.newlife.quanlymayao_android.model.DeviceStatistic;
-import com.newlife.quanlymayao_android.model.DeviceStatus;
+import com.newlife.quanlymayao_android.model.*;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class DeviceApi {
     @Autowired
     DeviceManager deviceManager;
 
-    @PostMapping("/api/turnon_device")
-    public ApiResponse<DeviceStatistic> turnOnDevice(@RequestParam("deviceId") String deviceId) {
-        return deviceManager.turnOnDevice(deviceId);
+    @PostMapping(value = "/api/turnon_device")
+    public ArrayList<ApiResponse<DeviceStatistic>> turnOnDevice(@RequestBody DeviceIdList deviceIdList) {
+        ArrayList<ApiResponse<DeviceStatistic>> list = new ArrayList<>();
+        for (String deviceId : deviceIdList.deviceIdList) {
+            list.add(deviceManager.turnOnDevice(deviceId));
+        }
+        return list;
     }
 
     @PostMapping("/api/turnoff_device")
-    public ApiResponse<DeviceStatistic> turnOffDevice(@RequestParam("deviceId") String deviceId) {
-        return deviceManager.turnOffDevice(deviceId);
+    public ArrayList<ApiResponse<DeviceStatistic>> turnOffDevice(@RequestBody DeviceIdList deviceIdList) {
+        ArrayList<ApiResponse<DeviceStatistic>> list = new ArrayList<>();
+        for (String deviceId : deviceIdList.deviceIdList) {
+            list.add(deviceManager.turnOffDevice(deviceId));
+        }
+        return list;
     }
 
-    @PostMapping("/api/run_script_one_device")
-    public ApiResponse<DeviceStatistic> runScriptOneDevice(@RequestBody RequestScript requestScript) {
-        return deviceManager.runScript(requestScript.deviceId, requestScript.scriptId, requestScript.accountId);
-    }
-
-    @PostMapping("/api/run_script_multi_device")
-    @JsonInclude(value = JsonInclude.Include.NON_NULL)
-    public ArrayList<ApiResponse<DeviceStatistic>> runScriptMultiDevice(@RequestBody RequestScriptList requestList) {
+    @PostMapping("/api/run_script_device")
+    public ArrayList<ApiResponse<DeviceStatistic>> runScriptDevice(@RequestBody RequestScriptList requestList) {
         ArrayList<ApiResponse<DeviceStatistic>> deviceList = new ArrayList<>();
         requestList.list.forEach(request -> {
             deviceList.add(deviceManager.runScript(request.deviceId, request.scriptId, request.accountId));
@@ -42,88 +45,119 @@ public class DeviceApi {
     }
 
     @PostMapping("/api/stop_script")
-    public ApiResponse<DeviceStatistic> stopScript(@RequestParam("deviceId") String deviceId) {
-        return deviceManager.stopScriptDevice(deviceId);
-    }
-
-    @PostMapping("/api/stop_multi_script")
-    public ArrayList<ApiResponse<DeviceStatistic>> stopMultiScript(@RequestBody DeviceIdList deviceIdList) {
-        ArrayList<ApiResponse<DeviceStatistic>> deviceList = new ArrayList<>();
-        deviceIdList.deviceIdList.forEach(deviceId->{
-            deviceList.add(deviceManager.stopScriptDevice(deviceId));
-        });
-        return deviceList;
+    public ArrayList<ApiResponse<DeviceStatistic>> stopScript(@RequestBody DeviceIdList deviceIdList) {
+        ArrayList<ApiResponse<DeviceStatistic>> list = new ArrayList<>();
+        for (String deviceId : deviceIdList.deviceIdList) {
+            list.add(deviceManager.stopScriptDevice(deviceId));
+        }
+        return list;
     }
 
     @PostMapping("/api/start_script")
-    public ApiResponse<DeviceStatistic> startScript(@RequestParam("deviceId") String deviceId) {
-        return deviceManager.startScriptDevice(deviceId);
-    }
-
-    @PostMapping("/api/start_multi_script")
-    public ArrayList<ApiResponse<DeviceStatistic>> startMultiScript(@RequestBody DeviceIdList deviceIdList) {
-        ArrayList<ApiResponse<DeviceStatistic>> deviceList = new ArrayList<>();
-        deviceIdList.deviceIdList.forEach(deviceId->{
-            deviceList.add(deviceManager.startScriptDevice(deviceId));
-        });
-        return deviceList;
+    public ArrayList<ApiResponse<DeviceStatistic>> startScript(@RequestBody DeviceIdList deviceIdList) {
+        ArrayList<ApiResponse<DeviceStatistic>> list = new ArrayList<>();
+        for (String deviceId : deviceIdList.deviceIdList) {
+            list.add(deviceManager.startScriptDevice(deviceId));
+        }
+        return list;
     }
 
     @PostMapping("/api/restart_device")
-    public ApiResponse<DeviceStatistic> restartDevice(@RequestParam("deviceId") String deviceId) {
-        return deviceManager.restartDevice(deviceId);
+    public ArrayList<ApiResponse<DeviceStatistic>> restartDevice(@RequestBody DeviceIdList deviceIdList) {
+        ArrayList<ApiResponse<DeviceStatistic>> list = new ArrayList<>();
+        for (String deviceId : deviceIdList.deviceIdList) {
+            list.add(deviceManager.restartDevice(deviceId));
+        }
+        return list;
     }
 
-    @GetMapping("/api/get_all_status_device_last")
-    public ApiResponse<ArrayList<DeviceStatistic>> getAllStatusDeviceLast(){
-        return new ApiResponse<>(true, deviceManager.getAllDeviceStatusStatistic(), "");
+    @PostMapping("/api/manage_device")
+    public ManageDeviceResponse getManageDeviceResponse(@RequestParam(name = "deviceId", required = false, defaultValue = "") String deviceId,
+                                                        @RequestParam("page") int page,
+                                                        @RequestParam("size") int size) {
+        return deviceManager.getManageDeviceResponse(deviceId, page, size);
     }
 
     @PostMapping("/api/add_device")
-    public ApiResponse<ArrayList<DeviceStatistic>> addDevice(@RequestParam("amount") int amount) {
+    public ManageDeviceResponse addDevice(@RequestParam("amount") int amount,
+                                          @RequestParam(name = "deviceId", required = false, defaultValue = "") String deviceId,
+                                          @RequestParam("page") int page,
+                                          @RequestParam("size") int size) {
         int success = 0;
         for (int i = 0; i < amount; i++) {
             Device device = deviceManager.addNewDevice();
-            if(device!=null) {
+            if (device != null) {
                 success += 1;
                 deviceManager.dvStatusList.add(new DeviceStatus(device));
+
+                for (DeviceStatus deviceStatus : deviceManager.dvStatusList) {
+                    try {
+                        deviceStatus.time = System.currentTimeMillis();
+                        deviceManager.deviceStatusRepository.save(deviceStatus.clone());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
-        ArrayList<DeviceStatistic> statisticList = new ArrayList<>();
-        deviceManager.dvStatusList.forEach(status ->{
-            statisticList.add(status.toStatistic());
-        });
-        return new ApiResponse<>(true, statisticList, "Thêm thành công " + success + ", thất bại " + (amount - success));
+        ManageDeviceResponse response = deviceManager.getManageDeviceResponse(deviceId, page, size);
+        response.message = "Thêm thành công " + success + ", thất bại " + (amount - success);
+        return response;
     }
 
     @PostMapping("/api/delete_device")
-    public ApiResponse<ArrayList<DeviceStatistic>> deleteDevice(@RequestBody DeviceIdList deviceIdList){
-        int total = deviceIdList.deviceIdList.size();
+    public ManageDeviceResponse deleteDevice(@RequestBody ManageDeviceList manageDeviceList) {
+        int total = manageDeviceList.deviceIdList.size();
         int success = 0;
-        for (String deviceId : deviceIdList.deviceIdList){
-            if(deviceManager.deleteDevice(deviceId)){
+        for (String id : manageDeviceList.deviceIdList) {
+            if (deviceManager.deleteDevice(id)) {
                 success += 1;
             }
         }
-        ArrayList<DeviceStatistic> statisticList = new ArrayList<>();
-        deviceManager.dvStatusList.forEach(status ->{
-            statisticList.add(status.toStatistic());
-        });
-        return new ApiResponse<>(true, statisticList, "Xoá thành công " + success + ", thất bại " + (total - success));
+        ManageDeviceResponse response = deviceManager.getManageDeviceResponse(manageDeviceList.filterDeviceId, manageDeviceList.page, manageDeviceList.size);
+        response.message = "Xoá thành công " + success + ", thất bại " + (total - success);
+        return response;
     }
 
-    static class RequestScript {
-        String deviceId;
-        Integer scriptId;
-        Long accountId;
+    @PostMapping("/api/device_log")
+    public ApiResponse<ArrayList<DeviceStatistic>> getDeviceLog(@RequestParam("deviceId") String deviceId) {
+        return new ApiResponse<>(true, deviceManager.getDeviceLog(deviceId), "");
     }
 
-    static class RequestScriptList {
-        ArrayList<RequestScript> list = new ArrayList<>();
+    @GetMapping("/api/get_all_script")
+    public List<Script> getAllScrip() {
+        return deviceManager.scriptReponsitory.findAll();
     }
 
-    static class DeviceIdList {
-        ArrayList<String> deviceIdList = new ArrayList<>();
+    @PostMapping("/api/find_account")
+    public List<Account> findAccount(@RequestParam(name = "appName") String appName) {
+        return deviceManager.accountRepository.findAccountByType(appName);
     }
 
+
+}
+
+@Data
+class RequestScript implements Serializable {
+    String deviceId;
+    Integer scriptId;
+    Long accountId;
+}
+
+@Data
+class RequestScriptList implements Serializable {
+    ArrayList<RequestScript> list = new ArrayList<>();
+}
+
+@Data
+class DeviceIdList implements Serializable {
+    ArrayList<String> deviceIdList = new ArrayList<>();
+}
+
+@Data
+class ManageDeviceList{
+    ArrayList<String> deviceIdList = new ArrayList<>();
+    String filterDeviceId;
+    int page;
+    int size;
 }

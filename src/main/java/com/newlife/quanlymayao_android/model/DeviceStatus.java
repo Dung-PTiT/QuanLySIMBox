@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class DeviceStatus implements Serializable, Cloneable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public long id;
+    public Long id;
 
     public long time;
     public String status = "";
@@ -20,11 +20,11 @@ public class DeviceStatus implements Serializable, Cloneable {
     public boolean isActive;
     @Column(name = "is_starting")
     public boolean isStarting;
-    @Column(name = "is_busy")
-    public boolean isBusy;
+    @Column(name = "is_deleted")
+    public boolean isDeleted = false;
 
     @ManyToOne
-    @JoinColumn(name = "nox_id")
+    @JoinColumn(name = "device_id")
     public Device device;
 
     @ManyToOne
@@ -47,16 +47,28 @@ public class DeviceStatus implements Serializable, Cloneable {
                 device.deviceId,
                 status,
                 time,
+                device.noxIndex,
                 isActive,
                 account == null ? "" : account.username,
-                account == null ? "" : account.app,
+                account == null ? "" : script.app,
                 action,
                 progress,
                 info,
                 script == null ? "" : script.name,
                 account == null ? "" : account.simId,
-                isBusy
+                isStarting
         );
+    }
+
+    public void clear(){
+        status = "";
+        info = "";
+        action = "";
+        info = "";
+        isStarting = false;
+        progress = 0;
+        account = null;
+        script = null;
     }
 
     public DeviceStatus clone() throws CloneNotSupportedException {

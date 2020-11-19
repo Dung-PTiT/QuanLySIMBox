@@ -12,6 +12,6 @@ public class Account {
     public String password;
     @Column(name = "sim_id")
     public String simId;
-    public String app;
+    public String type;
     public String status;
 }
