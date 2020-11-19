@@ -279,16 +279,31 @@ public class DeviceManager {
             if (deviceStatus.isStarting) {
                 return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị bận (" + deviceId + ")");
             } else if (deviceStatus.isActive) {
-                CmdUtil.runCmdWithoutOutput(Contract.NOX + " -quit:" + deviceStatus.device.noxId);
+                String cmd = Contract.NOX + " -clone:" + deviceStatus.device.noxId + " -quit";
+                CmdUtil.runCmdWithoutOutput(cmd);
                 deviceStatus.isActive = false;
                 deviceStatus.isStarting = true;
                 deviceStatus.clear();
+                if(deviceStatus.account != null) {
+                    deviceStatus.account.status = "free";
+                    accountRepository.save(deviceStatus.account);
+                }
                 saveDeviceStatusToDb();
-                CmdUtil.runCmdWithoutOutput(Contract.NOX + " -clone:" + deviceStatus.device.noxId);
+                new Thread(()->{
+                    try{
+                        Thread.sleep(5000);
+                        deviceStatus.isStarting = true;
+                        saveDeviceStatusToDb();
+                        CmdUtil.runCmdWithoutOutput(Contract.NOX + " -clone:" + deviceStatus.device.noxId + " -resolution:720x1280 -performance:middle -root:false");
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }).start();
                 return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
             } else {
                 deviceStatus.isStarting = true;
-                CmdUtil.runCmdWithoutOutput(Contract.NOX + " -clone:" + deviceStatus.device.noxId);
+                saveDeviceStatusToDb();
+                CmdUtil.runCmdWithoutOutput(Contract.NOX + " -clone:" + deviceStatus.device.noxId + " -resolution:720x1280 -performance:middle -root:false");
                 return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
             }
         } else return new ApiResponse<>(false, new DeviceStatistic(), "Không tìm thấy thiết bị (" + deviceId + ")");

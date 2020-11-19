@@ -105,6 +105,7 @@
                         </span>
                         <div>
                             <p>
+
                                 <span class="text-grey">CPU used: </span>
                                 <span class="font-weight-bold" id="cpu">40</span>%</p>
                             <p>
@@ -122,7 +123,8 @@
                                         Khay hành động
                                     </a>
                                     <div class="dropdown-menu">
-                                        <div class="dropdown-item divDisabled" id="restartDevice">
+                                        <div class="dropdown-item divDisabled" id="restartDevice"
+                                            onclick="restartDevice()">
                                             <fa class="fa fa-sync mr-2"></fa>
                                             <span>Khởi động lại</span>
                                             <span class="ml-2" style="position: absolute;right: 10px;"
@@ -203,14 +205,13 @@
                                     <input type="checkbox" id="select_all" onclick="getDeviceIdList()"/>
                                 </th>
                                 <th>Device ID</th>
-                                <th>Status</th>
+                                <th>Trạng thái</th>
+                                <th>Ứng dụng</th>
                                 <th>Tài khoản</th>
-                                <th>App</th>
-                                <th>Tiến trình</th>
                                 <th>Kịch bản</th>
-                                <th>Sim ID</th>
-                                <th>Hành động</th>
-                                <th style="width: 14%">Tác vụ</th>
+                                <th>Tiến trình</th>
+                                <th>Chi tiết</th>
+                                <th style="width: 14%">Hành động</th>
                             </tr>
                             </thead>
                             <tbody id="device_table_body">
@@ -398,10 +399,10 @@
         </div>
         <div class="modal fade" id="addDevice_popup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
              aria-hidden="true" style="top: 180px!important;">
-            <div class="modal-dialog" role="document" style="width: 300px">
+            <div class="modal-dialog" role="document" style="width: 400px">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h6 class="modal-title" id="exampleModalLabel">Thêm thiết bị</h6>
+                        <h5 class="card-title font-weight-bold mb-2" >Thêm thiết bị</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
