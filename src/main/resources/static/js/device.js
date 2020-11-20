@@ -95,7 +95,7 @@ var c = 0;
 function getData() {
     $.ajax({
         type: "POST",
-        url: "http://192.168.1.9:8082/api/manage_device",
+        url: "http://localhost:8082/api/manage_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -192,7 +192,7 @@ function addDevice() {
     if (amount != '') {
         $.ajax({
             type: "POST",
-            url: "http://192.168.1.9:8082/api/add_device",
+            url: "http://localhost:8082/api/add_device",
             cache: false,
             crossDomain: true,
             processData: true,
@@ -362,7 +362,7 @@ function genButtonActionDevice(script, account, status, deviceId, isActived, isS
                 '                                            <button onclick="viewDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Xem màn hình thiết bị" disabled>\n' +
                 '                                                <i class="icon-mobile text-grey"></i>\n' +
                 '                                            </button>\n' +
-                '                                            <button onclick="runDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Chạy kịch bản" disabled>\n' +
+                '                                            <button onclick="startScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Chạy kịch bản" disabled>\n' +
                 '                                                <i class="icon-play4 text-grey" style="font-size: 18px !important;"></i>\n' +
                 '                                            </button>\n' +
                 '                                            <button onclick="stopScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Dừng chạy kịch bản" disabled>\n' +
@@ -391,7 +391,7 @@ function genButtonActionDevice(script, account, status, deviceId, isActived, isS
                 '                                            <button onclick="viewDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Xem màn hình thiết bị">\n' +
                 '                                                <i class="icon-mobile text-indigo"></i>\n' +
                 '                                            </button>\n' +
-                '                                            <button onclick="runDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Chạy kịch bản" disabled>\n' +
+                '                                            <button onclick="startScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Chạy kịch bản" disabled>\n' +
                 '                                                <i class="icon-play4 text-grey" style="font-size: 18px !important;"></i>\n' +
                 '                                            </button>\n' +
                 '                                            <button onclick="stopScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Dừng chạy kịch bản" disabled>\n' +
@@ -420,7 +420,7 @@ function genButtonActionDevice(script, account, status, deviceId, isActived, isS
                     '                                            <button onclick="viewDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Xem màn hình thiết bị">\n' +
                     '                                                <i class="icon-mobile text-indigo"></i>\n' +
                     '                                            </button>\n' +
-                    '                                            <button onclick="runDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Chạy kịch bản" disabled>\n' +
+                    '                                            <button onclick="startScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Chạy kịch bản" disabled>\n' +
                     '                                                <i class="icon-play4 text-grey" style="font-size: 18px !important;"></i>\n' +
                     '                                            </button>\n' +
                     '                                            <button onclick="stopScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Dừng chạy kịch bản" disabled>\n' +
@@ -447,7 +447,7 @@ function genButtonActionDevice(script, account, status, deviceId, isActived, isS
                     '                                            <button onclick="viewDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Xem màn hình thiết bị">\n' +
                     '                                                <i class="icon-mobile text-indigo"></i>\n' +
                     '                                            </button>\n' +
-                    '                                            <button onclick="runDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Chạy kịch bản" disabled>\n' +
+                    '                                            <button onclick="startScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Chạy kịch bản" disabled>\n' +
                     '                                                <i class="icon-play4 text-grey" style="font-size: 18px !important;"></i>\n' +
                     '                                            </button>\n' +
                     '                                            <button onclick="stopScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Dừng chạy kịch bản">\n' +
@@ -474,7 +474,7 @@ function genButtonActionDevice(script, account, status, deviceId, isActived, isS
                     '                                            <button onclick="viewDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Xem màn hình thiết bị">\n' +
                     '                                                <i class="icon-mobile text-indigo"></i>\n' +
                     '                                            </button>\n' +
-                    '                                            <button onclick="runDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Chạy kịch bản">\n' +
+                    '                                            <button onclick="startScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Chạy kịch bản">\n' +
                     '                                                <i class="icon-play4 text-success" style="font-size: 18px !important;"></i>\n' +
                     '                                            </button>\n' +
                     '                                            <button onclick="stopScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Dừng chạy kịch bản" disabled>\n' +
@@ -504,18 +504,92 @@ function viewDevice(deviceID) {
     console.log(deviceID);
 }
 
-function runDevice(deviceID) {
-    console.log(deviceID);
+function startScript(deviceID) {
+    var deviceIdList = [];
+    deviceIdList.push(deviceID);
+    $.ajax({
+        type: "POST",
+        url: "http://localhost:8082/api/start_script",
+        cache: false,
+            crossDomain: true,
+            processData: true,
+            dataType: "json",
+            contentType: "application/json",
+            data: JSON.stringify(
+                {
+                    "deviceIdList": deviceIdList
+               }),
+             success: function (deviceListOnResp) {
+                 if (deviceListOnResp.length != 0) {
+                     for (var i = 0; i < deviceListOnResp.length; i++) {
+                         var newDeviceStatus = deviceListOnResp[i];
+                         if (newDeviceStatus.error == '') {
+                             if (dataOriginal.deviceStatistics.length != 0) {
+                                 for (var j = 0; j < dataOriginal.deviceStatistics.length; j++) {
+                                     if (dataOriginal.deviceStatistics[j].deviceId == newDeviceStatus.data.deviceId) {
+                                         dataOriginal.deviceStatistics[j] = newDeviceStatus;
+                                     }
+                                 }
+                             } else {
+                                 console.log("Data null")
+                             }
+                         } else {
+                             // Todo show error turn on
+                             console.log(newDeviceStatus.error);
+                         }
+                     }
+                 }
+                 showTable(dataOriginal.deviceStatistics);
+             }
+
+    })
 }
 
 function stopScript(deviceID) {
-    console.log(deviceID);
+    var deviceIdList = [];
+    deviceIdList.push(deviceID);
+    $.ajax({
+        type: "POST",
+        url: "http://localhost:8082/api/stop_script",
+        cache: false,
+            crossDomain: true,
+            processData: true,
+            dataType: "json",
+            contentType: "application/json",
+            data: JSON.stringify(
+                {
+                    "deviceIdList": deviceIdList
+               }),
+             success: function (deviceListOnResp) {
+                 if (deviceListOnResp.length != 0) {
+                     for (var i = 0; i < deviceListOnResp.length; i++) {
+                         var newDeviceStatus = deviceListOnResp[i];
+                         if (newDeviceStatus.error == '') {
+                             if (dataOriginal.deviceStatistics.length != 0) {
+                                 for (var j = 0; j < dataOriginal.deviceStatistics.length; j++) {
+                                     if (dataOriginal.deviceStatistics[j].deviceId == newDeviceStatus.data.deviceId) {
+                                         dataOriginal.deviceStatistics[j] = newDeviceStatus;
+                                     }
+                                 }
+                             } else {
+                                 console.log("Data null")
+                             }
+                         } else {
+                             // Todo show error turn on
+                             console.log(newDeviceStatus.error);
+                         }
+                     }
+                 }
+                 showTable(dataOriginal.deviceStatistics);
+             }
+
+    })
 }
 
 function restartDevice() {
     $.ajax({
         type: "POST",
-        url: "http://192.168.1.9:8082/api/restart_device",
+        url: "http://localhost:8082/api/restart_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -553,7 +627,7 @@ function restartDevice() {
 function turnOnMultiDevice() {
     $.ajax({
         type: "POST",
-        url: "http://192.168.1.9:8082/api/turnon_device",
+        url: "http://localhost:8082/api/turnon_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -593,7 +667,7 @@ function turnonDevice(deviceID) {
     deviceIdList.push(deviceID);
     $.ajax({
         type: "POST",
-        url: "http://192.168.1.9:8082/api/turnon_device",
+        url: "http://localhost:8082/api/turnon_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -631,7 +705,7 @@ function turnonDevice(deviceID) {
 function turnoffMultiDevice() {
     $.ajax({
         type: "POST",
-        url: "http://192.168.1.9:8082/api/turnoff_device",
+        url: "http://localhost:8082/api/turnoff_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -671,7 +745,7 @@ function turnoffDevice(deviceID) {
     deviceIdList.push(deviceID);
     $.ajax({
         type: "POST",
-        url: "http://192.168.1.9:8082/api/turnoff_device",
+        url: "http://localhost:8082/api/turnoff_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -809,9 +883,10 @@ function runOneScript() {
 }
 
 function viewLog(deviceID) {
+    $('#log_device_title').html(deviceID);
     $.ajax({
         type: "POST",
-        url: "http://192.168.1.9:8082/api/device_log",
+        url: "http://localhost:8082/api/device_log",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -821,15 +896,79 @@ function viewLog(deviceID) {
         },
         success: function (data) {
             $('#viewLog_popup').modal('show');
+            var content = "";
+            console.log(data);
+            if(data.success == true){
+                if(data.data!=null){
+                    for(var i=0; i<data.data.length; i++){
+                        row = data.data[i];
+                        if(row.isActive == false){
+                            content = content +
+                                    '<tr>' +
+                                        '<td>' + timeConverter(row.time) + '</td>\n' +
+                                        '<td>' + genActive(row.isActive) + '</td>\n' +
+                                        '<td></td>\n' +
+                                        '<td></td>\n' +
+                                        '<td></td>\n' +
+                                        '<td></td>\n' +
+                                        '<td></td>\n' +
+                                        '<td></td>\n' +
+                                        '<td></td>\n' +
+                                    '</tr>';
+                        } else {
+                            if(row.script == "" || row.account == ""){
+                                content = content +
+                                            '<tr>' +
+                                                '<td>' + timeConverter(row.time) + '</td>\n' +
+                                                '<td>' + genActive(row.isActive) + '</td>\n' +
+                                                '<td>' + genStatus(row.status) + '</td>\n' +
+                                                '<td></td>\n' +
+                                                '<td></td>\n' +
+                                                '<td></td>\n' +
+                                                '<td></td>\n' +
+                                                '<td></td>\n' +
+                                                '<td></td>\n' +
+                                            '</tr>';
+                            } else {
+                                content = content +
+                                            '<tr>' +
+                                                '<td>' + timeConverter(row.time) + '</td>\n' +
+                                                '<td>' + genActive(row.isActive) + '</td>\n' +
+                                                '<td>' + genStatus(row.status) + '</td>\n' +
+                                                '<td><img src="' + row.appIcon + '" class="rounded-circle" width="20" height="20">\n' +
+                                                '<span class="ml-2">' + row.app + '</span></td>\n' +
+                                                '<td>' + row.account + '</td>\n' +
+                                                '<td>' + row.script + '</td>\n' +
+                                                '<td>' + row.simId + '</td>\n' +
+                                                '<td>' + genProgress(row.progress) + '</td>\n' +
+                                                '<td>' + row.info + '</td>\n' +
+                                            '</tr>';
+                            }
+                        }
+                    }
+                }
+            } else {
+                // Todo show data.error
+            }
+            $('#log_table_body').html(content);
         }
     });
 }
 
+function genActive(isActive){
+    var content = '';
+    if(isActive){
+        content = '<fa class="fa fa-circle text-success" title="Bật" style="font-size:12px !important"></fa>';
+    } else {
+        content = '<fa class="fa fa-circle text-danger" title="Tắt" style="font-size:12px !important"></fa>';
+    }
+    return content;
+}
 
 function deleteDevice() {
     $.ajax({
         type: "POST",
-        url: "http://192.168.1.9:8082/api/delete_device",
+        url: "http://localhost:8082/api/delete_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -847,4 +986,18 @@ function deleteDevice() {
             filter(dataOriginal);
         }
     });
+}
+
+function timeConverter(UNIX_timestamp){
+  var a = new Date(UNIX_timestamp);
+  var months = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+  var year = a.getFullYear();
+  var month = months[a.getMonth()];
+  var date = a.getDate();
+  var hour = a.getHours();
+  var min = a.getMinutes();
+  var sec = a.getSeconds();
+  var time = hour + ':' + min + ':' + sec + ' ' + date + '/' + month + '/' + year;
+  return time;
+//    return new Date(UNIX_timestamp).toISOString().slice(0, 19).replace('T', ' ');
 }
