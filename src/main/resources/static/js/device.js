@@ -374,7 +374,7 @@ function genButtonActionDevice(script, account, status, deviceId, isActived, isS
                 '                                            <button onclick="turnoffDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Tắt thiết bị" style="display: none" >\n' +
                 '                                                <fa class="fa fa-power-off text-danger"></fa>\n' +
                 '                                            </button>\n' +
-                '                                            <button onclick="runScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Thiết lập kịch bản" >\n' +
+                '                                            <button onclick="showModalRunOneScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Thiết lập kịch bản" disabled>\n' +
                 '                                                <i class="icon-cog text-dark"></i>\n' +
                 '                                            </button>\n' +
                 '                                            <button onclick="viewLog(\'' + deviceId + '\')" class="btn btn-action-device" title="Xem log">\n' +
@@ -403,7 +403,7 @@ function genButtonActionDevice(script, account, status, deviceId, isActived, isS
                 '                                            <button onclick="turnoffDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Tắt thiết bị">\n' +
                 '                                                <fa class="fa fa-power-off text-danger"></fa>\n' +
                 '                                            </button>\n' +
-                '                                            <button onclick="runScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Thiết lập kịch bản" >\n' +
+                '                                            <button onclick="showModalRunOneScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Thiết lập kịch bản" >\n' +
                 '                                                <i class="icon-cog text-dark"></i>\n' +
                 '                                            </button>\n' +
                 '                                            <button onclick="viewLog(\'' + deviceId + '\')" class="btn btn-action-device" title="Xem log">\n' +
@@ -432,7 +432,7 @@ function genButtonActionDevice(script, account, status, deviceId, isActived, isS
                     '                                            <button onclick="turnoffDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Tắt thiết bị">\n' +
                     '                                                <fa class="fa fa-power-off text-danger"></fa>\n' +
                     '                                            </button>\n' +
-                    '                                            <button onclick="runScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Thiết lập kịch bản" >\n' +
+                    '                                            <button onclick="showModalRunOneScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Thiết lập kịch bản" >\n' +
                     '                                                <i class="icon-cog text-dark"></i>\n' +
                     '                                            </button>\n' +
                     '                                            <button onclick="viewLog(\'' + deviceId + '\')" class="btn btn-action-device" title="Xem log">\n' +
@@ -459,7 +459,7 @@ function genButtonActionDevice(script, account, status, deviceId, isActived, isS
                     '                                            <button onclick="turnoffDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Tắt thiết bị">\n' +
                     '                                                <fa class="fa fa-power-off text-danger"></fa>\n' +
                     '                                            </button>\n' +
-                    '                                            <button onclick="runScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Thiết lập kịch bản" >\n' +
+                    '                                            <button onclick="showModalRunOneScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Thiết lập kịch bản" >\n' +
                     '                                                <i class="icon-cog text-dark"></i>\n' +
                     '                                            </button>\n' +
                     '                                            <button onclick="viewLog(\'' + deviceId + '\')" class="btn btn-action-device" title="Xem log">\n' +
@@ -486,7 +486,7 @@ function genButtonActionDevice(script, account, status, deviceId, isActived, isS
                     '                                            <button onclick="turnoffDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Tắt thiết bị">\n' +
                     '                                                <fa class="fa fa-power-off text-danger"></fa>\n' +
                     '                                            </button>\n' +
-                    '                                            <button onclick="runScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Thiết lập kịch bản" >\n' +
+                    '                                            <button onclick="showModalRunOneScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Thiết lập kịch bản" >\n' +
                     '                                                <i class="icon-cog text-dark"></i>\n' +
                     '                                            </button>\n' +
                     '                                            <button onclick="viewLog(\'' + deviceId + '\')" class="btn btn-action-device" title="Xem log">\n' +
@@ -706,8 +706,106 @@ function turnoffDevice(deviceID) {
     });
 }
 
-function runScript(deviceID) {
-    console.log(deviceID);
+// chạy kịch bản 1 thiết bị
+var deviceIDTmp = '';
+var scriptMap = new Map();
+var scriptIDTmp = '';
+
+var scriptInfo = {
+    "accountId": 0,
+    "deviceId": '',
+    "scriptId": 0
+};
+
+function showModalRunOneScript(deviceID) {
+
+    scriptMap = new Map();
+    deviceIDTmp = deviceID;
+    $('#run_script').modal('show');
+    $.ajax({
+        type: "GET",
+        url: "http://192.168.1.9:8082/api/get_all_script",
+        cache: false,
+        crossDomain: true,
+        processData: true,
+        dataType: "json",
+        success: function (data) {
+            if (data.length != 0) {
+                for (var i = 0; i < data.length; i++) {
+                    $('#script_select').append($("<option>").val("" + data[i].app + "").text("" + data[i].name + ""));
+                    scriptMap.set(data[i].id, data[i].app);
+                }
+            }
+        }
+    });
+}
+
+function getAccountByScript() {
+    let scriptSelect = $("#script_select").val();
+    let scriptId =
+        [...scriptMap.entries()]
+            .filter(({1: v}) => v === scriptSelect)
+            .map(([k]) => k)[0];
+
+    scriptIDTmp = scriptId;
+
+    $.ajax({
+        type: "POST",
+        url: "http://192.168.1.9:8082/api/find_account",
+        cache: false,
+        crossDomain: true,
+        processData: true,
+        dataType: "json",
+        data: {
+            "appName": scriptSelect
+        },
+        success: function (data) {
+            if (data != 0) {
+                $("#error_account").hide();
+                $("#account_select").removeAttr("disabled");
+                for (var i = 0; i < data.length; i++) {
+                    $('#account_select').append($("<option>").val("" + data[i].id + "").text("" + data[i].username + ""));
+                }
+            } else {
+                $("#error_account").show();
+                $("#account_select").prop('disabled', 'disabled');
+                $("#account_select").val("");
+                $("#btn_runOneScript").prop("disabled", true);
+            }
+        }
+    });
+
+    if (scriptIDTmp != '' && $("#account_select").val() != '') {
+        $("#btn_runOneScript").prop("disabled", false);
+    }
+}
+
+function runOneScript() {
+
+    var scriptInfoList = [];
+    scriptInfoList.push({
+        "accountId": parseInt($("#account_select").val()),
+        "deviceId": deviceIDTmp,
+        "scriptId": scriptIDTmp
+    });
+
+    // console.log(scriptInfoList)
+
+    $.ajax({
+        type: "POST",
+        url: "http://192.168.1.9:8082/api/run_script_device",
+        cache: false,
+        crossDomain: true,
+        processData: true,
+        dataType: "json",
+        contentType: "application/json",
+        data: JSON.stringify({
+            "list": scriptInfoList
+        }),
+        success: function (data) {
+            console.log(data);
+        }
+    });
 }
 
 function viewLog(deviceID) {
