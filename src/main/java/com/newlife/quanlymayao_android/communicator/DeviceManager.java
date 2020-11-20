@@ -136,7 +136,7 @@ public class DeviceManager {
                 CmdUtil.runCmdWithoutOutput(cmd);
                 deviceStatus.isActive = false;
                 deviceStatus.clear();
-                if(deviceStatus.account != null) {
+                if (deviceStatus.account != null) {
                     deviceStatus.account.status = "free";
                     accountRepository.save(deviceStatus.account);
                 }
@@ -157,7 +157,7 @@ public class DeviceManager {
                 return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị bận (" + deviceId + ")");
             } else if (deviceStatus.isActive) {
                 deviceStatus.status = "stopped";
-                if(deviceStatus.account!=null){
+                if (deviceStatus.account != null) {
                     deviceStatus.account.status = "free";
                     accountRepository.save(deviceStatus.account);
                 }
@@ -225,23 +225,23 @@ public class DeviceManager {
     }
 
     public void runScript(DeviceStatus deviceStatus, Script script, Account account) {
+
+        String cmd = Contract.AUTO_TOOL + " " + script.name + " " + deviceStatus.device.deviceId + " "
+                + account.username + " " + account.password + " " + account.simId;
+        ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", cmd);
+        builder.directory(new File(Contract.AUTO_TOOL_FOLDER));
+        builder.redirectErrorStream(true);
+        deviceStatus.status = "running";
+        deviceStatus.isActive = true;
+        deviceStatus.isStarting = false;
+        deviceStatus.script = script;
+        deviceStatus.account = account;
+        deviceStatus.progress = 0;
+        account.status = "using";
+        saveDeviceStatusToDb();
+        accountRepository.save(account);
         new Thread(() -> {
             try {
-                String cmd = Contract.AUTO_TOOL + " " + script.name + " " + deviceStatus.device.deviceId + " "
-                        + account.username + " " + account.password + " " + account.simId;
-                ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", cmd);
-                builder.directory(new File(Contract.AUTO_TOOL_FOLDER));
-                builder.redirectErrorStream(true);
-                deviceStatus.status = "running";
-                deviceStatus.isActive = true;
-                deviceStatus.isStarting = false;
-                deviceStatus.script = script;
-                deviceStatus.account = account;
-                deviceStatus.progress = 0;
-                account.status = "using";
-                saveDeviceStatusToDb();
-                accountRepository.save(account);
-
                 Process process = builder.start();
                 BufferedReader r = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 String line;
@@ -288,18 +288,18 @@ public class DeviceManager {
                 deviceStatus.isActive = false;
                 deviceStatus.isStarting = true;
                 deviceStatus.clear();
-                if(deviceStatus.account != null) {
+                if (deviceStatus.account != null) {
                     deviceStatus.account.status = "free";
                     accountRepository.save(deviceStatus.account);
                 }
                 saveDeviceStatusToDb();
-                new Thread(()->{
-                    try{
+                new Thread(() -> {
+                    try {
                         Thread.sleep(5000);
                         deviceStatus.isStarting = true;
                         saveDeviceStatusToDb();
                         CmdUtil.runCmdWithoutOutput(Contract.NOX + " -clone:" + deviceStatus.device.noxId + " -resolution:720x1280 -performance:middle -root:false");
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }).start();
@@ -376,9 +376,13 @@ public class DeviceManager {
                 try {
                     deviceStatus.time = System.currentTimeMillis();
                     deviceStatus.isDeleted = true;
+                    if(deviceStatus.account!=null){
+                        deviceStatus.account.status = "free";
+                        accountRepository.save(deviceStatus.account);
+                    }
                     dvStatusList.remove(deviceStatus);
                     deviceStatusRepository.save(deviceStatus.clone());
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

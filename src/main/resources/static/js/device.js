@@ -527,7 +527,7 @@ function startScript(deviceID) {
                              if (dataOriginal.deviceStatistics.length != 0) {
                                  for (var j = 0; j < dataOriginal.deviceStatistics.length; j++) {
                                      if (dataOriginal.deviceStatistics[j].deviceId == newDeviceStatus.data.deviceId) {
-                                         dataOriginal.deviceStatistics[j] = newDeviceStatus;
+                                            dataOriginal.deviceStatistics[j] = newDeviceStatus.data;
                                      }
                                  }
                              } else {
@@ -563,12 +563,12 @@ function stopScript(deviceID) {
              success: function (deviceListOnResp) {
                  if (deviceListOnResp.length != 0) {
                      for (var i = 0; i < deviceListOnResp.length; i++) {
-                         var newDeviceStatus = deviceListOnResp[i];
+                         newDeviceStatus = deviceListOnResp[i];
                          if (newDeviceStatus.error == '') {
                              if (dataOriginal.deviceStatistics.length != 0) {
                                  for (var j = 0; j < dataOriginal.deviceStatistics.length; j++) {
                                      if (dataOriginal.deviceStatistics[j].deviceId == newDeviceStatus.data.deviceId) {
-                                         dataOriginal.deviceStatistics[j] = newDeviceStatus;
+                                        dataOriginal.deviceStatistics[j] = newDeviceStatus.data;
                                      }
                                  }
                              } else {
@@ -792,13 +792,13 @@ var scriptInfo = {
 };
 
 function showModalRunOneScript(deviceID) {
-
+    $('#script_select').append(""));
     scriptMap = new Map();
     deviceIDTmp = deviceID;
     $('#run_script').modal('show');
     $.ajax({
         type: "GET",
-        url: "http://192.168.1.9:8082/api/get_all_script",
+        url: "http://localhost:8082/api/get_all_script",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -815,6 +815,7 @@ function showModalRunOneScript(deviceID) {
 }
 
 function getAccountByScript() {
+    $('#account_select').append("");
     let scriptSelect = $("#script_select").val();
     let scriptId =
         [...scriptMap.entries()]
@@ -825,7 +826,7 @@ function getAccountByScript() {
 
     $.ajax({
         type: "POST",
-        url: "http://192.168.1.9:8082/api/find_account",
+        url: "http://localhost:8082/api/find_account",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -867,7 +868,7 @@ function runOneScript() {
 
     $.ajax({
         type: "POST",
-        url: "http://192.168.1.9:8082/api/run_script_device",
+        url: "http://localhost:8082/api/run_script_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -876,8 +877,28 @@ function runOneScript() {
         data: JSON.stringify({
             "list": scriptInfoList
         }),
-        success: function (data) {
-            console.log(data);
+        success: function (deviceListOffResp) {
+            $('#run_script').modal('hide');
+            if (deviceListOffResp.length != 0) {
+                for (var i = 0; i < deviceListOffResp.length; i++) {
+                    var deviceOff = deviceListOffResp[i];
+                    if (deviceOff.error == '') {
+                        if (dataOriginal.deviceStatistics.length != 0) {
+                            for (var j = 0; j < dataOriginal.deviceStatistics.length; j++) {
+                                if (dataOriginal.deviceStatistics[j].deviceId == deviceOff.data.deviceId) {
+                                    dataOriginal.deviceStatistics[j].isActive = false;
+                                }
+                            }
+                        } else {
+                            console.log("Data null")
+                        }
+                    } else {
+                        // Todo show error turn on
+                        console.log(deviceOff.error);
+                    }
+                }
+            }
+            showTab($("#device_status").text());
         }
     });
 }
