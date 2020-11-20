@@ -157,6 +157,10 @@ public class DeviceManager {
                 return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị bận (" + deviceId + ")");
             } else if (deviceStatus.isActive) {
                 deviceStatus.status = "stopped";
+                if(deviceStatus.account!=null){
+                    deviceStatus.account.status = "free";
+                    accountRepository.save(deviceStatus.account);
+                }
                 saveDeviceStatusToDb();
                 exitApp(deviceStatus);
                 return new ApiResponse<>(true, deviceStatus.toStatistic(), "");

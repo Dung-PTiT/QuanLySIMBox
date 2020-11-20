@@ -26,6 +26,6 @@ public interface DeviceStatusRepository extends JpaRepository<DeviceStatus, Long
                                                  @Param("limitTime") long limitTime,
                                                  @Param("deviceId") String deviceId, Pageable pageable);
 
-    @Query("SELECT s FROM DeviceStatus s where s.device.deviceId = :deviceId ORDER BY s.time ASC")
+    @Query("SELECT s FROM DeviceStatus s where s.device.deviceId = :deviceId ORDER BY s.time DESC")
     ArrayList<DeviceStatus> getLogDivice(Pageable pageable, @Param("deviceId") String deviceId);
 }
