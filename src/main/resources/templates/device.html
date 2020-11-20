@@ -124,7 +124,7 @@
                                     </a>
                                     <div class="dropdown-menu">
                                         <div class="dropdown-item divDisabled" id="restartDevice"
-                                            onclick="restartDevice()">
+                                             onclick="restartDevice()">
                                             <fa class="fa fa-sync mr-2"></fa>
                                             <span>Khởi động lại</span>
                                             <span class="ml-2" style="position: absolute;right: 10px;"
@@ -152,7 +152,7 @@
                                                   id="runScriptDeviceNumber"></span>
                                         </div>
                                         <div class="dropdown-item divDisabled" id="deleteDevice"
-                                        onclick="deleteDevice()">
+                                             onclick="deleteDevice()">
                                             <fa class="fa fa-trash-alt mr-2"></fa>
                                             <span>Xóa thiết bị</span>
                                             <span style="position: absolute;right: 10px;"
@@ -402,7 +402,7 @@
             <div class="modal-dialog" role="document" style="width: 400px">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="card-title font-weight-bold mb-2" >Thêm thiết bị</h5>
+                        <h5 class="card-title font-weight-bold mb-2">Thêm thiết bị</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -421,6 +421,57 @@
                     <div class="modal-footer justify-content-center">
                         <button type="button" class="btn btn-primary p-1" onclick="addDevice()">Thêm</button>
                         <button type="button" class="btn btn-danger p-1" data-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="viewLog_popup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="card-title font-weight-bold mb-2">Log thiết bị</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-bordered text-center">
+                            <thead>
+                            <tr class="text-center" style="background-color: #f2f2f2">
+                                <th>Device ID</th>
+                                <th>Trạng thái</th>
+                                <th>Ứng dụng</th>
+                                <th>Tài khoản</th>
+                                <th>Kịch bản</th>
+                                <th>Tiến trình</th>
+                                <th>Chi tiết</th>
+                                <th style="width: 14%">Hành động</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>Device ID</td>
+                                <td>Trạng thái</td>
+                                <td>Ứng dụng</td>
+                                <td>Tài khoản</td>
+                                <td>Kịch bản</td>
+                                <td>Tiến trình</td>
+                                <td>Chi tiết</td>
+                                <td>Hành động</td>
+                            </tr>
+                            <tr>
+                                <td>Device ID</td>
+                                <td>Trạng thái</td>
+                                <td>Ứng dụng</td>
+                                <td>Tài khoản</td>
+                                <td>Kịch bản</td>
+                                <td>Tiến trình</td>
+                                <td>Chi tiết</td>
+                                <td>Hành động</td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

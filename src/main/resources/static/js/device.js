@@ -1,4 +1,5 @@
 var dataOriginal;
+var deviceNumberChecked = 0;
 var deviceList = [];
 
 $(document).ready(function () {
@@ -94,7 +95,7 @@ var c = 0;
 function getData() {
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/manage_device",
+        url: "http://192.168.1.9:8082/api/manage_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -106,7 +107,7 @@ function getData() {
         },
         success: function (data) {
             dataOriginal = data;
-            console.log(c++);
+            // console.log(c++);
             filter(dataOriginal);
             setTimeout(function () {
                 getData();
@@ -191,7 +192,7 @@ function addDevice() {
     if (amount != '') {
         $.ajax({
             type: "POST",
-            url: "http://localhost:8082/api/add_device",
+            url: "http://192.168.1.9:8082/api/add_device",
             cache: false,
             crossDomain: true,
             processData: true,
@@ -211,6 +212,10 @@ function addDevice() {
 }
 
 function showTable(dataTable) {
+
+    //reset number checked in 'Khay hành động'
+    deviceNumberChecked = 0;
+
     $("#device_table_body").empty();
     if (dataTable.length != 0) {
         var contentString = "";
@@ -219,60 +224,69 @@ function showTable(dataTable) {
             if (row.isActive == false) {
                 contentString = contentString +
                     '<tr>' +
+                    '<td>' + genCheckox(row.index, row.deviceId) + '</td>\n' +
+                    '<td>' + row.deviceId + '</td>\n' +
+                    '<td></td>\n' +
+                    '<td></td>\n' +
+                    '<td></td>\n' +
+                    '<td></td>\n' +
+                    '<td></td>\n' +
+                    '<td></td>\n' +
+                    '<td>' + genButtonActionDevice(row.script, row.account, row.status, row.deviceId, row.isActive, row.isStarting) +
+                    '</tr>';
+            } else if (row.isActive == true) {
+                if (row.script == "" || row.account == "") {
+                    contentString = contentString +
+                        '<tr>' +
                         '<td>' + genCheckox(row.index, row.deviceId) + '</td>\n' +
                         '<td>' + row.deviceId + '</td>\n' +
-                        '<td></td>\n' +
+                        '<td>' + genStatus(row.status) + '</td>\n' +
                         '<td></td>\n' +
                         '<td></td>\n' +
                         '<td></td>\n' +
                         '<td></td>\n' +
                         '<td></td>\n' +
                         '<td>' + genButtonActionDevice(row.script, row.account, row.status, row.deviceId, row.isActive, row.isStarting) +
-                    '</tr>';
-            } else if (row.isActive == true) {
-                if(row.script == "" || row.account == ""){
-                    contentString = contentString +
-                        '<tr>' +
-                            '<td>' + genCheckox(row.index, row.deviceId) + '</td>\n' +
-                            '<td>' + row.deviceId + '</td>\n' +
-                            '<td>' + genStatus(row.status) + '</td>\n' +
-                            '<td></td>\n' +
-                            '<td></td>\n' +
-                            '<td></td>\n' +
-                            '<td></td>\n' +
-                            '<td></td>\n' +
-                            '<td>' + genButtonActionDevice(row.script, row.account, row.status, row.deviceId, row.isActive, row.isStarting) +
                         '</tr>';
-                } else if(row.script != "" && row.account != "") {
+                } else if (row.script != "" && row.account != "") {
                     contentString = contentString +
                         '<tr>' +
-                            '<td>' + genCheckox(row.index, row.deviceId) + '</td>\n' +
-                            '<td>' + row.deviceId + '</td>\n' +
-                            '<td>' + genStatus(row.status) + '</td>\n' +
-                            '<td><img src="' + row.appIcon + '" class="rounded-circle" width="20" height="20">\n' +
-                                '<span class="ml-2">' + row.app + '</span></td>\n' +
-                            '<td>' + row.account + '</td>\n' +
-                            '<td>' + row.script + '</td>\n' +
-                            '<td>' + genProgress(row.progress) + '</td>\n' +
-                            '<td>' + row.action + '</td>\n' +
-                            '<td>' + genButtonActionDevice(row.script, row.account, row.status, row.deviceId, row.isActive, row.isStarting) +
+                        '<td>' + genCheckox(row.index, row.deviceId) + '</td>\n' +
+                        '<td>' + row.deviceId + '</td>\n' +
+                        '<td>' + genStatus(row.status) + '</td>\n' +
+                        '<td><img src="' + row.appIcon + '" class="rounded-circle" width="20" height="20">\n' +
+                        '<span class="ml-2">' + row.app + '</span></td>\n' +
+                        '<td>' + row.account + '</td>\n' +
+                        '<td>' + row.script + '</td>\n' +
+                        '<td>' + genProgress(row.progress) + '</td>\n' +
+                        '<td>' + row.action + '</td>\n' +
+                        '<td>' + genButtonActionDevice(row.script, row.account, row.status, row.deviceId, row.isActive, row.isStarting) +
                         '</tr>';
                 }
             }
         }
         $("#device_table_body").html(contentString);
     }
+
+    if (deviceNumberChecked == 0) {
+        disableAction(deviceNumberChecked);
+    } else {
+        enableAction(deviceNumberChecked);
+    }
+
 }
 
 function genCheckox(index, deviceId) {
 
     var checkbox = '';
-
     if (deviceList.length != 0) {
         if (deviceList.includes(deviceId)) {
             checkbox =
                 '<input checked class="checkbox" type="checkbox" onclick="getDeviceIdInRow(\'' + deviceId + '\')">\n' +
                 '<span class="ml-2">' + index + '</span>';
+
+            //thay đổi số lượng trong khay hành động
+            deviceNumberChecked++;
         } else {
             checkbox =
                 '<input class="checkbox" type="checkbox" onclick="getDeviceIdInRow(\'' + deviceId + '\')">\n' +
@@ -501,7 +515,7 @@ function stopScript(deviceID) {
 function restartDevice() {
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/restart_device",
+        url: "http://192.168.1.9:8082/api/restart_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -539,7 +553,7 @@ function restartDevice() {
 function turnOnMultiDevice() {
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/turnon_device",
+        url: "http://192.168.1.9:8082/api/turnon_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -569,7 +583,7 @@ function turnOnMultiDevice() {
                     }
                 }
             }
-            showTable(dataOriginal.deviceStatistics);
+            showTab($("#device_status").text());
         }
     });
 }
@@ -579,7 +593,7 @@ function turnonDevice(deviceID) {
     deviceIdList.push(deviceID);
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/turnon_device",
+        url: "http://192.168.1.9:8082/api/turnon_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -609,7 +623,7 @@ function turnonDevice(deviceID) {
                     }
                 }
             }
-            showTable(dataOriginal.deviceStatistics);
+            showTab($("#device_status").text());
         }
     });
 }
@@ -617,7 +631,7 @@ function turnonDevice(deviceID) {
 function turnoffMultiDevice() {
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/turnoff_device",
+        url: "http://192.168.1.9:8082/api/turnoff_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -647,7 +661,7 @@ function turnoffMultiDevice() {
                     }
                 }
             }
-            showTable(dataOriginal.deviceStatistics);
+            showTab($("#device_status").text());
         }
     });
 }
@@ -657,7 +671,7 @@ function turnoffDevice(deviceID) {
     deviceIdList.push(deviceID);
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/turnoff_device",
+        url: "http://192.168.1.9:8082/api/turnoff_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -687,7 +701,7 @@ function turnoffDevice(deviceID) {
                     }
                 }
             }
-            showTable(dataOriginal.deviceStatistics);
+            showTab($("#device_status").text());
         }
     });
 }
@@ -699,7 +713,7 @@ function runScript(deviceID) {
 function viewLog(deviceID) {
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/device_log",
+        url: "http://192.168.1.9:8082/api/device_log",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -708,7 +722,7 @@ function viewLog(deviceID) {
             "deviceId": deviceID
         },
         success: function (data) {
-            console.log(data);
+            $('#viewLog_popup').modal('show');
         }
     });
 }
@@ -717,7 +731,7 @@ function viewLog(deviceID) {
 function deleteDevice() {
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/delete_device",
+        url: "http://192.168.1.9:8082/api/delete_device",
         cache: false,
         crossDomain: true,
         processData: true,
