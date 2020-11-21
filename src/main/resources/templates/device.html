@@ -186,13 +186,15 @@
                                     </div>
                                 </div>
                             </div>
-                            <div>
-                                <span>Số dòng:</span>
-                                <select id="selectNumberRecord">
-                                    <option value="10" selected>10</option>
-                                    <option value="25">25</option>
-                                    <option value="50">50</option>
-                                </select>
+                            <div class="d-flex">
+                                <div>
+                                    <span>Trang:</span>
+                                    <select id="selectNumberPage"></select>
+                                </div>
+                                <div class="ml-2">
+                                    <span>Số dòng:</span>
+                                    <select id="selectNumberRecord"></select>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -216,66 +218,18 @@
                             </tr>
                             </thead>
                             <tbody id="device_table_body">
-                            <!--                            <tr>-->
-                            <!--                                <td>-->
-                            <!--                                    <input class="checkbox" type="checkbox">-->
-                            <!--                                    <span class="ml-2">1</span>-->
-                            <!--                                </td>-->
-                            <!--                                <td>127.0.0.1:8080</td>-->
-                            <!--                                <td><span class="badge bg-blue">Running</span></td>-->
-                            <!--                                <td>Account 1</td>-->
-                            <!--                                <td>-->
-                            <!--                                    <img th:src="@{./images/brands/facebook.png}" class="rounded-circle" width="20"-->
-                            <!--                                         height="20">-->
-                            <!--                                    <span class="ml-2">Facebook</span>-->
-                            <!--                                </td>-->
-                            <!--                                <td>-->
-                            <!--                                    <div class="progress rounded-round" style=" height:0.8rem">-->
-                            <!--                                        <div class="progress-bar bg-success" style="width: 85%;">-->
-                            <!--                                            <span class="text-center">85%</span>-->
-                            <!--                                        </div>-->
-                            <!--                                    </div>-->
-                            <!--                                </td>-->
-                            <!--                                <td>fa-01</td>-->
-                            <!--                                <td>7478237984</td>-->
-                            <!--                                <td>-->
-                            <!--                                    <div class="list-icons">-->
-                            <!--                                        <div x-placement="bottom-start">-->
-                            <!--                                            <button class="btn btn-action-device" title="Xem màn hình">-->
-                            <!--                                                <i class="icon-mobile text-primary"></i>-->
-                            <!--                                            </button>-->
-                            <!--                                            <button class="btn btn-action-device" title="Chạy">-->
-                            <!--                                                <i class="icon-play4 text-success"></i>-->
-                            <!--                                            </button>-->
-                            <!--                                            <button class="btn btn-action-device" title="Tạm dừng">-->
-                            <!--                                                <i class="icon-square text-danger"></i>-->
-                            <!--                                            </button>-->
-                            <!--                                            <button class="btn btn-action-device" title="Bật">-->
-                            <!--                                                <i class="icon-close2 text-primary"></i>-->
-                            <!--                                            </button>-->
-                            <!--                                            <button class="btn btn-action-device" title="Kịch bản">-->
-                            <!--                                                <i class="icon-cog text-dark"></i>-->
-                            <!--                                            </button>-->
-                            <!--                                            <button class="btn btn-action-device" title="Xem log">-->
-                            <!--                                                <i class="icon-info3 text-info"></i>-->
-                            <!--                                            </button>-->
-                            <!--                                        </div>-->
-                            <!--                                    </div>-->
-                            <!--                                </td>-->
-                            <!--                            </tr>-->
                             </tbody>
                         </table>
                         <div id="demo" class="row mt-2 justify-content-between">
                             <div>
-                                <span>Hiển thị 1 đến 10 trong 100 bản ghi</span>
-                            </div>
-                            <div>
-                                <div class="pagination">
-                                    <a href="#" class="active">1</a>
-                                    <a href="#">2</a>
-                                    <a href="#">3</a>
-                                    <a href="#">&raquo;</a>
-                                </div>
+                                <span>Hiển thị
+                                    <span>1</span>
+                                    đến
+                                    <span>10</span>
+                                    trong
+                                    <span id="deviceTotal"></span>
+                                    bản ghi
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -513,8 +467,7 @@
                 </div>
             </div>
         </div>
-</div>
-</section>
+    </section>
 </div>
 </body>
 </html>

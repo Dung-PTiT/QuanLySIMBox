@@ -19,6 +19,13 @@ function getCheckbox() {
             });
         }
     });
+
+    for (var i = 0; i < 30; i++) {
+        var j = i + 1;
+        $('#selectNumberPage').append($("<option>").val("" + j + "").text("" + j + ""));
+        $('#selectNumberRecord').append($("<option>").val("" + j + "").text("" + j + ""));
+    }
+
 }
 
 function getDeviceIdList() {
@@ -90,8 +97,6 @@ Array.prototype.remove = function () {
     return this;
 };
 
-var c = 0;
-
 function getData() {
     $.ajax({
         type: "POST",
@@ -107,7 +112,7 @@ function getData() {
         },
         success: function (data) {
             dataOriginal = data;
-            // console.log(c++);
+            $("#deviceTotal").text(dataOriginal.deviceTotal);
             filter(dataOriginal);
             setTimeout(function () {
                 getData();
@@ -204,6 +209,7 @@ function addDevice() {
                 "size": 100
             },
             success: function (data) {
+                genToastSuccess(data.message);
                 dataOriginal = data;
                 filter(dataOriginal);
             }
@@ -531,11 +537,10 @@ function startScript(deviceID) {
                                 }
                             }
                         } else {
-                            console.log("Data null")
+                            genToastError("Data null");
                         }
                     } else {
-                        // Todo show error turn on
-                        console.log(newDeviceStatus.error);
+                        genToastError(newDeviceStatus.error);
                     }
                 }
             }
@@ -563,7 +568,7 @@ function stopScript(deviceID) {
         success: function (deviceListOnResp) {
             if (deviceListOnResp.length != 0) {
                 for (var i = 0; i < deviceListOnResp.length; i++) {
-                    newDeviceStatus = deviceListOnResp[i];
+                    var newDeviceStatus = deviceListOnResp[i];
                     if (newDeviceStatus.error == '') {
                         if (dataOriginal.deviceStatistics.length != 0) {
                             for (var j = 0; j < dataOriginal.deviceStatistics.length; j++) {
@@ -572,11 +577,10 @@ function stopScript(deviceID) {
                                 }
                             }
                         } else {
-                            console.log("Data null")
+                            genToastError("Data null");
                         }
                     } else {
-                        // Todo show error turn on
-                        console.log(newDeviceStatus.error);
+                        genToastError(newDeviceStatus.error);
                     }
                 }
             }
@@ -611,11 +615,10 @@ function restartDevice() {
                                 }
                             }
                         } else {
-                            console.log("Data null")
+                            genToastError("Data null");
                         }
                     } else {
-                        // Todo show error turn on
-                        console.log(deviceOn.error);
+                        genToastError(deviceOff.error);
                     }
                 }
             }
@@ -649,11 +652,10 @@ function turnOnMultiDevice() {
                                 }
                             }
                         } else {
-                            console.log("Data null")
+                            genToastError("Data null");
                         }
                     } else {
-                        // Todo show error turn on
-                        console.log(deviceOn.error);
+                        genToastError(deviceOn.error);
                     }
                 }
             }
@@ -689,11 +691,10 @@ function turnonDevice(deviceID) {
                                 }
                             }
                         } else {
-                            console.log("Data null")
+                            genToastError("Data null");
                         }
                     } else {
-                        // Todo show error turn on
-                        console.log(deviceOn.error);
+                        genToastError(deviceOn.error);
                     }
                 }
             }
@@ -727,11 +728,10 @@ function turnoffMultiDevice() {
                                 }
                             }
                         } else {
-                            console.log("Data null")
+                            genToastError("Data null");
                         }
                     } else {
-                        // Todo show error turn on
-                        console.log(deviceOff.error);
+                        genToastError(deviceOff.error);
                     }
                 }
             }
@@ -767,11 +767,10 @@ function turnoffDevice(deviceID) {
                                 }
                             }
                         } else {
-                            console.log("Data null")
+                            genToastError("Data null");
                         }
                     } else {
-                        // Todo show error turn on
-                        console.log(deviceOff.error);
+                        genToastError(deviceOff.error);
                     }
                 }
             }
@@ -899,11 +898,10 @@ function runOneScript() {
                                 }
                             }
                         } else {
-                            console.log("Data null")
+                            genToastError("Data null");
                         }
                     } else {
-                        // Todo show error turn on
-                        console.log(deviceOff.error);
+                        genToastError(deviceOff.error);
                     }
                 }
             }
@@ -947,11 +945,10 @@ function viewLog(deviceID) {
         success: function (data) {
             $('#viewLog_popup').modal('show');
             var content = "";
-            console.log(data);
             if (data.success == true) {
                 if (data.data != null) {
                     for (var i = 0; i < data.data.length; i++) {
-                        row = data.data[i];
+                        var row = data.data[i];
                         if (row.isActive == false) {
                             content = content +
                                 '<tr>' +
@@ -1000,8 +997,6 @@ function viewLog(deviceID) {
                         }
                     }
                 }
-            } else {
-                // Todo show data.error
             }
             $('#log_table_body').html(content);
         }
@@ -1035,6 +1030,7 @@ function deleteDevice() {
         }),
         success: function (data) {
             disableAction();
+            genToastSuccess(data.message);
             dataOriginal = data;
             filter(dataOriginal);
         }
@@ -1053,4 +1049,35 @@ function timeConverter(UNIX_timestamp) {
     var time = hour + ':' + min + ':' + sec + ' ' + date + '/' + month + '/' + year;
     return time;
 //    return new Date(UNIX_timestamp).toISOString().slice(0, 19).replace('T', ' ');
+}
+
+function genToastSuccess(message) {
+    $.toast({
+        text: message,
+        icon: 'success',
+        showHideTransition: 'plain',
+        allowToastClose: true,
+        hideAfter: 3000,
+        stack: 5,
+        position: 'bottom-left',
+        textAlign: 'left',
+        loader: true,
+        loaderBg: '#00f920',
+    });
+}
+
+function genToastError(message) {
+    $.toast({
+        text: message,
+        heading: 'Note', // Optional heading to be shown on the toast
+        icon: 'error', // Type of toast icon
+        showHideTransition: 'plain', // fade, slide or plain
+        allowToastClose: true, // Boolean value true or false
+        hideAfter: 3000, // false to make it sticky or number representing the miliseconds as time after which toast needs to be hidden
+        stack: 5, // false if there should be only one toast at a time or a number representing the maximum number of toasts to be shown at a time
+        position: 'bottom-left', // bottom-left or bottom-right or bottom-center or top-left or top-right or top-center or mid-center or an object representing the left, right, top, bottom values
+        textAlign: 'left',  // Text alignment i.e. left, right or center
+        loader: true,  // Whether to show loader or not. True by default
+        loaderBg: '#9EC600',  // Background color of the toast loader
+    });
 }
