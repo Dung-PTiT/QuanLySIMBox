@@ -3,7 +3,7 @@ package com.newlife;
 public class Contract {
     // time
     public static long SAVE_DEVICE_STATUS_TIME = 10000;
-    public static long READ_DEVICE_STATUS_TIME = SAVE_DEVICE_STATUS_TIME + 3000;
+    public static long READ_DEVICE_STATUS_TIME = SAVE_DEVICE_STATUS_TIME + 5000;
 
     // at
     public static String SIM_ID = "AT+CIMI";

@@ -539,7 +539,7 @@ function startScript(deviceID) {
                          }
                      }
                  }
-                 showTable(dataOriginal.deviceStatistics);
+                 showTab($("#device_status").text());
              }
 
     })
@@ -580,7 +580,7 @@ function stopScript(deviceID) {
                          }
                      }
                  }
-                 showTable(dataOriginal.deviceStatistics);
+                 showTab($("#device_status").text());
              }
 
     })
@@ -619,7 +619,7 @@ function restartDevice() {
                     }
                 }
             }
-            showTable(dataOriginal.deviceStatistics);
+            showTab($("#device_status").text());
         }
     });
 }
@@ -792,7 +792,15 @@ var scriptInfo = {
 };
 
 function showModalRunOneScript(deviceID) {
-    $('#script_select').append(""));
+    $('#run_script_one_device_title').html(deviceID);
+    $('#script_select').find('option')
+                           .remove()
+                           .end()
+                           .append('<option disabled selected>Chọn kịch bản</option>');
+   $('#account_select').find('option')
+                               .remove()
+                               .end();
+   $("#error_account").hide();
     scriptMap = new Map();
     deviceIDTmp = deviceID;
     $('#run_script').modal('show');
@@ -815,7 +823,9 @@ function showModalRunOneScript(deviceID) {
 }
 
 function getAccountByScript() {
-    $('#account_select').append("");
+    $('#account_select').find('option')
+                            .remove()
+                            .end();
     let scriptSelect = $("#script_select").val();
     let scriptId =
         [...scriptMap.entries()]
@@ -864,7 +874,7 @@ function runOneScript() {
         "scriptId": scriptIDTmp
     });
 
-    // console.log(scriptInfoList)
+    $('#run_script').modal('hide');
 
     $.ajax({
         type: "POST",
@@ -878,15 +888,14 @@ function runOneScript() {
             "list": scriptInfoList
         }),
         success: function (deviceListOffResp) {
-            $('#run_script').modal('hide');
             if (deviceListOffResp.length != 0) {
                 for (var i = 0; i < deviceListOffResp.length; i++) {
-                    var deviceOff = deviceListOffResp[i];
-                    if (deviceOff.error == '') {
+                    var newDeviceStatus = deviceListOffResp[i];
+                    if (newDeviceStatus.error == '') {
                         if (dataOriginal.deviceStatistics.length != 0) {
                             for (var j = 0; j < dataOriginal.deviceStatistics.length; j++) {
-                                if (dataOriginal.deviceStatistics[j].deviceId == deviceOff.data.deviceId) {
-                                    dataOriginal.deviceStatistics[j].isActive = false;
+                                if (dataOriginal.deviceStatistics[j].deviceId == newDeviceStatus.data.deviceId) {
+                                    dataOriginal.deviceStatistics[j] = newDeviceStatus.data;
                                 }
                             }
                         } else {

@@ -225,56 +225,63 @@ public class DeviceManager {
     }
 
     public void runScript(DeviceStatus deviceStatus, Script script, Account account) {
-
-        String cmd = Contract.AUTO_TOOL + " " + script.name + " " + deviceStatus.device.deviceId + " "
-                + account.username + " " + account.password + " " + account.simId;
-        ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", cmd);
-        builder.directory(new File(Contract.AUTO_TOOL_FOLDER));
-        builder.redirectErrorStream(true);
-        deviceStatus.status = "running";
-        deviceStatus.isActive = true;
-        deviceStatus.isStarting = false;
-        deviceStatus.script = script;
-        deviceStatus.account = account;
-        deviceStatus.progress = 0;
-        account.status = "using";
-        saveDeviceStatusToDb();
-        accountRepository.save(account);
-        new Thread(() -> {
-            try {
-                Process process = builder.start();
-                BufferedReader r = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                String line;
-                while (true) {
-                    line = r.readLine();
-                    if (line == null) {
-                        break;
-                    }
-                    System.out.println(line);
-                    if (line.startsWith("Action:")) {
-                        deviceStatus.action = line.substring(7);
-                    }
-                    if (line.startsWith("Progress:")) {
-                        try {
-                            deviceStatus.progress = Integer.parseInt(line.substring(9).trim());
-                            if (deviceStatus.progress == 100) {
-                                deviceStatus.status = "complete";
-                                deviceStatus.account.status = "free";
-                                accountRepository.save(account);
+        try {
+            String cmd = Contract.AUTO_TOOL + " " + script.name + " " + deviceStatus.device.deviceId + " "
+                    + account.username + " " + account.password + " " + account.simId + " " + deviceStatus.device.noxId;
+            ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", cmd);
+            builder.directory(new File(Contract.AUTO_TOOL_FOLDER));
+            builder.redirectErrorStream(true);
+            deviceStatus.status = "running";
+            deviceStatus.isActive = true;
+            deviceStatus.isStarting = false;
+            deviceStatus.script = script;
+            deviceStatus.account = account;
+            deviceStatus.progress = 0;
+            deviceStatus.info = "";
+            account.status = "using";
+            saveDeviceStatusToDb();
+            accountRepository.save(account);
+            new Thread(() -> {
+                try {
+                    Process process = builder.start();
+                    BufferedReader r = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    String line;
+                    while (true) {
+                        line = r.readLine();
+                        if (line == null) {
+                            break;
+                        }
+                        System.out.println(line);
+                        if (line.startsWith("Action:")) {
+                            deviceStatus.action = line.substring(7);
+                        }
+                        if (line.startsWith("Progress:")) {
+                            try {
+                                deviceStatus.progress = Integer.parseInt(line.substring(9).trim());
+                                if (deviceStatus.progress == 100) {
+                                    deviceStatus.status = "complete";
+                                    deviceStatus.account.status = "free";
+                                    accountRepository.save(account);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        }
+                        if (line.startsWith("Error:")) {
+                            deviceStatus.status = "fail";
+                            deviceStatus.info = line.substring(6);
                         }
                     }
-                    if (line.startsWith("Error:")) {
-                        deviceStatus.status = "fail";
-                        deviceStatus.info = line.substring(6);
-                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
+            }).start();
+        } catch (Exception e) {
+            e.printStackTrace();
+            deviceStatus.status = "fail";
+            deviceStatus.info = e.getMessage();
+            saveDeviceStatusToDb();
+        }
     }
 
     public ApiResponse<DeviceStatistic> restartDevice(String deviceId) {
@@ -376,7 +383,7 @@ public class DeviceManager {
                 try {
                     deviceStatus.time = System.currentTimeMillis();
                     deviceStatus.isDeleted = true;
-                    if(deviceStatus.account!=null){
+                    if (deviceStatus.account != null) {
                         deviceStatus.account.status = "free";
                         accountRepository.save(deviceStatus.account);
                     }

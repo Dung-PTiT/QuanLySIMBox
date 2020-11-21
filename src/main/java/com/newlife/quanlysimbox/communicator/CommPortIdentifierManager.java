@@ -159,8 +159,11 @@ public class CommPortIdentifierManager {
         }).start();
     }
 
-    public void saveMessages(ArrayList<Messages> messagesList){
-        new Thread(() -> messagesRepository.saveAll(messagesList)).start();
+    public void saveMessages(String simId, ArrayList<Messages> messagesList){
+        new Thread(() -> {
+            messagesRepository.deleteAllMessageOfSim(simId);
+            messagesRepository.saveAll(messagesList);
+        }).start();
     }
 
 }

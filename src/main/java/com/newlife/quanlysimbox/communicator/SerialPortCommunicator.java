@@ -182,7 +182,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                     simInfo.tinHieu = Float.valueOf(splits[1].trim().replaceAll(",", "."));
                     simInfo.time = TimeUtil.getTime();
                     System.out.println(simInfo.commName + " tinhieu: " + simInfo.tinHieu);
-                    manager.saveSimInfo(simInfo);
+//                    manager.saveSimInfo(simInfo);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -232,30 +232,31 @@ public class SerialPortCommunicator implements SerialPortEventListener {
     }
 
     public void repeatReadingSimInfo() {
-        status = SerialPortStatus.SLEEPING;
         lastCmd = "";
         if (!isStop) {
             new Thread(() -> {
                 try {
+                    if (simInfo.messagesList == null) {
+                        startUpdateAllMessage();
+                    }
+                    while (!isFinishReadMsg) {
+                        Thread.sleep(200);
+                    }
+
+                    status = SerialPortStatus.SLEEPING;
+                    Thread.sleep(SLEEP_TIME);
+
                     for (int i = 0; i < READ_SIGNAL_TIME; i++) {
                         if (!isStop) {
-                            status = SerialPortStatus.SLEEPING;
-                            Thread.sleep(SLEEP_TIME);
                             while (!isFinishReadMsg) {
                                 Thread.sleep(200);
                             }
                             if (!isStop) {
                                 status = SerialPortStatus.READING;
                                 runCmd(Contract.SIGNAL);
+                                Thread.sleep(SLEEP_TIME);
                             }
                         }
-                    }
-                    if (simInfo.messagesList == null) {
-                        startUpdateAllMessage();
-                    }
-                    Thread.sleep(SLEEP_TIME);
-                    while (!isFinishReadMsg) {
-                        Thread.sleep(200);
                     }
                     if (simInfo.messagesList != null && simInfo.messagesList.size() > MGS_MAX_SIZE) {
                         for (Messages messages : simInfo.messagesList) {
@@ -265,6 +266,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                             }
                         }
                     }
+                    manager.saveSimInfo(simInfo);
                     if (!isStop) startTracking();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -336,7 +338,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
         if (simInfo.lastMsgId == -1 && !simInfo.messagesList.isEmpty())
             simInfo.lastMsgId = simInfo.messagesList.get(simInfo.messagesList.size() - 1).mgsId;
         simInfo.time = TimeUtil.getTime();
-        manager.saveMessages(simInfo.messagesList);
+        manager.saveMessages(simInfo.simId, simInfo.messagesList);
         System.out.println("size: " + simInfo.messagesList.size());
     }
 
