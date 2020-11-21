@@ -236,13 +236,14 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="run_multi_script" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        <div class="modal fade" id="run_script_multi_device" tabindex="-1" role="dialog"
+             aria-labelledby="exampleModalLabel"
              aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modal_add_edit_title">Chạy kịch bản (<span>3</span>)
-                        </h5>
+                        <h5 class="modal-title font-weight-bold" id="modal_add_edit_title">Chạy kịch bản
+                            <span id="amount_device_selected" class="badge badge-info badge-pill ml-2">0</span></h5>
                         <button type="button" class="close text-danger" data-dismiss="modal">×</button>
                     </div>
                     <div class="modal-body">
@@ -250,28 +251,34 @@
                             <div class="col-2">
                                 <span>Kịch bản</span>
                             </div>
-                            <select style="width: 95%; height: 27px" onchange="getAccountByScript()"
+                            <select style="width: 95%; height: 27px" onchange="getAccountByScriptForMultiDevice()"
                                     class="col-10 filterInput"
                                     id="multi_script_select">
                                 <option disabled selected>Chọn kịch bản</option>
                             </select>
                         </div>
-                        <div class="mt-4 pl-3 pr-3" style="display: flex; justify-content: space-between">
+                        <div class="col-12 d-flex mt-2">
+                            <div class="col-2"></div>
+                            <div class="col-10">
+                                <span class="text-danger" style="display: none" id="message_find_account"></span>
+                            </div>
+                        </div>
+                        <div class="mt-3" style="display: flex; justify-content: space-between">
                             <div>
                                 <h6>Chọn tài khoản cho mỗi thiết bị</h6>
                             </div>
                             <div>
-                                <a href="" class="text-primary">Auto</a>
-                                <a href="" class="text-primary ml-2">Reset</a>
+                                <span class="text-primary " onclick="autoMatchDeviceWithAccount()">Auto</span>
+                                <span class="text-primary ml-2" onclick="clearMathDeviceWithAccount()">Reset</span>
                             </div>
                         </div>
                         <form id="form_add_edit_user">
-                            <div class="modal-body">
+                            <div>
                                 <div class="table-responsive">
                                     <table class="table table-bordered">
                                         <thead>
                                         <tr style="background-color: #f1f1f1">
-                                            <th>
+                                            <th style="width: 30%">
                                                 <span class="pl-2">Device</span>
                                             </th>
                                             <th>
@@ -279,46 +286,7 @@
                                             </th>
                                         </tr>
                                         </thead>
-                                        <tbody>
-                                        <tr>
-                                            <td>
-                                                <span class="pl-2">127.0.0.1:8080</span>
-                                            </td>
-                                            <td style="display:flex; align-items: center; justify-content: space-between">
-                                                <div>
-                                                    <span class="pl-2">4238442034042_GG</span>
-                                                </div>
-                                                <button class="btn legitRipple">
-                                                    <fa class="fa fa-pencil-alt"></fa>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <span class="pl-2">127.0.0.1:8080</span>
-                                            </td>
-                                            <td style="display:flex; align-items: center; justify-content: space-between">
-                                                <div>
-                                                    <span class="pl-2">4238442034042_GG</span>
-                                                </div>
-                                                <button class="btn legitRipple">
-                                                    <fa class="fa fa-pencil-alt"></fa>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <span class="pl-2">127.0.0.1:8080</span>
-                                            </td>
-                                            <td style="display:flex; align-items: center; justify-content: space-between">
-                                                <div>
-                                                    <span class="pl-2">4238442034042_GG</span>
-                                                </div>
-                                                <button class="btn legitRipple">
-                                                    <fa class="fa fa-pencil-alt"></fa>
-                                                </button>
-                                            </td>
-                                        </tr>
+                                        <tbody id="device_account_match_body">
                                         </tbody>
                                     </table>
                                 </div>
@@ -327,10 +295,11 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button"
-                                class="btn float-right"
+                                id="btn_run_multi_script"
+                                class="btn float-right font-weight-black"
                                 style="text-transform: none">Chạy
                         </button>
-                        <button type="button" id="form_close" class="btn float-right"
+                        <button type="button" id="form_close" class="btn float-right font-weight-black"
                                 data-dismiss="modal" style="text-transform: none">Đóng
                         </button>
                     </div>
@@ -419,7 +388,8 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="run_script" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        <div class="modal fade" id="run_script_one_device_dialog" tabindex="-1" role="dialog"
+             aria-labelledby="exampleModalLabel"
              aria-hidden="true" style="top: 180px!important;">
             <div class="modal-dialog" role="document" style="width: 400px">
                 <div class="modal-content">
@@ -435,23 +405,23 @@
                             <div class="col-3">
                                 <span>Kịch bản</span>
                             </div>
-                            <select style="width: 95%; height: 27px" onchange="getAccountByScript()"
+                            <select style="width: 95%; height: 27px" onchange="getAccountByScriptForOneDevice()"
                                     class="col-9 filterInput"
-                                    id="script_select">
+                                    id="one_script_select">
                                 <option disabled selected>Chọn kịch bản</option>
                             </select>
                         </div>
                         <div class="col-12 d-flex mt-2">
                             <div class="col-3"></div>
                             <div class="col-9">
-                                <span class="text-danger" style="display: none" id="error_account">Không còn tài khoản rảnh cho kịch bản</span>
+                                <span class="text-danger" style="display: none" id="error_empty_account">Không còn tài khoản rảnh cho kịch bản</span>
                             </div>
                         </div>
                         <div class="mt-2 col-12 d-flex align-items-center">
                             <div class="col-3">
                                 <span>Tài khoản</span>
                             </div>
-                            <select style="width: 95%; height: 27px"
+                            <select style="width: 95%; height: 27px" onchange="onSelectAccountForOneDevice()"
                                     class="col-9 filterInput"
                                     id="account_select">
                             </select>
