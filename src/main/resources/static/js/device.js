@@ -55,7 +55,7 @@ function enableAction(number) {
     $("#restartDevice").removeClass("divDisabled");
     $("#turnOffDevice").removeClass("divDisabled");
     $("#turnOnDevice").removeClass("divDisabled");
-    $("#runScriptDevice").removeClass("divDisabled");
+    $("#runMultiScript").removeClass("divDisabled");
     $("#deleteDevice").removeClass("divDisabled");
 
     $("#restartDeviceNumber").text(number);
@@ -69,7 +69,7 @@ function disableAction() {
     $("#restartDevice").addClass("divDisabled");
     $("#turnOffDevice").addClass("divDisabled");
     $("#turnOnDevice").addClass("divDisabled");
-    $("#runScriptDevice").addClass("divDisabled");
+    $("#runMultiScript").addClass("divDisabled");
     $("#deleteDevice").addClass("divDisabled");
 
     $("#restartDeviceNumber").text('');
@@ -95,7 +95,7 @@ var c = 0;
 function getData() {
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/manage_device",
+        url: "http://192.168.137.123:8082/api/manage_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -192,7 +192,7 @@ function addDevice() {
     if (amount != '') {
         $.ajax({
             type: "POST",
-            url: "http://localhost:8082/api/add_device",
+            url: "http://192.168.137.123:8082/api/add_device",
             cache: false,
             crossDomain: true,
             processData: true,
@@ -509,38 +509,38 @@ function startScript(deviceID) {
     deviceIdList.push(deviceID);
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/start_script",
+        url: "http://192.168.137.123:8082/api/start_script",
         cache: false,
-            crossDomain: true,
-            processData: true,
-            dataType: "json",
-            contentType: "application/json",
-            data: JSON.stringify(
-                {
-                    "deviceIdList": deviceIdList
-               }),
-             success: function (deviceListOnResp) {
-                 if (deviceListOnResp.length != 0) {
-                     for (var i = 0; i < deviceListOnResp.length; i++) {
-                         var newDeviceStatus = deviceListOnResp[i];
-                         if (newDeviceStatus.error == '') {
-                             if (dataOriginal.deviceStatistics.length != 0) {
-                                 for (var j = 0; j < dataOriginal.deviceStatistics.length; j++) {
-                                     if (dataOriginal.deviceStatistics[j].deviceId == newDeviceStatus.data.deviceId) {
-                                            dataOriginal.deviceStatistics[j] = newDeviceStatus.data;
-                                     }
-                                 }
-                             } else {
-                                 console.log("Data null")
-                             }
-                         } else {
-                             // Todo show error turn on
-                             console.log(newDeviceStatus.error);
-                         }
-                     }
-                 }
-                 showTab($("#device_status").text());
-             }
+        crossDomain: true,
+        processData: true,
+        dataType: "json",
+        contentType: "application/json",
+        data: JSON.stringify(
+            {
+                "deviceIdList": deviceIdList
+            }),
+        success: function (deviceListOnResp) {
+            if (deviceListOnResp.length != 0) {
+                for (var i = 0; i < deviceListOnResp.length; i++) {
+                    var newDeviceStatus = deviceListOnResp[i];
+                    if (newDeviceStatus.error == '') {
+                        if (dataOriginal.deviceStatistics.length != 0) {
+                            for (var j = 0; j < dataOriginal.deviceStatistics.length; j++) {
+                                if (dataOriginal.deviceStatistics[j].deviceId == newDeviceStatus.data.deviceId) {
+                                    dataOriginal.deviceStatistics[j] = newDeviceStatus.data;
+                                }
+                            }
+                        } else {
+                            console.log("Data null")
+                        }
+                    } else {
+                        // Todo show error turn on
+                        console.log(newDeviceStatus.error);
+                    }
+                }
+            }
+            showTab($("#device_status").text());
+        }
 
     })
 }
@@ -550,38 +550,38 @@ function stopScript(deviceID) {
     deviceIdList.push(deviceID);
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/stop_script",
+        url: "http://192.168.137.123:8082/api/stop_script",
         cache: false,
-            crossDomain: true,
-            processData: true,
-            dataType: "json",
-            contentType: "application/json",
-            data: JSON.stringify(
-                {
-                    "deviceIdList": deviceIdList
-               }),
-             success: function (deviceListOnResp) {
-                 if (deviceListOnResp.length != 0) {
-                     for (var i = 0; i < deviceListOnResp.length; i++) {
-                         newDeviceStatus = deviceListOnResp[i];
-                         if (newDeviceStatus.error == '') {
-                             if (dataOriginal.deviceStatistics.length != 0) {
-                                 for (var j = 0; j < dataOriginal.deviceStatistics.length; j++) {
-                                     if (dataOriginal.deviceStatistics[j].deviceId == newDeviceStatus.data.deviceId) {
-                                        dataOriginal.deviceStatistics[j] = newDeviceStatus.data;
-                                     }
-                                 }
-                             } else {
-                                 console.log("Data null")
-                             }
-                         } else {
-                             // Todo show error turn on
-                             console.log(newDeviceStatus.error);
-                         }
-                     }
-                 }
-                 showTab($("#device_status").text());
-             }
+        crossDomain: true,
+        processData: true,
+        dataType: "json",
+        contentType: "application/json",
+        data: JSON.stringify(
+            {
+                "deviceIdList": deviceIdList
+            }),
+        success: function (deviceListOnResp) {
+            if (deviceListOnResp.length != 0) {
+                for (var i = 0; i < deviceListOnResp.length; i++) {
+                    newDeviceStatus = deviceListOnResp[i];
+                    if (newDeviceStatus.error == '') {
+                        if (dataOriginal.deviceStatistics.length != 0) {
+                            for (var j = 0; j < dataOriginal.deviceStatistics.length; j++) {
+                                if (dataOriginal.deviceStatistics[j].deviceId == newDeviceStatus.data.deviceId) {
+                                    dataOriginal.deviceStatistics[j] = newDeviceStatus.data;
+                                }
+                            }
+                        } else {
+                            console.log("Data null")
+                        }
+                    } else {
+                        // Todo show error turn on
+                        console.log(newDeviceStatus.error);
+                    }
+                }
+            }
+            showTab($("#device_status").text());
+        }
 
     })
 }
@@ -589,7 +589,7 @@ function stopScript(deviceID) {
 function restartDevice() {
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/restart_device",
+        url: "http://192.168.137.123:8082/api/restart_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -627,7 +627,7 @@ function restartDevice() {
 function turnOnMultiDevice() {
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/turnon_device",
+        url: "http://192.168.137.123:8082/api/turnon_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -667,7 +667,7 @@ function turnonDevice(deviceID) {
     deviceIdList.push(deviceID);
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/turnon_device",
+        url: "http://192.168.137.123:8082/api/turnon_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -705,7 +705,7 @@ function turnonDevice(deviceID) {
 function turnoffMultiDevice() {
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/turnoff_device",
+        url: "http://192.168.137.123:8082/api/turnoff_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -745,7 +745,7 @@ function turnoffDevice(deviceID) {
     deviceIdList.push(deviceID);
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/turnoff_device",
+        url: "http://192.168.137.123:8082/api/turnoff_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -794,19 +794,19 @@ var scriptInfo = {
 function showModalRunOneScript(deviceID) {
     $('#run_script_one_device_title').html(deviceID);
     $('#script_select').find('option')
-                           .remove()
-                           .end()
-                           .append('<option disabled selected>Chọn kịch bản</option>');
-   $('#account_select').find('option')
-                               .remove()
-                               .end();
-   $("#error_account").hide();
+        .remove()
+        .end()
+        .append('<option disabled selected>Chọn kịch bản</option>');
+    $('#account_select').find('option')
+        .remove()
+        .end();
+    $("#error_account").hide();
     scriptMap = new Map();
     deviceIDTmp = deviceID;
     $('#run_script').modal('show');
     $.ajax({
         type: "GET",
-        url: "http://localhost:8082/api/get_all_script",
+        url: "http://192.168.137.123:8082/api/get_all_script",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -824,8 +824,8 @@ function showModalRunOneScript(deviceID) {
 
 function getAccountByScript() {
     $('#account_select').find('option')
-                            .remove()
-                            .end();
+        .remove()
+        .end();
     let scriptSelect = $("#script_select").val();
     let scriptId =
         [...scriptMap.entries()]
@@ -836,7 +836,7 @@ function getAccountByScript() {
 
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/find_account",
+        url: "http://192.168.137.123:8082/api/find_account",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -878,7 +878,7 @@ function runOneScript() {
 
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/run_script_device",
+        url: "http://192.168.137.123:8082/api/run_script_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -912,11 +912,31 @@ function runOneScript() {
     });
 }
 
+function showModalMultiScript() {
+    $('#multi_script_select').find('option').remove().end().append('<option disabled selected>Chọn kịch bản</option>');
+    $("#run_multi_script").modal('show');
+    $.ajax({
+        type: "GET",
+        url: "http://192.168.137.123:8082/api/get_all_script",
+        cache: false,
+        crossDomain: true,
+        processData: true,
+        dataType: "json",
+        success: function (data) {
+            if (data.length != 0) {
+                for (var i = 0; i < data.length; i++) {
+                    $('#multi_script_select').append($("<option>").val("" + data[i].app + "").text("" + data[i].name + ""));
+                }
+            }
+        }
+    });
+}
+
 function viewLog(deviceID) {
     $('#log_device_title').html(deviceID);
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/device_log",
+        url: "http://192.168.137.123:8082/api/device_log",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -928,54 +948,54 @@ function viewLog(deviceID) {
             $('#viewLog_popup').modal('show');
             var content = "";
             console.log(data);
-            if(data.success == true){
-                if(data.data!=null){
-                    for(var i=0; i<data.data.length; i++){
+            if (data.success == true) {
+                if (data.data != null) {
+                    for (var i = 0; i < data.data.length; i++) {
                         row = data.data[i];
-                        if(row.isActive == false){
+                        if (row.isActive == false) {
                             content = content +
-                                    '<tr>' +
-                                        '<td>' + timeConverter(row.time) + '</td>\n' +
-                                        '<td>' + genActive(row.isActive) + '</td>\n' +
-                                        '<td></td>\n' +
-                                        '<td></td>\n' +
-                                        '<td></td>\n' +
-                                        '<td></td>\n' +
-                                        '<td></td>\n' +
-                                        '<td></td>\n' +
-                                        '<td></td>\n' +
-                                        '<td></td>\n' +
-                                    '</tr>';
+                                '<tr>' +
+                                '<td>' + timeConverter(row.time) + '</td>\n' +
+                                '<td>' + genActive(row.isActive) + '</td>\n' +
+                                '<td></td>\n' +
+                                '<td></td>\n' +
+                                '<td></td>\n' +
+                                '<td></td>\n' +
+                                '<td></td>\n' +
+                                '<td></td>\n' +
+                                '<td></td>\n' +
+                                '<td></td>\n' +
+                                '</tr>';
                         } else {
-                            if(row.script == "" || row.account == ""){
+                            if (row.script == "" || row.account == "") {
                                 content = content +
-                                            '<tr>' +
-                                                '<td>' + timeConverter(row.time) + '</td>\n' +
-                                                '<td>' + genActive(row.isActive) + '</td>\n' +
-                                                '<td>' + genStatus(row.status) + '</td>\n' +
-                                                '<td></td>\n' +
-                                                '<td></td>\n' +
-                                                '<td></td>\n' +
-                                                '<td></td>\n' +
-                                                '<td></td>\n' +
-                                                '<td></td>\n' +
-                                                '<td></td>\n' +
-                                            '</tr>';
+                                    '<tr>' +
+                                    '<td>' + timeConverter(row.time) + '</td>\n' +
+                                    '<td>' + genActive(row.isActive) + '</td>\n' +
+                                    '<td>' + genStatus(row.status) + '</td>\n' +
+                                    '<td></td>\n' +
+                                    '<td></td>\n' +
+                                    '<td></td>\n' +
+                                    '<td></td>\n' +
+                                    '<td></td>\n' +
+                                    '<td></td>\n' +
+                                    '<td></td>\n' +
+                                    '</tr>';
                             } else {
                                 content = content +
-                                            '<tr>' +
-                                                '<td>' + timeConverter(row.time) + '</td>\n' +
-                                                '<td>' + genActive(row.isActive) + '</td>\n' +
-                                                '<td>' + genStatus(row.status) + '</td>\n' +
-                                                '<td><img src="' + row.appIcon + '" class="rounded-circle" width="20" height="20">\n' +
-                                                '<span class="ml-2">' + row.app + '</span></td>\n' +
-                                                '<td>' + row.account + '</td>\n' +
-                                                '<td>' + row.script + '</td>\n' +
-                                                '<td>' + row.simId + '</td>\n' +
-                                                '<td>' + genProgress(row.progress) + '</td>\n' +
-                                                '<td>' + row.action + '</td>\n' +
-                                                '<td>' + row.info + '</td>\n' +
-                                            '</tr>';
+                                    '<tr>' +
+                                    '<td>' + timeConverter(row.time) + '</td>\n' +
+                                    '<td>' + genActive(row.isActive) + '</td>\n' +
+                                    '<td>' + genStatus(row.status) + '</td>\n' +
+                                    '<td><img src="' + row.appIcon + '" class="rounded-circle" width="20" height="20">\n' +
+                                    '<span class="ml-2">' + row.app + '</span></td>\n' +
+                                    '<td>' + row.account + '</td>\n' +
+                                    '<td>' + row.script + '</td>\n' +
+                                    '<td>' + row.simId + '</td>\n' +
+                                    '<td>' + genProgress(row.progress) + '</td>\n' +
+                                    '<td>' + row.action + '</td>\n' +
+                                    '<td>' + row.info + '</td>\n' +
+                                    '</tr>';
                             }
                         }
                     }
@@ -988,9 +1008,9 @@ function viewLog(deviceID) {
     });
 }
 
-function genActive(isActive){
+function genActive(isActive) {
     var content = '';
-    if(isActive){
+    if (isActive) {
         content = '<fa class="fa fa-circle text-success" title="Bật" style="font-size:12px !important"></fa>';
     } else {
         content = '<fa class="fa fa-circle text-danger" title="Tắt" style="font-size:12px !important"></fa>';
@@ -1001,7 +1021,7 @@ function genActive(isActive){
 function deleteDevice() {
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/delete_device",
+        url: "http://192.168.137.123:8082/api/delete_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -1021,16 +1041,16 @@ function deleteDevice() {
     });
 }
 
-function timeConverter(UNIX_timestamp){
-  var a = new Date(UNIX_timestamp);
-  var months = ['01','02','03','04','05','06','07','08','09','10','11','12'];
-  var year = a.getFullYear();
-  var month = months[a.getMonth()];
-  var date = a.getDate();
-  var hour = a.getHours();
-  var min = a.getMinutes();
-  var sec = a.getSeconds();
-  var time = hour + ':' + min + ':' + sec + ' ' + date + '/' + month + '/' + year;
-  return time;
+function timeConverter(UNIX_timestamp) {
+    var a = new Date(UNIX_timestamp);
+    var months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+    var year = a.getFullYear();
+    var month = months[a.getMonth()];
+    var date = a.getDate();
+    var hour = a.getHours();
+    var min = a.getMinutes();
+    var sec = a.getSeconds();
+    var time = hour + ':' + min + ':' + sec + ' ' + date + '/' + month + '/' + year;
+    return time;
 //    return new Date(UNIX_timestamp).toISOString().slice(0, 19).replace('T', ' ');
 }

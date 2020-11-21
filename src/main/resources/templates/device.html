@@ -145,8 +145,8 @@
                                             <span style="position: absolute;right: 10px;"
                                                   id="turnOnDeviceNumber"></span>
                                         </div>
-                                        <div class="dropdown-item divDisabled" data-toggle="modal"
-                                             data-target="#run_multi_script" id="runScriptDevice">
+                                        <div class="dropdown-item divDisabled" id="runMultiScript"
+                                             onclick="showModalMultiScript()">
                                             <fa class="fa fa-play mr-2"></fa>
                                             <span>Chạy kịch bản</span>
                                             <span style="position: absolute;right: 10px;"
@@ -292,35 +292,17 @@
                         <button type="button" class="close text-danger" data-dismiss="modal">×</button>
                     </div>
                     <div class="modal-body">
-                        <div class="mt-3" style="display: flex; align-items: center">
-                            <div>
-                                <h6>Kịch bản</h6>
+                        <div class="col-12 d-flex align-items-center">
+                            <div class="col-2">
+                                <span>Kịch bản</span>
                             </div>
-                            <div class="ml-3 btn-group justify-content-center">
-                                <a href="#" class="btn btn-filter dropdown-toggle legitRipple"
-                                   data-toggle="dropdown">
-                                    Chọn
-                                </a>
-                                <div class="dropdown-menu">
-                                    <div class="dropdown-item">
-                                        <span>1</span>
-                                    </div>
-                                    <div class="dropdown-item">
-                                        <span>2</span>
-                                    </div>
-                                    <div class="dropdown-item">
-                                        <span>3</span>
-                                    </div>
-                                    <div class="dropdown-item">
-                                        <span>4</span>
-                                    </div>
-                                    <div class="dropdown-item">
-                                        <span>5</span>
-                                    </div>
-                                </div>
-                            </div>
+                            <select style="width: 95%; height: 27px" onchange="getAccountByScript()"
+                                    class="col-10 filterInput"
+                                    id="multi_script_select">
+                                <option disabled selected>Chọn kịch bản</option>
+                            </select>
                         </div>
-                        <div class="mt-4" style="display: flex; justify-content: space-between">
+                        <div class="mt-4 pl-3 pr-3" style="display: flex; justify-content: space-between">
                             <div>
                                 <h6>Chọn tài khoản cho mỗi thiết bị</h6>
                             </div>
@@ -334,7 +316,7 @@
                                 <div class="table-responsive">
                                     <table class="table table-bordered">
                                         <thead>
-                                        <tr>
+                                        <tr style="background-color: #f1f1f1">
                                             <th>
                                                 <span class="pl-2">Device</span>
                                             </th>
@@ -390,9 +372,12 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary mr-1 float-right">Chạy</button>
-                        <button type="button" id="form_close" class="btn btn-secondary mr-1 float-right bg-danger"
-                                data-dismiss="modal">Đóng
+                        <button type="button"
+                                class="btn float-right"
+                                style="text-transform: none">Chạy
+                        </button>
+                        <button type="button" id="form_close" class="btn float-right"
+                                data-dismiss="modal" style="text-transform: none">Đóng
                         </button>
                     </div>
                 </div>
@@ -413,13 +398,15 @@
                             <div class="form-group row">
                                 <label for="inputNumberDevice" class="col-4 col-form-label">Số lượng</label>
                                 <div class="col-8s">
-                                    <input type="number" class="form-control" id="inputNumberDevice" style="width: 130% !important;"
+                                    <input type="number" class="form-control" id="inputNumberDevice"
+                                           style="width: 130% !important;"
                                            placeholder="Ví dụ: 1">
                                 </div>
                             </div>
                         </form>
                         <div class="modal-footer justify-content-end p-0">
-                            <button type="button" class="btn p-1" style="text-transform: none" onclick="addDevice()">Thêm
+                            <button type="button" class="btn p-1" style="text-transform: none" onclick="addDevice()">
+                                Thêm
                             </button>
                             <button type="button" class="btn p-1" data-dismiss="modal" style="text-transform: none">Đóng
                             </button>
