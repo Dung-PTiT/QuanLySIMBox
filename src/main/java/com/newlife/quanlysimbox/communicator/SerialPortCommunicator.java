@@ -297,7 +297,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                 }
                 System.out.println("start update all message");
                 runCmd(Contract.TEXT_MODE);
-                Thread.sleep(300);
+                Thread.sleep(1000);
                 runCmd(Contract.MESSAGES_ALL);
             } catch (Exception e) {
                 e.printStackTrace();

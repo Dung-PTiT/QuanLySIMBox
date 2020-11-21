@@ -944,6 +944,7 @@ function viewLog(deviceID) {
                                         '<td></td>\n' +
                                         '<td></td>\n' +
                                         '<td></td>\n' +
+                                        '<td></td>\n' +
                                     '</tr>';
                         } else {
                             if(row.script == "" || row.account == ""){
@@ -952,6 +953,7 @@ function viewLog(deviceID) {
                                                 '<td>' + timeConverter(row.time) + '</td>\n' +
                                                 '<td>' + genActive(row.isActive) + '</td>\n' +
                                                 '<td>' + genStatus(row.status) + '</td>\n' +
+                                                '<td></td>\n' +
                                                 '<td></td>\n' +
                                                 '<td></td>\n' +
                                                 '<td></td>\n' +
@@ -971,6 +973,7 @@ function viewLog(deviceID) {
                                                 '<td>' + row.script + '</td>\n' +
                                                 '<td>' + row.simId + '</td>\n' +
                                                 '<td>' + genProgress(row.progress) + '</td>\n' +
+                                                '<td>' + row.action + '</td>\n' +
                                                 '<td>' + row.info + '</td>\n' +
                                             '</tr>';
                             }
