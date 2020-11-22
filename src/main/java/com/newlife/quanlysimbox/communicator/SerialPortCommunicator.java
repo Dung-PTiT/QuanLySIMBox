@@ -1,6 +1,7 @@
 package com.newlife.quanlysimbox.communicator;
 
 import com.newlife.Contract;
+import com.newlife.base.StringUtil;
 import com.newlife.quanlysimbox.model.Messages;
 import com.newlife.quanlysimbox.model.SimInfo;
 import com.newlife.base.TimeUtil;
@@ -319,13 +320,14 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                     String type = splits[1].replaceAll("\"", "");
                     String sdt = splits[2].replaceAll("\"", "");
                     String time = TimeUtil.parseMgsTime((splits[4] + " " + splits[5]).replaceAll("\"", ""));
-                    String content = "";
+                    String hexString = "";
                     index += 1;
                     while (index < messageLineList.size() && !messageLineList.get(index).startsWith("+CMGL")) {
                         String nextLine = messageLineList.get(index);
-                        content += nextLine;
+                        hexString += nextLine;
                         index += 1;
                     }
+                    String content = StringUtil.hexStringToText(hexString);
                     System.out.println(id + "," + type + "," + sdt + "," + time + "," + content);
                     tempList.add(new Messages(id, type, sdt, time, content, simInfo.simId));
                 } catch (Exception e) {

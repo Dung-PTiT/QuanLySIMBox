@@ -36,6 +36,10 @@ public class DeviceStatistic {
             case "Youtube":
                 this.appIcon = Contract.YOUTUBE_ICON;
                 break;
+            case "Skype":
+                this.appIcon = Contract.SKYPE_ICON;
+                break;
+
         }
     }
 

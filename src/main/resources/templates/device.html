@@ -78,31 +78,8 @@
         <div class="row" style="height: 100vh; background-color: #ffffff;">
             <div class="col-sm-12 col-md-12">
                 <div class="card-header">
-                    <h3 class="card-title font-weight-bold mb-3 mt-2">Quản lý thiết bị</h3>
-                    <div style="justify-content: space-between; display: flex">
-                        <span class="card-title" style="display: flex">
-                            <ul class="nav nav-tabs nav-tabs-bottom border-bottom-0 mb-0">
-                                <li class="nav-item" onclick="showTab('all')">
-                                    <a href="#" class="nav-link pl-0 active" data-toggle="tab">
-                                        <span class="text-dark font-weight-bold">Tất cả</span>
-                                        <span class="badge badge-info badge-pill ml-2" id="device_all"></span>
-                                    </a>
-                                </li>
-                                <li class="nav-item ml-3" onclick="showTab('on')">
-                                    <a href="#" class="nav-link pl-0" data-toggle="tab">
-                                        <span class="text-dark font-weight-bold">Đang hoạt động</span>
-                                        <span class="badge badge-success badge-pill ml-2" id="device_on"></span>
-                                    </a>
-                                </li>
-                                <li class="nav-item ml-3" onclick="showTab('off')">
-                                    <a href="#" class="nav-link pl-0" data-toggle="tab">
-                                        <span class="text-dark font-weight-bold">Đang tắt</span>
-                                        <span class="badge badge-dark badge-pill ml-2" id="device_off"></span>
-                                    </a>
-                                </li>
-                                <span id="device_status" style="display: none">all</span>
-                            </ul>
-                        </span>
+                    <div style="justify-content: space-between; display: flex" class="mt-2">
+                        <h3 class="card-title font-weight-bold mb-3 mt-2">Quản lý thiết bị</h3>
                         <div>
                             <p>
                                 <img style="width:16px;height:16px;opacity: 0.5" src="./images/cpu.svg">
@@ -115,7 +92,30 @@
                             </p>
                         </div>
                     </div>
-                    <div class="row mt-1">
+                    <span class="card-title" style="display: flex">
+                        <ul class="nav nav-tabs nav-tabs-bottom border-bottom-8 mb-0">
+                            <li class="nav-item" onclick="showTab('all')">
+                                <a href="#" class="nav-link pl-0 active" data-toggle="tab">
+                                    <span class="text-dark font-weight-bold">Tất cả</span>
+                                    <span class="badge badge-info badge-pill ml-2" id="device_all"></span>
+                                </a>
+                            </li>
+                            <li class="nav-item ml-3" onclick="showTab('on')">
+                                <a href="#" class="nav-link pl-0" data-toggle="tab">
+                                    <span class="text-dark font-weight-bold">Đang hoạt động</span>
+                                    <span class="badge badge-success badge-pill ml-2" id="device_on"></span>
+                                </a>
+                            </li>
+                            <li class="nav-item ml-3" onclick="showTab('off')">
+                                <a href="#" class="nav-link pl-0" data-toggle="tab">
+                                    <span class="text-dark font-weight-bold">Đang tắt</span>
+                                    <span class="badge badge-dark badge-pill ml-2" id="device_off"></span>
+                                </a>
+                            </li>
+                            <span id="device_status" style="display: none">all</span>
+                        </ul>
+                    </span>
+                    <div class="row mt-3">
                         <div class="col-12 pl-0 d-flex justify-content-between">
                             <div>
                                 <div class="btn-group justify-content-center">
@@ -178,9 +178,11 @@
                                 <div class="ml-3 btn-group justify-content-center">
                                     <div class="form-group-feedback form-group-feedback-right" style="display: flex">
                                         <input id="search_input" type="text" class="btn-filter"
-                                               placeholder="Tìm kiếm thiết bị" autocomplete="off" style="width: 260px;">
-                                        <button onclick="getData()" class="btn legitRipple"
-                                                style="left: -50px; border-radius: 3px; height: 34px">
+                                               placeholder="Tìm kiếm thiết bị" autocomplete="off"
+                                               style="width: 260px;  border-radius: 4px 0 0 4px !important; ">
+                                        <button onclick="getData()" class="btn legitRipple bg-white"
+                                                style="height: 34px; border: 1px solid #dddddd; border-radius: 0 4px 4px 0;
+                                            border-left-color: #ffffff;">
                                             <i class="icon-search4 pb-1"></i>
                                         </button>
                                     </div>
@@ -189,11 +191,11 @@
                             <div class="d-flex">
                                 <div>
                                     <span>Trang:</span>
-                                    <select id="selectNumberPage"></select>
+                                    <select style="border-radius: 3px; height: 27px" id="selectNumberPage"></select>
                                 </div>
-                                <div class="ml-2">
+                                <div class="ml-4">
                                     <span>Số dòng:</span>
-                                    <select id="selectNumberRecord"></select>
+                                    <select style="border-radius: 3px; height: 27px" id="selectNumberRecord"></select>
                                 </div>
                             </div>
                         </div>
@@ -237,14 +239,14 @@
             </div>
         </div>
         <div class="modal fade" id="run_script_multi_device" tabindex="-1" role="dialog"
-             aria-labelledby="exampleModalLabel"
-             aria-hidden="true">
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title font-weight-bold" id="modal_add_edit_title">Chạy kịch bản
                             <span id="amount_device_selected" class="badge badge-info badge-pill ml-2">0</span></h5>
-                        <button type="button" class="close text-danger" data-dismiss="modal">×</button>
+                        <button type="button" class="close text-danger" data-dismiss="modal" style="font-size: 26px">×
+                        </button>
                     </div>
                     <div class="modal-body">
                         <div class="col-12 d-flex align-items-center">
@@ -269,7 +271,7 @@
                             </div>
                             <div>
                                 <span class="text-primary " onclick="autoMatchDeviceWithAccount()">Auto</span>
-                                <span class="text-primary ml-2" onclick="clearMathDeviceWithAccount()">Reset</span>
+                                <span class="text-primary ml-2" onclick="clearMatchDeviceWithAccount()">Reset</span>
                             </div>
                         </div>
                         <form id="form_add_edit_user">
@@ -293,14 +295,15 @@
                             </div>
                         </form>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button"
+                    <div class="modal-footer justify-content-end mt-2">
+                        <button type="button" class="btn bg-primary legitRipple mr-3"
                                 id="btn_run_multi_script"
-                                class="btn float-right font-weight-black"
-                                style="text-transform: none">Chạy
+                                onclick="runScriptForMultiDivice()"
+                                style="text-transform: none; width: 80px; padding: 4px 2px 4px 2px;">Chạy
                         </button>
-                        <button type="button" id="form_close" class="btn float-right font-weight-black"
-                                data-dismiss="modal" style="text-transform: none">Đóng
+                        <button type="button" class="btn legitRipple" data-dismiss="modal"
+                                style="text-transform: none; width: 80px; background-color: #dddddd; padding: 4px 2px 4px 2px;">
+                            Đóng
                         </button>
                     </div>
                 </div>
@@ -312,8 +315,8 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="card-title font-weight-bold">Thêm thiết bị</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                        <button type="button" class="close text-danger" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true" style="font-size: 26px">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
@@ -342,32 +345,16 @@
              aria-hidden="true">
             <div class="modal-dialog" role="document" style="min-width: 85vw;">
                 <div class="modal-content">
-                    <div class="modal-header" style="margin-top: 20px">
+                    <div class="modal-header mt-2 mb-1 ml-2 mr-2">
                         <h5 class="card-title font-weight-bold mb-2">Xem log thiết bị</h5>
                         <h5 id="log_device_title" class="card-title font-weight-bold ml-2 text-primary"></h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                        <button type="button" class="close text-danger" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true" style="font-size: 26px">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body pt-1">
                         <table class="table table-bordered text-center">
                             <thead>
-                            <!--
-                              "account": "string",
-                              "action": "string",
-                              "app": "string",
-                              "appIcon": "string",
-                              "deviceId": "string",
-                              "index": 0,
-                              "info": "string",
-                              "isActive": true,
-                              "isStarting": true,
-                              "progress": 0,
-                              "script": "string",
-                              "simId": "string",
-                              "status": "string",
-                              "time": 0
-                             -->
                             <tr class="text-center" style="background-color: #f2f2f2">
                                 <th>Thời gian</th>
                                 <th>Hoạt động</th>
@@ -396,8 +383,8 @@
                     <div class="modal-header">
                         <h5 class="card-title font-weight-bold mb-2">Chạy kịch bản</h5>
                         <h5 id="run_script_one_device_title" class="card-title font-weight-bold ml-2 text-primary"></h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                        <button type="button" class="close text-danger" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true" style="font-size: 26px">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
@@ -433,6 +420,62 @@
                         </button>
                         <button type="button" class="btn p-1" data-dismiss="modal" style="text-transform: none">Đóng
                         </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="select_account_dialog" class="modal fade" tabindex="-1" aria-hidden="true"
+             style="display: none; margin-top: 80px!important;">
+            <div class="modal-dialog modal-xs">
+                <div class="modal-content">
+                    <div class="modal-header justify-content-center bg-grey-600 p-0" style="height: 46px; align-items: center">
+                        <h6 class="modal-title text-white font-weight-semibold">Chọn tài khoản</h6>
+                    </div>
+                    <div class="modal-body">
+                        <!--                        <div class="mb-4">-->
+                        <!--                            <div class="form-group form-group-feedback form-group-feedback-right">-->
+                        <!--                                <input type="text" class="form-control ui-autocomplete-input"-->
+                        <!--                                       autocomplete="off"-->
+                        <!--                                       style="    border: 1px solid #dddddd !important; border-radius: 5px; padding-left: 10px">-->
+                        <!--                                <div class="form-control-feedback">-->
+                        <!--                                    <button class="btn" style="margin-bottom: 1px;color: #6d6d6d">-->
+                        <!--                                        <i class="icon-search4 font-size-base"></i>-->
+                        <!--                                    </button>-->
+                        <!--                                </div>-->
+                        <!--                            </div>-->
+                        <!--                        </div>-->
+                        <div class="col-md-8 mb-3" id="select_account_radio_group">
+                            <tr>
+                                <td>
+                                    <span class="pl-2 font-weight-semibold text-primary">127.0.0.1:62028</span>
+                                </td>
+                                <td style="display:flex; align-items: center; justify-content: space-between">
+                                    <div>
+                                        <span class="pl-2 font-weight-semibold">dhaskd_acc1</span>
+                                    </div>
+                                    <button type="button" class="btn legitRipple"
+                                            onclick="clickSelectAccountDialog('127.0.0.1:62028',1)"
+                                            data-target="#select_account_dialog">
+                                        <fa class="fa fa-pencil-alt"></fa>
+                                    </button>
+                                    <button type="button" class="btn legitRipple"
+                                            onclick="clickSelectAccountDialog('127.0.0.1:62028',1)"
+                                            data-target="#select_account_dialog">
+                                        <fa class="fa fa-pencil-alt"></fa>
+                                    </button>
+                                </td>
+                            </tr>
+                        </div>
+                        <div class="modal-footer justify-content-center p-0 mt-4">
+                            <button type="button" class="btn bg-primary legitRipple mr-3"
+                                    onclick="getAccountSelectedInRadioGroup()"
+                                    style="text-transform: none; width: 80px; padding: 4px 2px 4px 2px;">Xong
+                            </button>
+                            <button type="button" class="btn legitRipple" data-dismiss="modal"
+                                    style="text-transform: none; width: 80px; background-color: #dddddd; padding: 4px 2px 4px 2px;">
+                                Hủy
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

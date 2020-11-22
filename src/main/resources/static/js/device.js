@@ -1,6 +1,6 @@
 var dataOriginal;
 var deviceNumberChecked = 0;
-var selectedDeviceList = [];
+var selectedDeviceIdList = [];
 
 $(document).ready(function () {
     getData();
@@ -30,15 +30,15 @@ function getCheckbox() {
 
 function getDeviceIdList() {
     if ($('#select_all').is(":checked")) {
-        selectedDeviceList = [];
+        selectedDeviceIdList = [];
         for (var i = 0; i < dataOriginal.deviceStatistics.length; i++) {
-            selectedDeviceList.push(dataOriginal.deviceStatistics[i].deviceId);
+            selectedDeviceIdList.push(dataOriginal.deviceStatistics[i].deviceId);
         }
     } else {
-        selectedDeviceList = [];
+        selectedDeviceIdList = [];
     }
-    if (selectedDeviceList.length != 0) {
-        enableAction(selectedDeviceList.length);
+    if (selectedDeviceIdList.length != 0) {
+        enableAction(selectedDeviceIdList.length);
     } else {
         disableAction();
     }
@@ -46,13 +46,13 @@ function getDeviceIdList() {
 
 function getDeviceIdInRow(deviceId) {
     $("#select_all").prop("checked", false);
-    if (!selectedDeviceList.includes(deviceId)) {
-        selectedDeviceList.push(deviceId);
+    if (!selectedDeviceIdList.includes(deviceId)) {
+        selectedDeviceIdList.push(deviceId);
     } else {
-        selectedDeviceList.remove(deviceId);
+        selectedDeviceIdList.remove(deviceId);
     }
-    if (selectedDeviceList.length != 0) {
-        enableAction(selectedDeviceList.length);
+    if (selectedDeviceIdList.length != 0) {
+        enableAction(selectedDeviceIdList.length);
     } else {
         disableAction();
     }
@@ -157,8 +157,8 @@ function filter(dataOriginal) {
 }
 
 function showTab(type) {
-    var rowList = [];
-    var dataTable = dataOriginal.deviceStatistics;
+    let rowList = [];
+    let dataTable = dataOriginal.deviceStatistics;
     if (type == 'all') {
         showTable(dataTable);
         $("#device_status").text('all');
@@ -193,7 +193,7 @@ function showAddDeviceModal() {
 
 function addDevice() {
     $('#addDevice_popup').modal('hide');
-    var amount = $("#inputNumberDevice").val();
+    let amount = $("#inputNumberDevice").val();
     if (amount != '') {
         $.ajax({
             type: "POST",
@@ -284,9 +284,9 @@ function showTable(dataTable) {
 
 function genCheckox(index, deviceId) {
 
-    var checkbox = '';
-    if (selectedDeviceList.length != 0) {
-        if (selectedDeviceList.includes(deviceId)) {
+    let checkbox = '';
+    if (selectedDeviceIdList.length != 0) {
+        if (selectedDeviceIdList.includes(deviceId)) {
             checkbox =
                 '<input checked class="checkbox" type="checkbox" onclick="getDeviceIdInRow(\'' + deviceId + '\')">\n' +
                 '<span class="ml-2">' + index + '</span>';
@@ -307,7 +307,7 @@ function genCheckox(index, deviceId) {
 }
 
 function genStatus(statusValue) {
-    var status;
+    let status;
     if (statusValue == "") {
         status = '';
     } else if (statusValue == "free") {
@@ -325,7 +325,7 @@ function genStatus(statusValue) {
 }
 
 function genProgress(progressValue) {
-    var progress = '';
+    let progress = '';
     if (progressValue == 0) {
         progress =
             '   <div class="progress rounded-round" style=" height:0.8rem">\n' +
@@ -352,7 +352,7 @@ function genProgress(progressValue) {
 }
 
 function genButtonActionDevice(script, account, status, deviceId, isActived, isStaring) {
-    var button = '';
+    let button = '';
     if (isActived == false) {
         if (isStaring == true) {
             button =
@@ -360,7 +360,7 @@ function genButtonActionDevice(script, account, status, deviceId, isActived, isS
                 '<div class="cv-spinner">\n' +
                 '    <span class="spinner"></span>\n' +
                 '</div>\n' +
-                '                                    </div>';
+                '</div>';
         } else {
             button =
                 ' <div class="list-icons">\n' +
@@ -380,7 +380,7 @@ function genButtonActionDevice(script, account, status, deviceId, isActived, isS
                 '    <button onclick="turnoffDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Tắt thiết bị" style="display: none" >\n' +
                 '        <fa class="fa fa-power-off text-danger"></fa>\n' +
                 '    </button>\n' +
-                '    <button onclick="showModalRunOneScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Thiết lập kịch bản">\n' +
+                '    <button onclick="showModalRunOneScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Thiết lập kịch bản" disabled>\n' +
                 '        <i class="icon-cog text-dark"></i>\n' +
                 '    </button>\n' +
                 '    <button onclick="viewLog(\'' + deviceId + '\')" class="btn btn-action-device" title="Xem log">\n' +
@@ -499,7 +499,7 @@ function genButtonActionDevice(script, account, status, deviceId, isActived, isS
                     '        <fa class="far fa-file-alt text-info"></fa>\n' +
                     '    </button>\n' +
                     '</div>\n' +
-                    '                                    </div>';
+                    '</div>';
             }
         }
     }
@@ -511,7 +511,7 @@ function viewDevice(deviceID) {
 }
 
 function startScript(deviceID) {
-    var deviceIdList = [];
+    let deviceIdList = [];
     deviceIdList.push(deviceID);
     $.ajax({
         type: "POST",
@@ -527,8 +527,8 @@ function startScript(deviceID) {
             }),
         success: function (deviceListOnResp) {
             if (deviceListOnResp.length != 0) {
-                for (var i = 0; i < deviceListOnResp.length; i++) {
-                    var newDeviceStatus = deviceListOnResp[i];
+                for (let i = 0; i < deviceListOnResp.length; i++) {
+                    let newDeviceStatus = deviceListOnResp[i];
                     if (newDeviceStatus.error == '') {
                         if (dataOriginal.deviceStatistics.length != 0) {
                             for (var j = 0; j < dataOriginal.deviceStatistics.length; j++) {
@@ -551,7 +551,7 @@ function startScript(deviceID) {
 }
 
 function stopScript(deviceID) {
-    var deviceIdList = [];
+    let deviceIdList = [];
     deviceIdList.push(deviceID);
     $.ajax({
         type: "POST",
@@ -567,8 +567,8 @@ function stopScript(deviceID) {
             }),
         success: function (deviceListOnResp) {
             if (deviceListOnResp.length != 0) {
-                for (var i = 0; i < deviceListOnResp.length; i++) {
-                    var newDeviceStatus = deviceListOnResp[i];
+                for (let i = 0; i < deviceListOnResp.length; i++) {
+                    let newDeviceStatus = deviceListOnResp[i];
                     if (newDeviceStatus.error == '') {
                         if (dataOriginal.deviceStatistics.length != 0) {
                             for (var j = 0; j < dataOriginal.deviceStatistics.length; j++) {
@@ -601,12 +601,12 @@ function restartDevice() {
         contentType: "application/json",
         data: JSON.stringify(
             {
-                "deviceIdList": selectedDeviceList
+                "deviceIdList": selectedDeviceIdList
             }),
         success: function (deviceListOnResp) {
             if (deviceListOnResp.length != 0) {
-                for (var i = 0; i < deviceListOnResp.length; i++) {
-                    var deviceOn = deviceListOnResp[i];
+                for (let i = 0; i < deviceListOnResp.length; i++) {
+                    let deviceOn = deviceListOnResp[i];
                     if (deviceOn.error == '') {
                         if (dataOriginal.deviceStatistics.length != 0) {
                             for (var j = 0; j < dataOriginal.deviceStatistics.length; j++) {
@@ -618,7 +618,7 @@ function restartDevice() {
                             genToastError("Data null");
                         }
                     } else {
-                        genToastError(deviceOff.error);
+                        genToastError(deviceOn.error);
                     }
                 }
             }
@@ -638,12 +638,12 @@ function turnOnMultiDevice() {
         contentType: "application/json",
         data: JSON.stringify(
             {
-                "deviceIdList": selectedDeviceList
+                "deviceIdList": selectedDeviceIdList
             }),
         success: function (deviceListOnResp) {
             if (deviceListOnResp.length != 0) {
-                for (var i = 0; i < deviceListOnResp.length; i++) {
-                    var deviceOn = deviceListOnResp[i];
+                for (let i = 0; i < deviceListOnResp.length; i++) {
+                    let deviceOn = deviceListOnResp[i];
                     if (deviceOn.error == '') {
                         if (dataOriginal.deviceStatistics.length != 0) {
                             for (var j = 0; j < dataOriginal.deviceStatistics.length; j++) {
@@ -665,7 +665,7 @@ function turnOnMultiDevice() {
 }
 
 function turnonDevice(deviceID) {
-    var deviceIdList = [];
+    let deviceIdList = [];
     deviceIdList.push(deviceID);
     $.ajax({
         type: "POST",
@@ -681,8 +681,8 @@ function turnonDevice(deviceID) {
             }),
         success: function (deviceListOnResp) {
             if (deviceListOnResp.length != 0) {
-                for (var i = 0; i < deviceListOnResp.length; i++) {
-                    var deviceOn = deviceListOnResp[i];
+                for (let i = 0; i < deviceListOnResp.length; i++) {
+                    let deviceOn = deviceListOnResp[i];
                     if (deviceOn.error == '') {
                         if (dataOriginal.deviceStatistics.length != 0) {
                             for (var j = 0; j < dataOriginal.deviceStatistics.length; j++) {
@@ -714,7 +714,7 @@ function turnoffMultiDevice() {
         contentType: "application/json",
         data: JSON.stringify(
             {
-                "deviceIdList": selectedDeviceList
+                "deviceIdList": selectedDeviceIdList
             }),
         success: function (deviceListOffResp) {
             if (deviceListOffResp.length != 0) {
@@ -782,12 +782,6 @@ function turnoffDevice(deviceID) {
 // chạy kịch bản 1 thiết bị
 var selectedDeviceId = '';
 var scriptMap = new Map();
-
-var scriptRequest = {
-    "accountId": 0,
-    "deviceId": '',
-    "scriptId": 0
-};
 
 function showModalRunOneScript(deviceID) {
     $('#run_script_one_device_title').html(deviceID);
@@ -857,7 +851,7 @@ function getAccountByScriptForOneDevice() {
     });
 }
 
-function onSelectAccountForOneDevice(){
+function onSelectAccountForOneDevice() {
     if ($("#one_script_select").val() != '' && $("#account_select").val() != '') {
         $("#btn_runOneScript").prop("disabled", false);
     } else {
@@ -866,9 +860,8 @@ function onSelectAccountForOneDevice(){
 }
 
 function runOneScript() {
-
-    var scriptInfoList = [];
-    scriptInfoList.push({
+    let scriptRequestList = [];
+    scriptRequestList.push({
         "accountId": parseInt($("#account_select").val()),
         "deviceId": selectedDeviceId,
         "scriptId": parseInt($("#one_script_select").val())
@@ -876,39 +869,7 @@ function runOneScript() {
 
     $('#run_script_one_device_dialog').modal('hide');
 
-    $.ajax({
-        type: "POST",
-        url: "http://localhost:8082/api/run_script_device",
-        cache: false,
-        crossDomain: true,
-        processData: true,
-        dataType: "json",
-        contentType: "application/json",
-        data: JSON.stringify({
-            "list": scriptInfoList
-        }),
-        success: function (deviceListOffResp) {
-            if (deviceListOffResp.length != 0) {
-                for (var i = 0; i < deviceListOffResp.length; i++) {
-                    var newDeviceStatus = deviceListOffResp[i];
-                    if (newDeviceStatus.error == '') {
-                        if (dataOriginal.deviceStatistics.length != 0) {
-                            for (var j = 0; j < dataOriginal.deviceStatistics.length; j++) {
-                                if (dataOriginal.deviceStatistics[j].deviceId == newDeviceStatus.data.deviceId) {
-                                    dataOriginal.deviceStatistics[j] = newDeviceStatus.data;
-                                }
-                            }
-                        } else {
-                            genToastError("Data null");
-                        }
-                    } else {
-                        genToastError(deviceOff.error);
-                    }
-                }
-            }
-            showTab($("#device_status").text());
-        }
-    });
+    runScript(scriptRequestList)
 }
 
 
@@ -921,11 +882,11 @@ function showModalMultiScript() {
     $("#run_script_multi_device").modal('show');
     $("#btn_run_multi_script").prop("disabled", true);
     $("#message_find_account").hide();
-    $("#amount_device_selected").html(selectedDeviceList.length);
+    $("#amount_device_selected").html(selectedDeviceIdList.length);
     scriptMap = new Map();
     deviceIdToAccountMap = new Map();
     accountList = [];
-    clearMathDeviceWithAccount()
+    clearMatchDeviceWithAccount();
     $.ajax({
         type: "GET",
         url: "http://localhost:8082/api/get_all_script",
@@ -947,7 +908,7 @@ function showModalMultiScript() {
 function getAccountByScriptForMultiDevice() {
     let selectedScriptId = $("#multi_script_select").val();
     let appSelected = scriptMap.get(Number(selectedScriptId));
-    clearMathDeviceWithAccount();
+    clearMatchDeviceWithAccount();
     $.ajax({
         type: "POST",
         url: "http://localhost:8082/api/find_account",
@@ -960,7 +921,7 @@ function getAccountByScriptForMultiDevice() {
         },
         success: function (data) {
             accountList = data;
-            if (accountList.length === 0 || accountList.length < selectedDeviceList.length) {
+            if (accountList.length === 0 || accountList.length < selectedDeviceIdList.length) {
                 $("#message_find_account").show();
                 $("#message_find_account").html("Không có đủ tài khoản đang rảnh cho kịch bản này");
                 $("#btn_run_multi_script").prop("disabled", true);
@@ -973,68 +934,186 @@ function getAccountByScriptForMultiDevice() {
     });
 }
 
-function clearMathDeviceWithAccount(){
+function clearMatchDeviceWithAccount() {
     deviceIdToAccountMap.clear();
-    let tableContent = "";
-    for (let i = 0; i < selectedDeviceList.length; i++) {
-        deviceIdToAccountMap.set(selectedDeviceList[i], 0);
-        tableContent = tableContent +
-            "<tr>\n" +
-            "<td>\n" +
-            "    <span class='pl-2 font-weight-semibold text-primary'>" + selectedDeviceList[i] + "</span>\n" +
-            "</td>\n" +
-            "<td style='display:flex; align-items: center; justify-content: space-between'>\n" +
-            "    <div>\n" +
-            "        <span class='pl-2 font-weight-semibold'>" + "" + "</span>\n" +
-            "    </div>\n" +
-            "    <button class='btn legitRipple' onclick=''>\n" +
-            "        <fa class='fa fa-pencil-alt'></fa>\n" +
-            "    </button>\n" +
-            "</td>\n" +
-            "</tr>";
+    $("#btn_run_multi_script").prop("disabled", true);
+    for (let i = 0; i < selectedDeviceIdList.length; i++) {
+        deviceIdToAccountMap.set(selectedDeviceIdList[i], null);
     }
-    $("#device_account_match_body").html(tableContent);
+    showDeviceToAccountMap();
+}
+
+function clickSelectAccountDialog(deviceId, currentAccountId) {
+    $('#select_account_radio_group').html("");
+    selectedDeviceId = deviceId;
+    let content = "";
+    for (let i = 0; i < accountList.length; i++) {
+        if (currentAccountId != null && currentAccountId == accountList[i].id) {
+            content = content +
+                "<label class=\"radio font-weight-semibold\">\n" +
+                "  <input type=\"radio\" name=\"username_radio\" value=\"" + accountList[i].id + "\" checked>\n" +
+                "  <span>" + accountList[i].username + "</span>\n" +
+                "</label>"
+        } else {
+            let containt = findInMap(deviceIdToAccountMap, accountList[i]);
+            if (containt === false) {
+                content = content +
+                    "<label class=\"radio font-weight-semibold\">\n" +
+                    "  <input type=\"radio\" name=\"username_radio\" value=\"" + accountList[i].id + "\">\n" +
+                    "  <span>" + accountList[i].username + "</span>\n" +
+                    "</label>"
+            } else {
+                content = content +
+                    "<label class=\"radio font-weight-semibold\" style='color: #b0b0b0' disabled='true'>\n" +
+                    "  <input type=\"radio\" name=\"username_radio\" value=\"" + accountList[i].id + "\" disabled>\n" +
+                    "  <span>" + accountList[i].username + "</span>\n" +
+                    "</label>"
+            }
+        }
+    }
+    $('#select_account_radio_group').html(content);
+    $("#select_account_dialog").modal('show');
 }
 
 function autoMatchDeviceWithAccount() {
     deviceIdToAccountMap.clear();
+    for (let i = 0; i < selectedDeviceIdList.length; i++) {
+        if (i < accountList.length) {
+            deviceIdToAccountMap.set(selectedDeviceIdList[i], accountList[i]);
+        } else {
+            deviceIdToAccountMap.set(selectedDeviceIdList[i], null);
+        }
+    }
+    showDeviceToAccountMap();
+}
+
+function getAccountSelectedInRadioGroup() {
+    let selectedAccountId = document.querySelector('input[name="username_radio"]:checked').value;
+    for (let i = 0; i < accountList.length; i++) {
+        if (accountList[i].id == selectedAccountId) {
+            deviceIdToAccountMap.set(selectedDeviceId, accountList[i]);
+            break;
+        }
+    }
+    $("#select_account_dialog").modal('hide');
+    showDeviceToAccountMap();
+}
+
+function showDeviceToAccountMap() {
     let tableContent = "";
-    for (let i = 0; i < selectedDeviceList.length; i++) {
-        if(i<accountList.length) {
-            deviceIdToAccountMap.set(selectedDeviceList[i], accountList[i]);
+    let fillAll = true;
+    for (let i = 0; i < selectedDeviceIdList.length; i++) {
+        let account = deviceIdToAccountMap.get(selectedDeviceIdList[i]);
+        if (account != null) {
             tableContent = tableContent +
                 "<tr>\n" +
                 "<td>\n" +
-                "    <span class='pl-2 font-weight-semibold text-primary'>" + selectedDeviceList[i] + "</span>\n" +
+                "    <span class='pl-2 font-weight-semibold text-primary'>" + selectedDeviceIdList[i] + "</span>\n" +
                 "</td>\n" +
-                "<td style='display:flex; align-items: center; justify-content: space-between'>\n" +
-                "    <div>\n" +
-                "        <span class='pl-2 font-weight-semibold'>" + accountList[i].username + "</span>\n" +
+                "<td>\n" +
+                "<div style=\"display:flex; align-items: center;\">\n" +
+                "    <div style=\"width: 80%;\">\n" +
+                "        <span class='pl-2 font-weight-semibold'>" + account.username + "</span>\n" +
                 "    </div>\n" +
-                "    <button class='btn legitRipple' onclick=''>\n" +
-                "        <fa class='fa fa-pencil-alt'></fa>\n" +
+                "    <button type=\"button\" class=\"btn legitRipple\"\n" +
+                "            onclick=\"removeAccount('" + selectedDeviceIdList[i] + "')\"\n" +
+                "            style=\"width: 10%; padding: 5px; align-items: center; color: #ff2c2c\">X\n" +
                 "    </button>\n" +
-                "</td>\n" +
+                "    <button type=\"button\" class=\"btn legitRipple\"\n" +
+                "            onclick=\"clickSelectAccountDialog('" + selectedDeviceIdList[i] + "'," + account.id + ")\"" +
+                "            data-target=\"#select_account_dialog\"\n" +
+                "            style=\"width: 10%; padding: 5px; align-items: center;\">\n" +
+                "        <fa class=\"far fa-caret-square-down\"></fa>\n" +
+                "    </button>\n" +
+                "</div>\n" +
+                "</td>" +
                 "</tr>";
         } else {
-            deviceIdToAccountMap.set(selectedDeviceList[i], 0);
+            fillAll = false;
             tableContent = tableContent +
                 "<tr>\n" +
                 "<td>\n" +
-                "    <span class='pl-2 font-weight-semibold text-primary'>" + selectedDeviceList[i] + "</span>\n" +
+                "    <span class='pl-2 font-weight-semibold text-primary'>" + selectedDeviceIdList[i] + "</span>\n" +
                 "</td>\n" +
-                "<td style='display:flex; align-items: center; justify-content: space-between'>\n" +
-                "    <div>\n" +
+                "<td>\n" +
+                "<div style=\"display:flex; align-items: center;\">\n" +
+                "    <div style=\"width: 90%;\">\n" +
                 "        <span class='pl-2 font-weight-semibold'>" + "" + "</span>\n" +
                 "    </div>\n" +
-                "    <button class='btn legitRipple' onclick=''>\n" +
-                "        <fa class='fa fa-pencil-alt'></fa>\n" +
+                "    <button type=\"button\" class=\"btn legitRipple\"\n" +
+                "            onclick=\"clickSelectAccountDialog('" + selectedDeviceIdList[i] + "',null)\"" +
+                "            data-target=\"#select_account_dialog\"\n" +
+                "            style=\"width: 10%; padding: 5px; align-items: center;\">\n" +
+                "        <fa class=\"far fa-caret-square-down\"></fa>\n" +
                 "    </button>\n" +
-                "</td>\n" +
+                "</div>\n" +
+                "</td>" +
                 "</tr>";
         }
     }
+    if (fillAll) $("#btn_run_multi_script").prop("disabled", false);
+    else $("#btn_run_multi_script").prop("disabled", true);
+
     $("#device_account_match_body").html(tableContent);
+}
+
+function removeAccount(deviceId){
+    deviceIdToAccountMap.set(deviceId, null);
+    showDeviceToAccountMap();
+}
+
+function runScriptForMultiDivice() {
+    if (findInMap(deviceIdToAccountMap, null)) {
+        cosole.log("Hãy chọn tài khoản cho tất cả thiết bị");
+    } else {
+        $('#run_script_multi_device').modal('hide');
+        let scriptRequestList = [];
+        let selectedScript =  parseInt($("#multi_script_select").val());
+        deviceIdToAccountMap.forEach((value, key) => {
+            scriptRequestList.push({
+                "accountId": Number(value.id),
+                "deviceId": key,
+                "scriptId": selectedScript
+            });
+        });
+        runScript(scriptRequestList);
+    }
+}
+
+function runScript(scriptRequestList){
+    $.ajax({
+        type: "POST",
+        url: "http://localhost:8082/api/run_script_device",
+        cache: false,
+        crossDomain: true,
+        processData: true,
+        dataType: "json",
+        contentType: "application/json",
+        data: JSON.stringify({
+            "list": scriptRequestList
+        }),
+        success: function (deviceListOffResp) {
+            if (deviceListOffResp.length != 0) {
+                for (var i = 0; i < deviceListOffResp.length; i++) {
+                    var newDeviceStatus = deviceListOffResp[i];
+                    if (newDeviceStatus.error == '') {
+                        if (dataOriginal.deviceStatistics.length != 0) {
+                            for (var j = 0; j < dataOriginal.deviceStatistics.length; j++) {
+                                if (dataOriginal.deviceStatistics[j].deviceId == newDeviceStatus.data.deviceId) {
+                                    dataOriginal.deviceStatistics[j] = newDeviceStatus.data;
+                                }
+                            }
+                        } else {
+                            genToastError("Data null");
+                        }
+                    } else {
+                        genToastError(newDeviceStatus.error);
+                    }
+                }
+            }
+            showTab($("#device_status").text());
+        }
+    });
 }
 
 function viewLog(deviceID) {
@@ -1111,7 +1190,7 @@ function viewLog(deviceID) {
 }
 
 function genActive(isActive) {
-    var content = '';
+    let content = '';
     if (isActive) {
         content = '<fa class="fa fa-circle text-success" title="Bật" style="font-size:12px !important"></fa>';
     } else {
@@ -1130,7 +1209,7 @@ function deleteDevice() {
         dataType: "json",
         contentType: "application/json",
         data: JSON.stringify({
-            "deviceIdList": selectedDeviceList,
+            "deviceIdList": selectedDeviceIdList,
             "filterDeviceId": $("#search_input").val().trim(),
             "page": 0,
             "size": 100
@@ -1145,15 +1224,15 @@ function deleteDevice() {
 }
 
 function timeConverter(UNIX_timestamp) {
-    var a = new Date(UNIX_timestamp);
-    var months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
-    var year = a.getFullYear();
-    var month = months[a.getMonth()];
-    var date = a.getDate();
-    var hour = a.getHours();
-    var min = a.getMinutes();
-    var sec = a.getSeconds();
-    var time = hour + ':' + min + ':' + sec + ' ' + date + '/' + month + '/' + year;
+    let a = new Date(UNIX_timestamp);
+    let months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+    let year = a.getFullYear();
+    let month = months[a.getMonth()];
+    let date = a.getDate();
+    let hour = a.getHours();
+    let min = a.getMinutes();
+    let sec = a.getSeconds();
+    let time = hour + ':' + min + ':' + sec + ' ' + date + '/' + month + '/' + year;
     return time;
 //    return new Date(UNIX_timestamp).toISOString().slice(0, 19).replace('T', ' ');
 }
@@ -1187,4 +1266,13 @@ function genToastError(message) {
         loader: true,  // Whether to show loader or not. True by default
         loaderBg: '#9EC600',  // Background color of the toast loader
     });
+}
+
+function findInMap(map, val) {
+    for (let [k, v] of map) {
+        if (v === val) {
+            return true;
+        }
+    }
+    return false;
 }
