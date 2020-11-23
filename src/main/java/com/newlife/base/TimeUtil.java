@@ -13,16 +13,17 @@ public class TimeUtil {
     }
 
     // 20/11/0313:20:58+28
-    public static String parseMgsTime(String strTime) {
+    public static Date parseMgsTime(String strTime) {
         String result = strTime;
         try {
             dateFormat = new SimpleDateFormat("yy/MM/dd HH:mm:ss");
             Date date = dateFormat.parse(strTime);
-            dateFormat = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy");
-            result = dateFormat.format(date);
+            return date;
+//            dateFormat = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy");
+//            result = dateFormat.format(date);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return result;
+        return new Date();
     }
 }

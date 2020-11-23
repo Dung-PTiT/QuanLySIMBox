@@ -15,7 +15,7 @@ public class Contract {
     public static String REJECT_CALL = "ATH";
     public static String BALANCE = "ATDT*101#;";
     public static String AT = "AT";
-    public static String TEXT_MODE = "AT+CMGF=0";
+    public static String TEXT_MODE = "AT+CMGF=1";
     public static String DELETE_MGS = "AT+CMGD=";
 
 

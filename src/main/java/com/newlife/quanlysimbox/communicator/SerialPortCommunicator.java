@@ -319,7 +319,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                     int id = Integer.parseInt(splits[0].trim());
                     String type = splits[1].replaceAll("\"", "");
                     String sdt = splits[2].replaceAll("\"", "");
-                    String time = TimeUtil.parseMgsTime((splits[4] + " " + splits[5]).replaceAll("\"", ""));
+                    Date time = TimeUtil.parseMgsTime((splits[4] + " " + splits[5]).replaceAll("\"", ""));
                     String hexString = "";
                     index += 1;
                     while (index < messageLineList.size() && !messageLineList.get(index).startsWith("+CMGL")) {
@@ -329,7 +329,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                     }
                     String content = StringUtil.hexStringToText(hexString);
                     System.out.println(id + "," + type + "," + sdt + "," + time + "," + content);
-                    tempList.add(new Messages(id, type, sdt, time, content, simInfo.simId));
+                    tempList.add(new Messages(id, type, sdt.toUpperCase(), time, content, simInfo.simId));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -391,7 +391,6 @@ public class SerialPortCommunicator implements SerialPortEventListener {
     }
 
     public void runCmd(String cmd) {
-        System.out.println(cmd);
         lastCmd = cmd;
         writeSerial(cmd);
     }

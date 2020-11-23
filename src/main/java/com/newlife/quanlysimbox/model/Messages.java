@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 @Entity
 @Table(name = "messages")
@@ -16,12 +17,12 @@ public class Messages implements Serializable {
     public int mgsId;
     public String status;
     public String sdt;
-    public String time;
+    public Date time;
     public String content;
     @Column(name = "sim_id")
     public String simId;
 
-    public Messages(int mgsId, String status, String sdt, String time, String content, String simId) {
+    public Messages(int mgsId, String status, String sdt, Date time, String content, String simId) {
         this.mgsId = mgsId;
         this.status = status;
         this.sdt = sdt;

@@ -114,7 +114,7 @@ function genBtnDisconnect(status, commName) {
 
 function showMessageList(simID) {
     $('#messageSIM_popup').modal('show');
-    var simInfoList = dataOriginal.data.simInfoList;
+    var simInfoList = dataOriginal.simInfoList;
     var messageList = [];
     for (var i = 0; i < simInfoList.length; i++) {
         if (simInfoList[i].simId == simID) {
