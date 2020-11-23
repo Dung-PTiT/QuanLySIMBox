@@ -335,7 +335,7 @@ public class DeviceManager {
         return deviceList;
     }
 
-    public Device addNewDevice() {
+    synchronized public Device addNewDevice() {
         ArrayList<Device> deviceList = loadAvailableDevice();
         int maxId = 0;
         for (Device device : deviceList) {

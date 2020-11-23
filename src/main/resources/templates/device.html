@@ -125,14 +125,14 @@
                                     </a>
                                     <div class="dropdown-menu">
                                         <div class="dropdown-item divDisabled" id="restartDevice"
-                                             onclick="restartDevice()">
+                                             onclick="showRestartDeviceConfirm()">
                                             <fa class="fa fa-sync mr-2"></fa>
                                             <span>Khởi động lại</span>
                                             <span class="ml-2" style="position: absolute;right: 10px;"
                                                   id="restartDeviceNumber"></span>
                                         </div>
                                         <div class="dropdown-item divDisabled" id="turnOffDevice"
-                                             onclick="turnoffMultiDevice()">
+                                             onclick="showTurnoffMultiDeviceConfirm()">
                                             <fa class="fa fa-power-off mr-2"></fa>
                                             <span>Tắt</span>
                                             <span style="position: absolute;right: 10px;"
@@ -153,7 +153,7 @@
                                                   id="runScriptDeviceNumber"></span>
                                         </div>
                                         <div class="dropdown-item divDisabled" id="deleteDevice"
-                                             onclick="deleteDevice()">
+                                             onclick="showDeleteDeviceConfirm()">
                                             <fa class="fa fa-trash-alt mr-2"></fa>
                                             <span>Xóa thiết bị</span>
                                             <span style="position: absolute;right: 10px;"
@@ -207,7 +207,7 @@
                             <thead>
                             <tr class="text-center" style="background-color: #f2f2f2">
                                 <th>
-                                    <input type="checkbox" id="select_all" onclick="getDeviceIdList()"/>
+                                    <input type="checkbox" id="select_all" onclick="fillSelectedDeviceIdList()"/>
                                 </th>
                                 <th>Device ID</th>
                                 <th>Trạng thái</th>
@@ -238,82 +238,33 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="run_script_multi_device" tabindex="-1" role="dialog"
-             aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+        <div class="modal fade" id="confirm_popup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true" style="top: 180px!important;">
+            <div class="modal-dialog" role="document" style="width: 350px">
                 <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title font-weight-bold" id="modal_add_edit_title">Chạy kịch bản
-                            <span id="amount_device_selected" class="badge badge-info badge-pill ml-2">0</span></h5>
-                        <button type="button" class="close text-danger" data-dismiss="modal" style="font-size: 26px">×
-                        </button>
+                    <div class="modal-header" style="height: 50px">
+                        <h5 id="comfirm_title" class="card-title font-weight-bold">Xác nhận xóa</h5>
                     </div>
                     <div class="modal-body">
-                        <div class="col-12 d-flex align-items-center">
-                            <div class="col-2">
-                                <span>Kịch bản</span>
-                            </div>
-                            <select style="width: 95%; height: 27px" onchange="getAccountByScriptForMultiDevice()"
-                                    class="col-10 filterInput"
-                                    id="multi_script_select">
-                                <option disabled selected>Chọn kịch bản</option>
-                            </select>
+                        <p id="confirm_content">Bạn chắc chắn muốn xóa thiết bị ?</p>
+                        <div class="modal-footer justify-content-end mt-4 p-0">
+                            <button id="btn_ok_comfirm" type="button" class="btn bg-primary legitRipple mr-3"
+                                    style="text-transform: none; width: 80px; padding: 4px 2px 4px 2px;">Xóa
+                            </button>
+                            <button type="button" class="btn legitRipple" data-dismiss="modal"
+                                    style="text-transform: none; width: 80px; background-color: #dddddd; padding: 4px 2px 4px 2px;">
+                                Hủy
+                            </button>
                         </div>
-                        <div class="col-12 d-flex mt-2">
-                            <div class="col-2"></div>
-                            <div class="col-10">
-                                <span class="text-danger" style="display: none" id="message_find_account"></span>
-                            </div>
-                        </div>
-                        <div class="mt-3" style="display: flex; justify-content: space-between">
-                            <div>
-                                <h6>Chọn tài khoản cho mỗi thiết bị</h6>
-                            </div>
-                            <div>
-                                <span class="text-primary " onclick="autoMatchDeviceWithAccount()">Auto</span>
-                                <span class="text-primary ml-2" onclick="clearMatchDeviceWithAccount()">Reset</span>
-                            </div>
-                        </div>
-                        <form id="form_add_edit_user">
-                            <div>
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <thead>
-                                        <tr style="background-color: #f1f1f1">
-                                            <th style="width: 30%">
-                                                <span class="pl-2">Device</span>
-                                            </th>
-                                            <th>
-                                                <span class="pl-2">Account</span>
-                                            </th>
-                                        </tr>
-                                        </thead>
-                                        <tbody id="device_account_match_body">
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer justify-content-end mt-2">
-                        <button type="button" class="btn bg-primary legitRipple mr-3"
-                                id="btn_run_multi_script"
-                                onclick="runScriptForMultiDivice()"
-                                style="text-transform: none; width: 80px; padding: 4px 2px 4px 2px;">Chạy
-                        </button>
-                        <button type="button" class="btn legitRipple" data-dismiss="modal"
-                                style="text-transform: none; width: 80px; background-color: #dddddd; padding: 4px 2px 4px 2px;">
-                            Đóng
-                        </button>
                     </div>
                 </div>
             </div>
         </div>
         <div class="modal fade" id="addDevice_popup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
              aria-hidden="true" style="top: 180px!important;">
-            <div class="modal-dialog" role="document" style="width: 320px">
+            <div class="modal-dialog" role="document" style="width: 350px">
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <div class="modal-header" style="height: 50px">
                         <h5 class="card-title font-weight-bold">Thêm thiết bị</h5>
                         <button type="button" class="close text-danger" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true" style="font-size: 26px">&times;</span>
@@ -322,19 +273,22 @@
                     <div class="modal-body">
                         <form>
                             <div class="form-group row">
-                                <label for="inputNumberDevice" class="col-4 col-form-label">Số lượng</label>
-                                <div class="col-8s">
-                                    <input type="number" class="form-control" id="inputNumberDevice"
-                                           style="width: 130% !important;"
-                                           placeholder="Ví dụ: 1">
+                                <label class="col-3 col-form-label">Số lượng</label>
+                                <div class="col-9">
+                                    <div class="form-group">
+                                        <input id="inputNumberDevice" type="number" class="form-control" name="add_device_input" value="">
+                                    </div>
                                 </div>
                             </div>
                         </form>
-                        <div class="modal-footer justify-content-end p-0">
-                            <button type="button" class="btn p-1" style="text-transform: none" onclick="addDevice()">
-                                Thêm
+                        <div class="modal-footer justify-content-end mt-4 p-0">
+                            <button type="button" class="btn bg-primary legitRipple mr-3"
+                                    onclick="addDevice()"
+                                    style="text-transform: none; width: 80px; padding: 4px 2px 4px 2px;">Thêm
                             </button>
-                            <button type="button" class="btn p-1" data-dismiss="modal" style="text-transform: none">Đóng
+                            <button type="button" class="btn legitRipple" data-dismiss="modal"
+                                    style="text-transform: none; width: 80px; background-color: #dddddd; padding: 4px 2px 4px 2px;">
+                                Đóng
                             </button>
                         </div>
                     </div>
@@ -414,11 +368,95 @@
                             </select>
                         </div>
                     </div>
-                    <div class="modal-footer justify-content-end">
-                        <button id="btn_runOneScript" type="button" class="btn p-1" style="text-transform: none"
-                                onclick="runOneScript()" disabled>Chạy
+                    <div class="modal-footer justify-content-end mt-2">
+                        <button type="button" class="btn bg-primary legitRipple mr-3"
+                                id="btn_runOneScript"
+                                onclick="runOneScript()"
+                                style="text-transform: none; width: 80px; padding: 4px 2px 4px 2px;">Chạy
                         </button>
-                        <button type="button" class="btn p-1" data-dismiss="modal" style="text-transform: none">Đóng
+                        <button type="button" class="btn legitRipple" data-dismiss="modal"
+                                style="text-transform: none; width: 80px; background-color: #dddddd; padding: 4px 2px 4px 2px;">
+                            Đóng
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="run_script_multi_device" tabindex="-1" role="dialog"
+             aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title font-weight-bold" id="modal_add_edit_title">Chạy kịch bản
+                            <span id="amount_device_selected" class="badge badge-info badge-pill ml-2">0</span></h5>
+                        <button type="button" class="close text-danger" data-dismiss="modal" style="font-size: 26px">×
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-12 d-flex align-items-center pl-0 pr-0">
+                            <div class="col-2 pl-0">
+                                <span>Kịch bản</span>
+                            </div>
+                            <select style="width: 95%; height: 27px" onchange="getAccountByScriptForMultiDevice()"
+                                    class="col-10 filterInput"
+                                    id="multi_script_select">
+                                <option disabled selected>Chọn kịch bản</option>
+                            </select>
+                        </div>
+                        <div class="col-12 d-flex mt-2">
+                            <div class="col-2"></div>
+                            <div class="col-10">
+                                <span class="text-danger" style="display: none" id="message_find_account"></span>
+                            </div>
+                        </div>
+                        <div class="mt-3" style="display: flex; justify-content: space-between">
+                            <div>
+                                <h6>Chọn tài khoản cho mỗi thiết bị</h6>
+                            </div>
+                            <div>
+                                <button class="btn btn-filter legitRipple"
+                                        style="padding: 4px 5px 4px 6px !important; border: none !important;"
+                                        onclick="autoMatchDeviceWithAccount()">
+                                    <span class="text-primary">Auto</span>
+                                </button>
+
+                                <button class="btn btn-filter legitRipple"
+                                        style="padding: 4px 5px 4px 6px !important; border: none !important;"
+                                        onclick="clearMatchDeviceWithAccount()">
+                                    <span class="text-primary">Reset</span>
+                                </button>
+                            </div>
+                        </div>
+                        <form id="form_add_edit_user">
+                            <div>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                        <tr style="background-color: #f1f1f1">
+                                            <th style="width: 30%">
+                                                <span class="pl-2">Device</span>
+                                            </th>
+                                            <th>
+                                                <span class="pl-2">Account</span>
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="device_account_match_body">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer justify-content-end mt-2">
+                        <button type="button" class="btn bg-primary legitRipple mr-2"
+                                id="btn_run_multi_script"
+                                onclick="runScriptForMultiDivice()"
+                                style="text-transform: none; width: 80px; padding: 4px 2px 4px 2px;">Chạy
+                        </button>
+                        <button type="button" class="btn legitRipple" data-dismiss="modal"
+                                style="text-transform: none; width: 80px; background-color: #dddddd; padding: 4px 2px 4px 2px;">
+                            Đóng
                         </button>
                     </div>
                 </div>
@@ -428,7 +466,8 @@
              style="display: none; margin-top: 80px!important;">
             <div class="modal-dialog modal-xs">
                 <div class="modal-content">
-                    <div class="modal-header justify-content-center bg-grey-600 p-0" style="height: 46px; align-items: center">
+                    <div class="modal-header justify-content-center bg-grey-600 p-0"
+                         style="height: 46px; align-items: center">
                         <h6 class="modal-title text-white font-weight-semibold">Chọn tài khoản</h6>
                     </div>
                     <div class="modal-body">

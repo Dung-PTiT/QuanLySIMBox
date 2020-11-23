@@ -1,13 +1,21 @@
 var dataOriginal;
 var deviceNumberChecked = 0;
 var selectedDeviceIdList = [];
+var selectedDeviceId = '';
+var scriptMap = new Map();
+var deviceIdToAccountMap = new Map();
+var accountList = [];
 
 $(document).ready(function () {
     getData();
-    getCheckbox();
+    selectAllClickListener();
+    $("#inputNumberDevice").TouchSpin({
+        buttondown_class: "btn btn-light",
+        buttonup_class: "btn btn-light"
+    });
 });
 
-function getCheckbox() {
+function selectAllClickListener() {
     $('#select_all').on('click', function () {
         if (this.checked) {
             $('.checkbox').each(function () {
@@ -20,18 +28,18 @@ function getCheckbox() {
         }
     });
 
-    for (var i = 0; i < 30; i++) {
-        var j = i + 1;
+    for (let i = 0; i < 30; i++) {
+        let j = i + 1;
         $('#selectNumberPage').append($("<option>").val("" + j + "").text("" + j + ""));
         $('#selectNumberRecord').append($("<option>").val("" + j + "").text("" + j + ""));
     }
 
 }
 
-function getDeviceIdList() {
+function fillSelectedDeviceIdList() {
     if ($('#select_all').is(":checked")) {
         selectedDeviceIdList = [];
-        for (var i = 0; i < dataOriginal.deviceStatistics.length; i++) {
+        for (let i = 0; i < dataOriginal.deviceStatistics.length; i++) {
             selectedDeviceIdList.push(dataOriginal.deviceStatistics[i].deviceId);
         }
     } else {
@@ -44,7 +52,7 @@ function getDeviceIdList() {
     }
 }
 
-function getDeviceIdInRow(deviceId) {
+function onSelectDevice(deviceId) {
     $("#select_all").prop("checked", false);
     if (!selectedDeviceIdList.includes(deviceId)) {
         selectedDeviceIdList.push(deviceId);
@@ -53,8 +61,17 @@ function getDeviceIdInRow(deviceId) {
     }
     if (selectedDeviceIdList.length != 0) {
         enableAction(selectedDeviceIdList.length);
+        updateSelectAllChecked();
     } else {
         disableAction();
+    }
+}
+
+function updateSelectAllChecked(){
+    if(selectedDeviceIdList.length == dataOriginal.deviceStatistics.length){
+        $("#select_all").prop("checked", true);
+    } else {
+        $("#select_all").prop("checked", false);
     }
 }
 
@@ -100,7 +117,7 @@ Array.prototype.remove = function () {
 function getData() {
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/manage_device",
+        url: "/api/manage_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -187,17 +204,19 @@ function showTab(type) {
 
 function showAddDeviceModal() {
     $('#addDevice_popup').modal('show');
-    $('#inputNumberDevice').val('');
+    $('#inputNumberDevice').val(1);
     $("#overlay_spinner_1").hide();
 }
 
 function addDevice() {
     $('#addDevice_popup').modal('hide');
     let amount = $("#inputNumberDevice").val();
+    amount = parseInt(amount);
+    genToastInfo("Đang thêm " + amount + " thiết bị mới ....");
     if (amount != '') {
         $.ajax({
             type: "POST",
-            url: "http://localhost:8082/api/add_device",
+            url: "/api/add_device",
             cache: false,
             crossDomain: true,
             processData: true,
@@ -209,7 +228,7 @@ function addDevice() {
                 "size": 100
             },
             success: function (data) {
-                genToastSuccess(data.message);
+                genToastInfo(data.message);
                 dataOriginal = data;
                 filter(dataOriginal);
             }
@@ -288,19 +307,19 @@ function genCheckox(index, deviceId) {
     if (selectedDeviceIdList.length != 0) {
         if (selectedDeviceIdList.includes(deviceId)) {
             checkbox =
-                '<input checked class="checkbox" type="checkbox" onclick="getDeviceIdInRow(\'' + deviceId + '\')">\n' +
+                '<input checked class="checkbox" type="checkbox" onclick="onSelectDevice(\'' + deviceId + '\')">\n' +
                 '<span class="ml-2">' + index + '</span>';
 
             //thay đổi số lượng trong khay hành động
             deviceNumberChecked++;
         } else {
             checkbox =
-                '<input class="checkbox" type="checkbox" onclick="getDeviceIdInRow(\'' + deviceId + '\')">\n' +
+                '<input class="checkbox" type="checkbox" onclick="onSelectDevice(\'' + deviceId + '\')">\n' +
                 '<span class="ml-2">' + index + '</span>';
         }
     } else {
         checkbox =
-            '<input class="checkbox" type="checkbox" onclick="getDeviceIdInRow(\'' + deviceId + '\')">\n' +
+            '<input class="checkbox" type="checkbox" onclick="onSelectDevice(\'' + deviceId + '\')">\n' +
             '<span class="ml-2">' + index + '</span>';
     }
     return checkbox;
@@ -371,13 +390,13 @@ function genButtonActionDevice(script, account, status, deviceId, isActived, isS
                 '    <button onclick="startScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Chạy kịch bản" disabled>\n' +
                 '        <i class="icon-play4 text-grey" style="font-size: 18px !important;"></i>\n' +
                 '    </button>\n' +
-                '    <button onclick="stopScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Dừng chạy kịch bản" disabled>\n' +
+                '    <button onclick="showStopScriptConfirm(\'' + deviceId + '\')" class="btn btn-action-device" title="Dừng chạy kịch bản" disabled>\n' +
                 '        <i class="icon-square text-grey font-size-sm"></i>\n' +
                 '    </button>\n' +
                 '    <button onclick="turnonDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Bật thiết bị">\n' +
                 '        <fa class="fa fa-power-off text-success"></fa>\n' +
                 '    </button>\n' +
-                '    <button onclick="turnoffDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Tắt thiết bị" style="display: none" >\n' +
+                '    <button onclick="showTurnoffSingleDeviceConfirm(\'' + deviceId + '\')" class="btn btn-action-device" title="Tắt thiết bị" style="display: none" >\n' +
                 '        <fa class="fa fa-power-off text-danger"></fa>\n' +
                 '    </button>\n' +
                 '    <button onclick="showModalRunOneScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Thiết lập kịch bản" disabled>\n' +
@@ -400,13 +419,13 @@ function genButtonActionDevice(script, account, status, deviceId, isActived, isS
                 '    <button onclick="startScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Chạy kịch bản" disabled>\n' +
                 '        <i class="icon-play4 text-grey" style="font-size: 18px !important;"></i>\n' +
                 '    </button>\n' +
-                '    <button onclick="stopScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Dừng chạy kịch bản" disabled>\n' +
+                '    <button onclick="showStopScriptConfirm(\'' + deviceId + '\')" class="btn btn-action-device" title="Dừng chạy kịch bản" disabled>\n' +
                 '        <i class="icon-square text-grey font-size-sm"></i>\n' +
                 '    </button>\n' +
                 '    <button onclick="turnonDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Bật thiết bị" style="display: none">\n' +
                 '        <fa class="fa fa-power-off text-success"></fa>\n' +
                 '    </button>\n' +
-                '    <button onclick="turnoffDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Tắt thiết bị">\n' +
+                '    <button onclick="showTurnoffSingleDeviceConfirm(\'' + deviceId + '\')" class="btn btn-action-device" title="Tắt thiết bị">\n' +
                 '        <fa class="fa fa-power-off text-danger"></fa>\n' +
                 '    </button>\n' +
                 '    <button onclick="showModalRunOneScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Thiết lập kịch bản" >\n' +
@@ -429,13 +448,13 @@ function genButtonActionDevice(script, account, status, deviceId, isActived, isS
                     '    <button onclick="startScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Chạy kịch bản" disabled>\n' +
                     '        <i class="icon-play4 text-grey" style="font-size: 18px !important;"></i>\n' +
                     '    </button>\n' +
-                    '    <button onclick="stopScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Dừng chạy kịch bản" disabled>\n' +
+                    '    <button onclick="showStopScriptConfirm(\'' + deviceId + '\')" class="btn btn-action-device" title="Dừng chạy kịch bản" disabled>\n' +
                     '        <i class="icon-square text-grey font-size-sm"></i>\n' +
                     '    </button>\n' +
                     '    <button onclick="turnonDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Bật thiết bị" style="display: none" >\n' +
                     '        <fa class="fa fa-power-off text-success"></fa>\n' +
                     '    </button>\n' +
-                    '    <button onclick="turnoffDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Tắt thiết bị">\n' +
+                    '    <button onclick="showTurnoffSingleDeviceConfirm(\'' + deviceId + '\')" class="btn btn-action-device" title="Tắt thiết bị">\n' +
                     '        <fa class="fa fa-power-off text-danger"></fa>\n' +
                     '    </button>\n' +
                     '    <button onclick="showModalRunOneScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Thiết lập kịch bản" >\n' +
@@ -456,13 +475,13 @@ function genButtonActionDevice(script, account, status, deviceId, isActived, isS
                     '    <button onclick="startScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Chạy kịch bản" disabled>\n' +
                     '        <i class="icon-play4 text-grey" style="font-size: 18px !important;"></i>\n' +
                     '    </button>\n' +
-                    '    <button onclick="stopScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Dừng chạy kịch bản">\n' +
+                    '    <button onclick="showStopScriptConfirm(\'' + deviceId + '\')" class="btn btn-action-device" title="Dừng chạy kịch bản">\n' +
                     '        <i class="icon-square text-warning font-size-sm"></i>\n' +
                     '    </button>\n' +
                     '    <button onclick="turnonDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Bật thiết bị"  style="display: none" >\n' +
                     '        <fa class="fa fa-power-off text-success"></fa>\n' +
                     '    </button>\n' +
-                    '    <button onclick="turnoffDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Tắt thiết bị">\n' +
+                    '    <button onclick="showTurnoffSingleDeviceConfirm(\'' + deviceId + '\')" class="btn btn-action-device" title="Tắt thiết bị">\n' +
                     '        <fa class="fa fa-power-off text-danger"></fa>\n' +
                     '    </button>\n' +
                     '    <button onclick="showModalRunOneScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Thiết lập kịch bản" >\n' +
@@ -483,13 +502,13 @@ function genButtonActionDevice(script, account, status, deviceId, isActived, isS
                     '    <button onclick="startScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Chạy kịch bản">\n' +
                     '        <i class="icon-play4 text-success" style="font-size: 18px !important;"></i>\n' +
                     '    </button>\n' +
-                    '    <button onclick="stopScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Dừng chạy kịch bản" disabled>\n' +
+                    '    <button onclick="showStopScriptConfirm(\'' + deviceId + '\')" class="btn btn-action-device" title="Dừng chạy kịch bản" disabled>\n' +
                     '        <i class="icon-square text-grey font-size-sm"></i>\n' +
                     '    </button>\n' +
                     '    <button onclick="turnonDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Bật thiết bị" style="display: none" >\n' +
                     '        <fa class="fa fa-power-off text-success"></fa>\n' +
                     '    </button>\n' +
-                    '    <button onclick="turnoffDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Tắt thiết bị">\n' +
+                    '    <button onclick="showTurnoffSingleDeviceConfirm(\'' + deviceId + '\')" class="btn btn-action-device" title="Tắt thiết bị">\n' +
                     '        <fa class="fa fa-power-off text-danger"></fa>\n' +
                     '    </button>\n' +
                     '    <button onclick="showModalRunOneScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Thiết lập kịch bản" >\n' +
@@ -515,7 +534,7 @@ function startScript(deviceID) {
     deviceIdList.push(deviceID);
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/start_script",
+        url: "/api/start_script",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -548,14 +567,26 @@ function startScript(deviceID) {
         }
 
     })
+}
+
+function showStopScriptConfirm(deviceID) {
+    $('#btn_ok_comfirm').prop("onclick", null).off("click");
+    $('#btn_ok_comfirm').click(function () {
+        stopScript(deviceID);
+    });
+    $('#btn_ok_comfirm').html("Dừng");
+    $('#comfirm_title').html("Xác nhận dừng");
+    $('#confirm_content').html("Bạn chắc chắn muốn dừng kịch bản đang chạy ?");
+    $('#confirm_popup').modal('show');
 }
 
 function stopScript(deviceID) {
     let deviceIdList = [];
     deviceIdList.push(deviceID);
+    $('#confirm_popup').modal('hide');
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/stop_script",
+        url: "/api/stop_script",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -590,10 +621,24 @@ function stopScript(deviceID) {
     })
 }
 
+function showRestartDeviceConfirm() {
+    $('#btn_ok_comfirm').prop("onclick", null).off("click");
+    $('#btn_ok_comfirm').click(function () {
+        restartDevice();
+        selectedDeviceIdList = [];
+        updateSelectAllChecked();
+    });
+    $('#btn_ok_comfirm').html("Restart");
+    $('#comfirm_title').html("Xác nhận khởi động lại");
+    $('#confirm_content').html("Bạn chắc chắn muốn khởi động lại " + selectedDeviceIdList.length + " thiết bị ?");
+    $('#confirm_popup').modal('show');
+}
+
 function restartDevice() {
+    $('#confirm_popup').modal('hide');
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/restart_device",
+        url: "/api/restart_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -630,7 +675,7 @@ function restartDevice() {
 function turnOnMultiDevice() {
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/turnon_device",
+        url: "/api/turnon_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -669,7 +714,7 @@ function turnonDevice(deviceID) {
     deviceIdList.push(deviceID);
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/turnon_device",
+        url: "/api/turnon_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -703,49 +748,37 @@ function turnonDevice(deviceID) {
     });
 }
 
-function turnoffMultiDevice() {
-    $.ajax({
-        type: "POST",
-        url: "http://localhost:8082/api/turnoff_device",
-        cache: false,
-        crossDomain: true,
-        processData: true,
-        dataType: "json",
-        contentType: "application/json",
-        data: JSON.stringify(
-            {
-                "deviceIdList": selectedDeviceIdList
-            }),
-        success: function (deviceListOffResp) {
-            if (deviceListOffResp.length != 0) {
-                for (var i = 0; i < deviceListOffResp.length; i++) {
-                    var deviceOff = deviceListOffResp[i];
-                    if (deviceOff.error == '') {
-                        if (dataOriginal.deviceStatistics.length != 0) {
-                            for (var j = 0; j < dataOriginal.deviceStatistics.length; j++) {
-                                if (dataOriginal.deviceStatistics[j].deviceId == deviceOff.data.deviceId) {
-                                    dataOriginal.deviceStatistics[j].isActive = false;
-                                }
-                            }
-                        } else {
-                            genToastError("Data null");
-                        }
-                    } else {
-                        genToastError(deviceOff.error);
-                    }
-                }
-            }
-            showTab($("#device_status").text());
-        }
+function showTurnoffMultiDeviceConfirm() {
+    $('#btn_ok_comfirm').prop("onclick", null).off("click");
+    $('#btn_ok_comfirm').click(function () {
+        turnOffDecive(selectedDeviceIdList);
+        selectedDeviceIdList = [];
+        updateSelectAllChecked();
     });
+    $('#btn_ok_comfirm').html("Tắt");
+    $('#comfirm_title').html("Xác nhận tắt");
+    $('#confirm_content').html("Bạn chắc chắn muốn tắt " + selectedDeviceIdList.length + " thiết bị ?");
+    $('#confirm_popup').modal('show');
 }
 
-function turnoffDevice(deviceID) {
-    var deviceIdList = [];
-    deviceIdList.push(deviceID);
+function showTurnoffSingleDeviceConfirm(deviceID) {
+    $('#btn_ok_comfirm').prop("onclick", null).off("click");
+    $('#btn_ok_comfirm').click(function () {
+        let deviceIdList = [];
+        deviceIdList.push(deviceID);
+        turnOffDecive(deviceIdList);
+    });
+    $('#btn_ok_comfirm').html("Tắt");
+    $('#comfirm_title').html("Xác nhận tắt");
+    $('#confirm_content').html("Bạn chắc chắn muốn tắt thiết bị ?");
+    $('#confirm_popup').modal('show');
+}
+
+function turnOffDecive(deviceIdList) {
+    $('#confirm_popup').modal('hide');
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/turnoff_device",
+        url: "/api/turnoff_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -779,10 +812,6 @@ function turnoffDevice(deviceID) {
     });
 }
 
-// chạy kịch bản 1 thiết bị
-var selectedDeviceId = '';
-var scriptMap = new Map();
-
 function showModalRunOneScript(deviceID) {
     $('#run_script_one_device_title').html(deviceID);
     $('#one_script_select').find('option')
@@ -800,7 +829,7 @@ function showModalRunOneScript(deviceID) {
     selectedDeviceId = deviceID;
     $.ajax({
         type: "GET",
-        url: "http://localhost:8082/api/get_all_script",
+        url: "/api/get_all_script",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -825,7 +854,7 @@ function getAccountByScriptForOneDevice() {
 
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/find_account",
+        url: "/api/find_account",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -872,11 +901,6 @@ function runOneScript() {
     runScript(scriptRequestList)
 }
 
-
-// chạy kịch bản cho nhiều thiết bị cùng lúc
-var deviceIdToAccountMap = new Map();
-var accountList = [];
-
 function showModalMultiScript() {
     $('#multi_script_select').find('option').remove().end().append('<option disabled selected>Chọn kịch bản</option>');
     $("#run_script_multi_device").modal('show');
@@ -889,7 +913,7 @@ function showModalMultiScript() {
     clearMatchDeviceWithAccount();
     $.ajax({
         type: "GET",
-        url: "http://localhost:8082/api/get_all_script",
+        url: "/api/get_all_script",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -911,7 +935,7 @@ function getAccountByScriptForMultiDevice() {
     clearMatchDeviceWithAccount();
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/find_account",
+        url: "/api/find_account",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -1057,7 +1081,7 @@ function showDeviceToAccountMap() {
     $("#device_account_match_body").html(tableContent);
 }
 
-function removeAccount(deviceId){
+function removeAccount(deviceId) {
     deviceIdToAccountMap.set(deviceId, null);
     showDeviceToAccountMap();
 }
@@ -1068,7 +1092,7 @@ function runScriptForMultiDivice() {
     } else {
         $('#run_script_multi_device').modal('hide');
         let scriptRequestList = [];
-        let selectedScript =  parseInt($("#multi_script_select").val());
+        let selectedScript = parseInt($("#multi_script_select").val());
         deviceIdToAccountMap.forEach((value, key) => {
             scriptRequestList.push({
                 "accountId": Number(value.id),
@@ -1080,10 +1104,10 @@ function runScriptForMultiDivice() {
     }
 }
 
-function runScript(scriptRequestList){
+function runScript(scriptRequestList) {
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/run_script_device",
+        url: "/api/run_script_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -1120,7 +1144,7 @@ function viewLog(deviceID) {
     $('#log_device_title').html(deviceID);
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/device_log",
+        url: "/api/device_log",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -1199,10 +1223,23 @@ function genActive(isActive) {
     return content;
 }
 
+function showDeleteDeviceConfirm() {
+    $('#btn_ok_comfirm').prop("onclick", null).off("click");
+    $('#btn_ok_comfirm').click(function () {
+        deleteDevice()
+    });
+    $('#btn_ok_comfirm').html("Xóa");
+    $('#comfirm_title').html("Xác nhận xóa thiết bị");
+    $('#confirm_content').html("Bạn chắc chắn muốn xóa " + selectedDeviceIdList.length + " thiết bị ?");
+    $('#confirm_popup').modal('show');
+}
+
 function deleteDevice() {
+    $('#confirm_popup').modal('hide');
+    genToastInfo("Đang xóa " + selectedDeviceIdList.length +" thiết bị");
     $.ajax({
         type: "POST",
-        url: "http://localhost:8082/api/delete_device",
+        url: "/api/delete_device",
         cache: false,
         crossDomain: true,
         processData: true,
@@ -1216,11 +1253,13 @@ function deleteDevice() {
         }),
         success: function (data) {
             disableAction();
-            genToastSuccess(data.message);
+            genToastInfo(data.message);
             dataOriginal = data;
             filter(dataOriginal);
         }
     });
+    selectedDeviceIdList = [];
+    updateSelectAllChecked();
 }
 
 function timeConverter(UNIX_timestamp) {
@@ -1245,26 +1284,40 @@ function genToastSuccess(message) {
         allowToastClose: true,
         hideAfter: 3000,
         stack: 5,
-        position: 'bottom-left',
+        position: 'bottom-right',
         textAlign: 'left',
-        loader: true,
-        loaderBg: '#00f920',
+        loader: false,  // Whether to show loader or not. True by default
+        loaderBg: '#ffffff',  // Background color of the toast loader
+    });
+}
+
+function genToastInfo(message) {
+    $.toast({
+        text: message,
+        icon: 'info',
+        showHideTransition: 'plain',
+        allowToastClose: true,
+        hideAfter: 3000,
+        stack: 5,
+        position: 'bottom-right',
+        textAlign: 'left',
+        loader: false,  // Whether to show loader or not. True by default
+        loaderBg: '#ffffff',  // Background color of the toast loader
     });
 }
 
 function genToastError(message) {
     $.toast({
         text: message,
-        heading: 'Note', // Optional heading to be shown on the toast
         icon: 'error', // Type of toast icon
         showHideTransition: 'plain', // fade, slide or plain
         allowToastClose: true, // Boolean value true or false
         hideAfter: 3000, // false to make it sticky or number representing the miliseconds as time after which toast needs to be hidden
         stack: 5, // false if there should be only one toast at a time or a number representing the maximum number of toasts to be shown at a time
-        position: 'bottom-left', // bottom-left or bottom-right or bottom-center or top-left or top-right or top-center or mid-center or an object representing the left, right, top, bottom values
+        position: 'bottom-right', // bottom-left or bottom-right or bottom-center or top-left or top-right or top-center or mid-center or an object representing the left, right, top, bottom values
         textAlign: 'left',  // Text alignment i.e. left, right or center
-        loader: true,  // Whether to show loader or not. True by default
-        loaderBg: '#9EC600',  // Background color of the toast loader
+        loader: false,  // Whether to show loader or not. True by default
+        loaderBg: '#ffffff',  // Background color of the toast loader
     });
 }
 
