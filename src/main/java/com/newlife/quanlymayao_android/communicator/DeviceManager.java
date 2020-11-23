@@ -135,11 +135,11 @@ public class DeviceManager {
                 String cmd = Contract.NOX + " -clone:" + deviceStatus.device.noxId + " -quit";
                 CmdUtil.runCmdWithoutOutput(cmd);
                 deviceStatus.isActive = false;
-                deviceStatus.clear();
                 if (deviceStatus.account != null) {
                     deviceStatus.account.status = "free";
                     accountRepository.save(deviceStatus.account);
                 }
+                deviceStatus.clear();
                 saveDeviceStatusToDb();
                 return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
             } else {
@@ -294,11 +294,11 @@ public class DeviceManager {
                 CmdUtil.runCmdWithoutOutput(cmd);
                 deviceStatus.isActive = false;
                 deviceStatus.isStarting = true;
-                deviceStatus.clear();
                 if (deviceStatus.account != null) {
                     deviceStatus.account.status = "free";
                     accountRepository.save(deviceStatus.account);
                 }
+                deviceStatus.clear();
                 saveDeviceStatusToDb();
                 new Thread(() -> {
                     try {
