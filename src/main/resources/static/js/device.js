@@ -283,7 +283,7 @@ function showTable(dataTable) {
                         '<span class="ml-2">' + row.app + '</span></td>\n' +
                         '<td>' + row.account + '</td>\n' +
                         '<td>' + row.script + '</td>\n' +
-                        '<td>' + genProgress(row.progress) + '</td>\n' +
+                        '<td>' + genProgress(row.progress, row.status) + '</td>\n' +
                         '<td>' + row.action + '</td>\n' +
                         '<td>' + genButtonActionDevice(row.script, row.account, row.status, row.deviceId, row.isActive, row.isStarting) +
                         '</tr>';
@@ -1207,7 +1207,7 @@ function viewLog(deviceID) {
                                     '<td>' + row.account + '</td>\n' +
                                     '<td>' + row.script + '</td>\n' +
                                     '<td>' + row.simId + '</td>\n' +
-                                    '<td>' + genProgress(row.progress) + '</td>\n' +
+                                    '<td>' + genProgress(row.progress, row.status) + '</td>\n' +
                                     '<td>' + row.action + '</td>\n' +
                                     '<td>' + row.info + '</td>\n' +
                                     '</tr>';
