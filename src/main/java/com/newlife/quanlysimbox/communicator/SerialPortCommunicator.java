@@ -320,14 +320,16 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                     String type = splits[1].replaceAll("\"", "");
                     String sdt = splits[2].replaceAll("\"", "");
                     Date time = TimeUtil.parseMgsTime((splits[4] + " " + splits[5]).replaceAll("\"", ""));
-                    String hexString = "";
+                    String content = "";
                     index += 1;
                     while (index < messageLineList.size() && !messageLineList.get(index).startsWith("+CMGL")) {
                         String nextLine = messageLineList.get(index);
-                        hexString += nextLine;
+                        content += nextLine;
                         index += 1;
                     }
-                    String content = StringUtil.hexStringToText(hexString);
+                    if(!content.contains(" ")) {
+                        content = StringUtil.hexStringToText(content.trim()).replaceAll("[^a-zA-Z0-9' ']", "");
+                    }
                     System.out.println(id + "," + type + "," + sdt + "," + time + "," + content);
                     tempList.add(new Messages(id, type, sdt.toUpperCase(), time, content, simInfo.simId));
                 } catch (Exception e) {
