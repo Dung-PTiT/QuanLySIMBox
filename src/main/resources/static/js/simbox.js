@@ -86,7 +86,7 @@ function reloadSIM(commName) {
 function genBtnConnect(status, commName) {
     if (status == true) {
         var btnConnect = '<button id="btn_connect" class="btn-action" data-toggle="tooltip"\n' +
-            'title="Đang kết nối" onclick="connectSIM(\'' + commName + '\')" disabled>\n' +
+            'title="Kết nối" onclick="connectSIM(\'' + commName + '\')" disabled>\n' +
             '<i class="fas fa-link v"></i>\n';
         return btnConnect;
     } else {
@@ -106,7 +106,7 @@ function genBtnDisconnect(status, commName) {
         return btnDisconnect;
     } else {
         var btnDisconnect = '<button id="btn_connect" class="btn-action" data-toggle="tooltip"\n' +
-            'title="Kết nối" onclick="disconnectSIM(\'' + commName + '\')" disabled>\n' +
+            'title="Ngắt kết nối" onclick="disconnectSIM(\'' + commName + '\')" disabled>\n' +
             '<i class="fas fa-unlink text-grey"></i>\n';
         return btnDisconnect;
     }
@@ -427,7 +427,7 @@ function showTableFilter(data) {
             '<td id="hanhDong"><div>\n' + genBtnConnect(simInfo.isConnected, String(simInfo.commName)) +
             genBtnDisconnect(simInfo.isConnected, String(simInfo.commName)) +
             '<button id="btn_reload" class="btn-action" data-toggle="tooltip"\n' +
-            'title="Đồng bộ" onclick="reloadSIM(\'' + simInfo.commName + '\')">\n' +
+            'title="Kết nối lại" onclick="reloadSIM(\'' + simInfo.commName + '\')">\n' +
             '<i class="fas fa-sync text-success"></i>\n' +
             '</button>\n' +
             '</div>\n' +
