@@ -255,6 +255,7 @@ function timKiem() {
                     check_money_date(simInfo, simObject, resultList);
                 }
             }
+            // showTableFilter(resultList);
             if (resultList.length != 0) {
                 showTableFilter(resultList);
             } else {

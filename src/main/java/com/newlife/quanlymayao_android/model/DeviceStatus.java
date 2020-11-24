@@ -2,6 +2,7 @@ package com.newlife.quanlymayao_android.model;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "device_status")

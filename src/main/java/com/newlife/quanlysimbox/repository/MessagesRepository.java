@@ -15,5 +15,5 @@ public interface MessagesRepository extends JpaRepository<Messages, Long> {
 
     @Modifying
     @Query("delete from Messages m where m.simId=:simId")
-    boolean deleteAllMessageOfSim(@Param("simId") String simId);
+    void deleteAllMessageOfSim(@Param("simId") String simId);
 }

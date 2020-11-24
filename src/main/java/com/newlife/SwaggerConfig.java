@@ -1,4 +1,4 @@
-package com.newlife.quanlymayao_android.util;
+package com.newlife;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

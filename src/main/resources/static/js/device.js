@@ -257,7 +257,7 @@ function showTable(dataTable) {
                     '<td></td>\n' +
                     '<td></td>\n' +
                     '<td></td>\n' +
-                    '<td>' + genButtonActionDevice(row.script, row.account, row.status, row.deviceId, row.isActive, row.isStarting) +
+                    '<td>' + genButtonActionDevice(row.script, row.account, row.status, row.deviceId, row.isActive, row.isStarting, row.isStopping) +
                     '</tr>';
             } else if (row.isActive == true) {
                 if (row.script == "" || row.account == "") {
@@ -271,7 +271,7 @@ function showTable(dataTable) {
                         '<td></td>\n' +
                         '<td></td>\n' +
                         '<td></td>\n' +
-                        '<td>' + genButtonActionDevice(row.script, row.account, row.status, row.deviceId, row.isActive, row.isStarting) +
+                        '<td>' + genButtonActionDevice(row.script, row.account, row.status, row.deviceId, row.isActive, row.isStarting, row.isStopping) +
                         '</tr>';
                 } else if (row.script != "" && row.account != "") {
                     contentString = contentString +
@@ -285,7 +285,7 @@ function showTable(dataTable) {
                         '<td>' + row.script + '</td>\n' +
                         '<td>' + genProgress(row.progress) + '</td>\n' +
                         '<td>' + row.action + '</td>\n' +
-                        '<td>' + genButtonActionDevice(row.script, row.account, row.status, row.deviceId, row.isActive, row.isStarting) +
+                        '<td>' + genButtonActionDevice(row.script, row.account, row.status, row.deviceId, row.isActive, row.isStarting, row.isStopping) +
                         '</tr>';
                 }
             }
@@ -330,15 +330,15 @@ function genStatus(statusValue) {
     if (statusValue == "") {
         status = '';
     } else if (statusValue == "free") {
-        status = '<span class="badge bg-blue w-50">Free</span>';
+        status = '<span class="badge bg-blue" style="min-width: 48px">Free</span>';
     } else if (statusValue == "running") {
-        status = '<span class="badge bg-purple w-50">Running</span>';
+        status = '<span class="badge bg-purple" style="min-width: 48px">Running</span>';
     } else if (statusValue == "complete") {
-        status = '<span class="badge bg-success w-50">Complete</span>';
+        status = '<span class="badge bg-success" style="min-width: 48px">Complete</span>';
     } else if (statusValue == "fail") {
-        status = '<span class="badge bg-danger w-50">Fail</span>';
+        status = '<span class="badge bg-danger" style="min-width: 48px">Fail</span>';
     } else if (statusValue == "stopped") {
-        status = '<span class="badge bg-warning w-50">Stopped</span>';
+        status = '<span class="badge bg-warning" style="min-width: 48px">Stopped</span>';
     }
     return status;
 }
@@ -370,7 +370,7 @@ function genProgress(progressValue) {
     return progress;
 }
 
-function genButtonActionDevice(script, account, status, deviceId, isActived, isStaring) {
+function genButtonActionDevice(script, account, status, deviceId, isActived, isStaring, isStopping) {
     let button = '';
     if (isActived == false) {
         if (isStaring == true) {
@@ -1142,6 +1142,7 @@ function runScript(scriptRequestList) {
 
 function viewLog(deviceID) {
     $('#log_device_title').html(deviceID);
+    $('#viewLog_popup').modal('show');
     $.ajax({
         type: "POST",
         url: "/api/device_log",
@@ -1153,7 +1154,6 @@ function viewLog(deviceID) {
             "deviceId": deviceID
         },
         success: function (data) {
-            $('#viewLog_popup').modal('show');
             var content = "";
             if (data.success == true) {
                 if (data.data != null) {
