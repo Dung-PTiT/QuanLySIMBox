@@ -257,7 +257,7 @@ function showTable(dataTable) {
                     '<td></td>\n' +
                     '<td></td>\n' +
                     '<td></td>\n' +
-                    '<td>' + genButtonActionDevice(row.script, row.account, row.status, row.deviceId, row.isActive, row.isStarting, row.isStopping) +
+                    '<td>' + genButtonActionDevice(row.script, row.account, row.status, row.deviceId, row.isActive, row.isStarting) +
                     '</tr>';
             } else if (row.isActive == true) {
                 if (row.script == "" || row.account == "") {
@@ -271,7 +271,7 @@ function showTable(dataTable) {
                         '<td></td>\n' +
                         '<td></td>\n' +
                         '<td></td>\n' +
-                        '<td>' + genButtonActionDevice(row.script, row.account, row.status, row.deviceId, row.isActive, row.isStarting, row.isStopping) +
+                        '<td>' + genButtonActionDevice(row.script, row.account, row.status, row.deviceId, row.isActive, row.isStarting) +
                         '</tr>';
                 } else if (row.script != "" && row.account != "") {
                     contentString = contentString +
@@ -285,7 +285,7 @@ function showTable(dataTable) {
                         '<td>' + row.script + '</td>\n' +
                         '<td>' + genProgress(row.progress) + '</td>\n' +
                         '<td>' + row.action + '</td>\n' +
-                        '<td>' + genButtonActionDevice(row.script, row.account, row.status, row.deviceId, row.isActive, row.isStarting, row.isStopping) +
+                        '<td>' + genButtonActionDevice(row.script, row.account, row.status, row.deviceId, row.isActive, row.isStarting) +
                         '</tr>';
                 }
             }
@@ -343,8 +343,16 @@ function genStatus(statusValue) {
     return status;
 }
 
-function genProgress(progressValue) {
+function genProgress(progressValue, status) {
     let progress = '';
+    let backgroundColor = "";
+    if(status == "fail"){
+        backgroundColor = "bg-ranger";
+    } else if(progressValue==100){
+        backgroundColor = "bg-success";
+    } else {
+        backgroundColor = "bg-blue";
+    }
     if (progressValue == 0) {
         progress =
             '   <div class="progress rounded-round" style=" height:0.8rem">\n' +
@@ -355,14 +363,14 @@ function genProgress(progressValue) {
     } else if (progressValue < 100) {
         progress =
             '   <div class="progress rounded-round" style=" height:0.8rem">\n' +
-            '       <div class="progress-bar bg-blue" style="width: ' + progressValue + '%;">\n' +
+            '       <div class="progress-bar ' + backgroundColor  + '" style="width: ' + progressValue + '%;">\n' +
             '               <span>' + progressValue + '%</span>\n' +
             '       </div>\n' +
             '   </div>';
     } else if (progressValue == 100) {
         progress =
             '   <div class="progress rounded-round" style=" height:0.8rem">\n' +
-            '       <div class="progress-bar bg-success" style="width: ' + progressValue + '%;">\n' +
+            '       <div class="progress-bar ' + backgroundColor  + '" style="width: ' + progressValue + '%;">\n' +
             '               <span>' + progressValue + '%</span>\n' +
             '       </div>\n' +
             '   </div>';
@@ -370,7 +378,7 @@ function genProgress(progressValue) {
     return progress;
 }
 
-function genButtonActionDevice(script, account, status, deviceId, isActived, isStaring, isStopping) {
+function genButtonActionDevice(script, account, status, deviceId, isActived, isStaring) {
     let button = '';
     if (isActived == false) {
         if (isStaring == true) {
