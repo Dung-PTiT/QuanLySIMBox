@@ -67,8 +67,8 @@ function onSelectDevice(deviceId) {
     }
 }
 
-function updateSelectAllChecked(){
-    if(selectedDeviceIdList.length == dataOriginal.deviceStatistics.length){
+function updateSelectAllChecked() {
+    if (selectedDeviceIdList.length == dataOriginal.deviceStatistics.length) {
         $("#select_all").prop("checked", true);
     } else {
         $("#select_all").prop("checked", false);
@@ -244,11 +244,14 @@ function showTable(dataTable) {
     $("#device_table_body").empty();
     if (dataTable.length != 0) {
         var contentString = "";
+        dataTable.sort(function (a, b) {
+            return a.index - b.index;
+        });
         for (var i = 0; i < dataTable.length; i++) {
             var row = dataTable[i];
             if (row.isActive == false) {
                 contentString = contentString +
-                    '<tr>' +
+                    '<tr style="height: 53px">' +
                     '<td>' + genCheckox(row.index, row.deviceId) + '</td>\n' +
                     '<td>' + row.deviceId + '</td>\n' +
                     '<td></td>\n' +
@@ -262,7 +265,7 @@ function showTable(dataTable) {
             } else if (row.isActive == true) {
                 if (row.script == "" || row.account == "") {
                     contentString = contentString +
-                        '<tr>' +
+                        '<tr style="height: 53px">' +
                         '<td>' + genCheckox(row.index, row.deviceId) + '</td>\n' +
                         '<td>' + row.deviceId + '</td>\n' +
                         '<td>' + genStatus(row.status) + '</td>\n' +
@@ -275,7 +278,7 @@ function showTable(dataTable) {
                         '</tr>';
                 } else if (row.script != "" && row.account != "") {
                     contentString = contentString +
-                        '<tr>' +
+                        '<tr style="height: 53px">' +
                         '<td>' + genCheckox(row.index, row.deviceId) + '</td>\n' +
                         '<td>' + row.deviceId + '</td>\n' +
                         '<td>' + genStatus(row.status) + '</td>\n' +
@@ -283,8 +286,8 @@ function showTable(dataTable) {
                         '<span class="ml-2">' + row.app + '</span></td>\n' +
                         '<td>' + row.account + '</td>\n' +
                         '<td>' + row.script + '</td>\n' +
-                        '<td>' + genProgress(row.progress, row.status) + '</td>\n' +
-                        '<td>' + row.action + '</td>\n' +
+                        '<td class="p-2">' + genProgress(row.progress, row.action, row.status) + '</td>\n' +
+                        '<td>' + genMessage(row.message, row.code) + '</td>\n' +
                         '<td>' + genButtonActionDevice(row.script, row.account, row.status, row.deviceId, row.isActive, row.isStarting) +
                         '</tr>';
                 }
@@ -343,34 +346,37 @@ function genStatus(statusValue) {
     return status;
 }
 
-function genProgress(progressValue, status) {
-    let progress = '';
+function genProgress(progressValue, action, status) {
     let backgroundColor = "";
-    if(status == "fail"){
-        backgroundColor = "bg-ranger";
-    } else if(progressValue==100){
+    if (status == "fail") {
+        backgroundColor = "bg-danger";
+    } else if (progressValue == 100) {
         backgroundColor = "bg-success";
+    } else if (status == "stopped") {
+        backgroundColor = "bg-warning";
     } else {
-        backgroundColor = "bg-blue";
+        backgroundColor = "bg-purple";
     }
+    let progress = "<p class=\"p-0 mb-1\" style=\"font-size: 12px;\">" + action + "</p>";
+
     if (progressValue == 0) {
-        progress =
+        progress = progress +
             '   <div class="progress rounded-round" style=" height:0.8rem">\n' +
             '       <div class="progress-bar" style="width: ' + 100 + '%; background-color: #f2f2f2">\n' +
             '               <span class="text-grey">' + progressValue + '%</span>\n' +
             '       </div>\n' +
             '   </div>';
     } else if (progressValue < 100) {
-        progress =
+        progress = progress +
             '   <div class="progress rounded-round" style=" height:0.8rem">\n' +
-            '       <div class="progress-bar ' + backgroundColor  + '" style="width: ' + progressValue + '%;">\n' +
+            '       <div class="progress-bar ' + backgroundColor + '" style="width: ' + progressValue + '%;">\n' +
             '               <span>' + progressValue + '%</span>\n' +
             '       </div>\n' +
             '   </div>';
     } else if (progressValue == 100) {
-        progress =
+        progress = progress +
             '   <div class="progress rounded-round" style=" height:0.8rem">\n' +
-            '       <div class="progress-bar ' + backgroundColor  + '" style="width: ' + progressValue + '%;">\n' +
+            '       <div class="progress-bar ' + backgroundColor + '" style="width: ' + progressValue + '%;">\n' +
             '               <span>' + progressValue + '%</span>\n' +
             '       </div>\n' +
             '   </div>';
@@ -1207,8 +1213,8 @@ function viewLog(deviceID) {
                                     '<td>' + row.account + '</td>\n' +
                                     '<td>' + row.script + '</td>\n' +
                                     '<td>' + row.simId + '</td>\n' +
-                                    '<td>' + genProgress(row.progress, row.status) + '</td>\n' +
-                                    '<td>' + row.action + '</td>\n' +
+                                    '<td>' + genProgress(row.progress, row.acction, row.status) + '</td>\n' +
+                                    '<td>' + genMessage(row.message, row.code) + '</td>\n' +
                                     '<td>' + row.info + '</td>\n' +
                                     '</tr>';
                             }
@@ -1219,6 +1225,15 @@ function viewLog(deviceID) {
             $('#log_table_body').html(content);
         }
     });
+}
+
+function genMessage(message, code) {
+    if (message != '' && code != '') {
+        return "<p class=\"text-primary font-weight-semibold m-0\" style=\"text-align: center; cursor: pointer\" title='" + message + "'>" + code + "</p>"
+    } else if (message != '' && code == '') {
+        return "<p class=\"text-danger font-weight-semibold m-0\" style=\"text-align: center; cursor: pointer\" title='" + message + "'>No code</p>"
+    }
+    return "";
 }
 
 function genActive(isActive) {
@@ -1244,7 +1259,7 @@ function showDeleteDeviceConfirm() {
 
 function deleteDevice() {
     $('#confirm_popup').modal('hide');
-    genToastInfo("Đang xóa " + selectedDeviceIdList.length +" thiết bị");
+    genToastInfo("Đang xóa " + selectedDeviceIdList.length + " thiết bị");
     $.ajax({
         type: "POST",
         url: "/api/delete_device",

@@ -16,6 +16,8 @@ public class DeviceStatus implements Serializable, Cloneable {
     public String info = "";
     public String action = "";
     public int progress = 0;
+    public String message = "";
+    public String code = "";
 
     @Column(name = "is_active")
     public boolean isActive;
@@ -57,7 +59,9 @@ public class DeviceStatus implements Serializable, Cloneable {
                 info,
                 script == null ? "" : script.name,
                 account == null ? "" : account.simId,
-                isStarting
+                isStarting,
+                message,
+                code
         );
     }
 
@@ -66,6 +70,8 @@ public class DeviceStatus implements Serializable, Cloneable {
         info = "";
         action = "";
         info = "";
+        message = "";
+        code = "";
         isStarting = false;
         progress = 0;
         account = null;

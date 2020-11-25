@@ -150,7 +150,6 @@ public class DeviceManager {
                 }
                 justStop = true;
                 deviceStatus.isActive = false;
-                deviceStatus.info = "";
                 deviceStatus.clear();
                 saveDeviceStatusToDb();
                 return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
@@ -255,6 +254,8 @@ public class DeviceManager {
             deviceStatus.account = account;
             deviceStatus.progress = 0;
             deviceStatus.info = "";
+            deviceStatus.message = "";
+            deviceStatus.code = "";
             account.status = "using";
             saveDeviceStatusToDb();
             accountRepository.save(account);
@@ -264,13 +265,15 @@ public class DeviceManager {
                     BufferedReader r = new BufferedReader(new InputStreamReader(process.getInputStream()));
                     String line;
                     while (true) {
+                        boolean hasChange = false;
                         line = r.readLine();
                         if (line == null) {
                             break;
                         }
                         System.out.println(line);
                         if (line.startsWith("Action:")) {
-                            deviceStatus.action = line.substring(7);
+                            hasChange = true;
+                            deviceStatus.action = line.substring(7).trim();
                         }
                         if (line.startsWith("Progress:")) {
                             try {
@@ -279,15 +282,26 @@ public class DeviceManager {
                                     deviceStatus.status = "complete";
                                     deviceStatus.account.status = "free";
                                     accountRepository.save(account);
+                                    hasChange = true;
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
+                        if(line.startsWith("Message:")){
+                            deviceStatus.message = line.substring(8).trim();
+                            hasChange = true;
+                        }
+                        if(line.startsWith("Code:")){
+                            deviceStatus.code = line.substring(5).trim();
+                            hasChange = true;
+                        }
                         if (line.startsWith("Error:")) {
                             deviceStatus.status = "fail";
-                            deviceStatus.info = line.substring(6);
+                            deviceStatus.info = line.substring(6).trim();
+                            hasChange = true;
                         }
+                        if(hasChange) saveDeviceStatusToDb();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -305,6 +319,8 @@ public class DeviceManager {
         DeviceStatus deviceStatus = getDeviceStatus(deviceId);
         if (deviceStatus != null) {
             deviceStatus.info = "";
+            deviceStatus.message = "";
+            deviceStatus.code = "";
             if (deviceStatus.isActive) {
                 String cmd = Contract.NOX + " -clone:" + deviceStatus.device.noxId + " -quit";
                 CmdUtil.runCmdWithoutOutput(cmd);
