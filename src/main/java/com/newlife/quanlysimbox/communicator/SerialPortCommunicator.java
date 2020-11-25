@@ -53,6 +53,9 @@ public class SerialPortCommunicator implements SerialPortEventListener {
     public String outString = "";
     public ArrayList<String> messageLineList = new ArrayList<>();
     public SimInfo simInfo = new SimInfo();
+    public int countReadAllMessageError = 0;
+    public int MaxReadAllMessageError = 3;
+
 
     public SerialPortCommunicator(CommPortIdentifierManager manager, CommPortIdentifier commPortIdentifier) {
         this.commPortIdentifier = commPortIdentifier;
@@ -144,7 +147,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
 
         System.out.println(outString);
         if (outString.equals("^SYSSTART")) {
-            isStop = true;
+//            isStop = true;
             lastCmd = "";
             status = SerialPortStatus.SLEEPING;
             new Thread(() -> {
@@ -168,6 +171,13 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                 lastCmd = "";
                 messageLineList.clear();
                 System.out.println("error read all messages");
+                if(countReadAllMessageError < MaxReadAllMessageError){
+                    startUpdateAllMessage();
+                    countReadAllMessageError += 1;
+                } else {
+                    countReadAllMessageError = 0;
+                    isFinishReadMsg = true;
+                }
             } else if (outString.equals("OK")) {
                 lastCmd = "";
                 parseMessages();
@@ -175,7 +185,6 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                 messageLineList.add(outString);
                 System.out.println(outString);
             }
-            isFinishReadMsg = true;
         } else if (lastCmd.equals(Contract.SIGNAL)) {
             if (outString.startsWith("+CSQ")) {
                 try {
@@ -293,6 +302,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
         new Thread(() -> {
             try {
                 isFinishReadMsg = false;
+                messageLineList.clear();
                 while (status != SerialPortStatus.SLEEPING) {
                     Thread.sleep(200);
                 }
@@ -344,6 +354,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
         simInfo.time = TimeUtil.getTime();
         manager.saveMessages(simInfo.simId, simInfo.messagesList);
         System.out.println("size: " + simInfo.messagesList.size());
+        isFinishReadMsg = true;
     }
 
     public void updateSimAccount() {
