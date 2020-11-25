@@ -299,6 +299,10 @@ public class DeviceManager {
                         if (line.startsWith("Error:")) {
                             deviceStatus.status = "fail";
                             deviceStatus.info = line.substring(6).trim();
+                            if(deviceStatus.account!=null){
+                                deviceStatus.account.status = "free";
+                                accountRepository.save(deviceStatus.account);
+                            }
                             hasChange = true;
                         }
                         if(hasChange) saveDeviceStatusToDb();

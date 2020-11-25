@@ -1213,7 +1213,7 @@ function viewLog(deviceID) {
                                     '<td>' + row.account + '</td>\n' +
                                     '<td>' + row.script + '</td>\n' +
                                     '<td>' + row.simId + '</td>\n' +
-                                    '<td>' + genProgress(row.progress, row.acction, row.status) + '</td>\n' +
+                                    '<td>' + genProgress(row.progress, row.action, row.status) + '</td>\n' +
                                     '<td>' + genMessage(row.message, row.code) + '</td>\n' +
                                     '<td>' + row.info + '</td>\n' +
                                     '</tr>';
