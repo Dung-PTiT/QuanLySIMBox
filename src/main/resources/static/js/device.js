@@ -287,7 +287,7 @@ function showTable(dataTable) {
                         '<td>' + row.account + '</td>\n' +
                         '<td>' + row.script + '</td>\n' +
                         '<td class="p-2">' + genProgress(row.progress, row.action, row.status) + '</td>\n' +
-                        '<td>' + genMessage(row.message, row.code) + '</td>\n' +
+                        '<td>' + genMessage(row.message, row.code, row.status) + '</td>\n' +
                         '<td>' + genButtonActionDevice(row.script, row.account, row.status, row.deviceId, row.isActive, row.isStarting) +
                         '</tr>';
                 }
@@ -1214,7 +1214,7 @@ function viewLog(deviceID) {
                                     '<td>' + row.script + '</td>\n' +
                                     '<td>' + row.simId + '</td>\n' +
                                     '<td>' + genProgress(row.progress, row.acction, row.status) + '</td>\n' +
-                                    '<td>' + genMessage(row.message, row.code) + '</td>\n' +
+                                    '<td>' + genMessage(row.message, row.code, row.status) + '</td>\n' +
                                     '<td>' + row.info + '</td>\n' +
                                     '</tr>';
                             }
@@ -1227,8 +1227,10 @@ function viewLog(deviceID) {
     });
 }
 
-function genMessage(message, code) {
-    if (message != '' && code != '') {
+function genMessage(message, code, status) {
+    if(status == "complete" && message == ""){
+        return "<p class=\"text-danger font-weight-semibold m-0\" style=\"text-align: center; cursor: pointer\">No message</p>";
+    } else if (message != '' && code != '') {
         return "<p class=\"text-primary font-weight-semibold m-0\" style=\"text-align: center; cursor: pointer\" title='" + message + "'>" + code + "</p>"
     } else if (message != '' && code == '') {
         return "<p class=\"text-danger font-weight-semibold m-0\" style=\"text-align: center; cursor: pointer\" title='" + message + "'>No code</p>"

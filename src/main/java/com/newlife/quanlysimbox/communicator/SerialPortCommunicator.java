@@ -196,7 +196,6 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                status = SerialPortStatus.SLEEPING;
             }
         } else if (lastCmd.equals(Contract.SIM_ID) && !outString.equals("OK")) {
             if (outString.equals("ERROR")) {
@@ -249,12 +248,12 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                     if (simInfo.messagesList == null) {
                         startUpdateAllMessage();
                     }
-                    while (!isFinishReadMsg) {
-                        Thread.sleep(200);
-                    }
-
                     status = SerialPortStatus.SLEEPING;
                     Thread.sleep(SLEEP_TIME);
+
+                    while (!isFinishReadMsg ) {
+                        Thread.sleep(200);
+                    }
 
                     for (int i = 0; i < READ_SIGNAL_TIME; i++) {
                         if (!isStop) {
@@ -264,7 +263,9 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                             if (!isStop) {
                                 status = SerialPortStatus.READING;
                                 runCmd(Contract.SIGNAL);
-                                Thread.sleep(SLEEP_TIME);
+                                Thread.sleep(SLEEP_TIME/2);
+                                status = SerialPortStatus.SLEEPING;
+                                Thread.sleep(SLEEP_TIME/2);
                             }
                         }
                     }
