@@ -23,6 +23,7 @@ public class CommPortIdentifierManager {
     public ArrayList<SerialPortCommunicator> commPortList = findAllCommPort();
 
     public void connectToSimbox() {
+        System.out.println("size: " + commPortList.size());
         commPortList.forEach(comm -> {
             if (comm.connect()) {
                 if (comm.initIOStream()) {

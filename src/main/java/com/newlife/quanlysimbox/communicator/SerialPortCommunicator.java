@@ -167,6 +167,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
         } else if (outString.startsWith("+CMTI")) {
             updateMessageList(outString);
         } else if (lastCmd.equals(Contract.MESSAGES_ALL)) {
+            System.out.println("read all message: " + outString);
             if (outString.equals("ERROR")) {
                 lastCmd = "";
                 messageLineList.clear();
@@ -196,6 +197,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+//                status = SerialPortStatus.SLEEPING;
             }
         } else if (lastCmd.equals(Contract.SIM_ID) && !outString.equals("OK")) {
             if (outString.equals("ERROR")) {
@@ -248,14 +250,17 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                     if (simInfo.messagesList == null) {
                         startUpdateAllMessage();
                     }
+
                     status = SerialPortStatus.SLEEPING;
                     Thread.sleep(SLEEP_TIME);
 
-                    while (!isFinishReadMsg ) {
+                    while (!isFinishReadMsg) {
                         Thread.sleep(200);
                     }
 
+
                     for (int i = 0; i < READ_SIGNAL_TIME; i++) {
+                        System.out.println(i + " : " + status );
                         if (!isStop) {
                             while (!isFinishReadMsg) {
                                 Thread.sleep(200);
@@ -264,18 +269,23 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                                 status = SerialPortStatus.READING;
                                 runCmd(Contract.SIGNAL);
                                 Thread.sleep(SLEEP_TIME/2);
-                                status = SerialPortStatus.SLEEPING;
+                                status  = SerialPortStatus.SLEEPING;
                                 Thread.sleep(SLEEP_TIME/2);
                             }
                         }
                     }
                     if (simInfo.messagesList != null && simInfo.messagesList.size() > MGS_MAX_SIZE) {
-                        for (Messages messages : simInfo.messagesList) {
+                        for (int i=0; i<simInfo.messagesList.size()-2; i++) {
                             if (!isStop) {
+                                Messages messages = simInfo.messagesList.get(i);
                                 runCmd(Contract.DELETE_MGS + messages.mgsId);
+                                simInfo.messagesList.remove(messages);
                                 Thread.sleep(400);
                             }
                         }
+                        manager.messagesRepository.deleteAll();
+                        manager.messagesRepository.saveAll(simInfo.messagesList);
+
                     }
                     manager.saveSimInfo(simInfo);
                     if (!isStop) startTracking();
@@ -306,6 +316,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                 messageLineList.clear();
                 while (status != SerialPortStatus.SLEEPING) {
                     Thread.sleep(200);
+                    System.out.println("wait sleep to read all message");
                 }
                 System.out.println("start update all message");
                 runCmd(Contract.TEXT_MODE);
