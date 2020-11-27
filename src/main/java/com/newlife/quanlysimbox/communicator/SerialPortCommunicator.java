@@ -168,7 +168,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
             updateMessageList(outString);
         } else if (lastCmd.equals(Contract.MESSAGES_ALL)) {
             System.out.println("read all message: " + outString);
-            if (outString.equals("ERROR")) {
+            if (outString.trim().equalsIgnoreCase("ERROR")) {
                 lastCmd = "";
                 messageLineList.clear();
                 System.out.println("error read all messages");
@@ -252,9 +252,10 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                     }
 
                     status = SerialPortStatus.SLEEPING;
-                    Thread.sleep(SLEEP_TIME);
+                    Thread.sleep(SLEEP_TIME * 2);
 
                     while (!isFinishReadMsg) {
+                        System.out.println("wait finish read all message");
                         Thread.sleep(200);
                     }
 

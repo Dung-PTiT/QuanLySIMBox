@@ -41,6 +41,9 @@ public class DeviceStatistic {
             case "Skype":
                 this.appIcon = Contract.SKYPE_ICON;
                 break;
+            case "Gmail":
+                this.appIcon = Contract.GMAIL_ICON;
+                break;
 
         }
     }

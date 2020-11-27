@@ -282,7 +282,7 @@ function showTable(dataTable) {
                         '<td>' + genCheckox(row.index, row.deviceId) + '</td>\n' +
                         '<td>' + row.deviceId + '</td>\n' +
                         '<td>' + genStatus(row.status) + '</td>\n' +
-                        '<td><img src="' + row.appIcon + '" class="rounded-circle" width="20" height="20">\n' +
+                        '<td><img src="' + row.appIcon + '" width="20" height="20">\n' +
                         '<span class="ml-2">' + row.app + '</span></td>\n' +
                         '<td>' + row.account + '</td>\n' +
                         '<td>' + row.script + '</td>\n' +
@@ -1213,7 +1213,7 @@ function viewLog(deviceID) {
                                     '<td>' + row.account + '</td>\n' +
                                     '<td>' + row.script + '</td>\n' +
                                     '<td>' + row.simId + '</td>\n' +
-                                    '<td>' + genProgress(row.progress, row.acction, row.status) + '</td>\n' +
+                                    '<td>' + genProgress(row.progress, row.action, row.status) + '</td>\n' +
                                     '<td>' + genMessage(row.message, row.code, row.status) + '</td>\n' +
                                     '<td>' + row.info + '</td>\n' +
                                     '</tr>';
