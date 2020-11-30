@@ -130,7 +130,7 @@ function showMessageList(simID) {
             '<td>' + message.id + '</td>\n' +
             '<td>' + message.status + '</td>\n' +
             '<td>' + message.sdt + '</td>\n' +
-            '<td>' + message.time + '</td>\n' +
+            '<td>' + new Date(message.time).toLocaleString() + '</td>\n' +
             '<td class="text-left">' + message.content + '</td>' +
             '</tr>';
     }

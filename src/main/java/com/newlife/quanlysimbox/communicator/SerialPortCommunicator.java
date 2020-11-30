@@ -282,17 +282,20 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                     }
 
                     if (simInfo.messagesList != null && simInfo.messagesList.size() > MGS_MAX_SIZE) {
-                        for (int i=0; i<simInfo.messagesList.size()-2; i++) {
+                        int size = simInfo.messagesList.size();
+                        while(size > 10 ){
                             if (!isStop) {
-                                Messages messages = simInfo.messagesList.get(i);
+                                Messages messages = simInfo.messagesList.get(0);
                                 runCmd(Contract.DELETE_MGS + messages.mgsId);
-                                simInfo.messagesList.remove(messages);
+                                simInfo.messagesList.remove(0);
                                 Thread.sleep(400);
+                                size -= 1;
+                            } else {
+                                break;
                             }
                         }
                         manager.messagesRepository.deleteAll();
                         manager.messagesRepository.saveAll(simInfo.messagesList);
-
                     }
                     manager.saveSimInfo(simInfo);
                     if (!isStop) startTracking();

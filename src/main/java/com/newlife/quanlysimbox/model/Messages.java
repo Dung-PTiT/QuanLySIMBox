@@ -30,4 +30,8 @@ public class Messages implements Serializable {
         this.content = content;
         this.simId = simId;
     }
+
+    public Messages() {
+
+    }
 }

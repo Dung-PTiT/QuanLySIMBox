@@ -276,7 +276,7 @@ function showTable(dataTable) {
                         '<td></td>\n' +
                         '<td>' + genButtonActionDevice(row.script, row.account, row.status, row.deviceId, row.isActive, row.isStarting) +
                         '</tr>';
-                } else if (row.script != "" && row.account != "") {
+                } else if (row.script != "" && row.account != "") {x``
                     contentString = contentString +
                         '<tr style="height: 53px">' +
                         '<td>' + genCheckox(row.index, row.deviceId) + '</td>\n' +
@@ -1208,7 +1208,7 @@ function viewLog(deviceID) {
                                     '<td>' + timeConverter(row.time) + '</td>\n' +
                                     '<td>' + genActive(row.isActive) + '</td>\n' +
                                     '<td>' + genStatus(row.status) + '</td>\n' +
-                                    '<td><img src="' + row.appIcon + '" class="rounded-circle" width="20" height="20">\n' +
+                                    '<td><img src="' + row.appIcon + '" width="20" height="20">\n' +
                                     '<span class="ml-2">' + row.app + '</span></td>\n' +
                                     '<td>' + row.account + '</td>\n' +
                                     '<td>' + row.script + '</td>\n' +

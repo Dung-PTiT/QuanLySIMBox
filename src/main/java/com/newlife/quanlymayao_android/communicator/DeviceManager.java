@@ -415,6 +415,7 @@ public class DeviceManager {
                     e.printStackTrace();
                 }
             }
+            deviceReponsitory.delete(deviceStatus.device);
             if (deleteSuccess) {
                 try {
                     deviceStatus.time = System.currentTimeMillis();
