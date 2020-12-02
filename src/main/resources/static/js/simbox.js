@@ -377,6 +377,8 @@ function showTableFilter(data) {
     $("#span_sim_het_han").html(dataOriginal.simHetHan);
 
     var contentString = "";
+
+    console.log("so sim"+data.length);
     for (var i = 0; i < data.length; i++) {
         var simInfo = data[i];
         if (simInfo.taiKhoanChinh < 0) {

@@ -305,6 +305,15 @@ public class DeviceManager {
                             }
                             hasChange = true;
                         }
+                        // error: device '127.0.0.1:62025' not found
+                        if(line.startsWith("error: device") && line.endsWith("not found")){
+                            String[] splits = line.split("'");
+                            String deviceId = splits[1];
+                            if(deviceId.startsWith("127")){
+                                stopScriptDevice(deviceId);
+                                turnOffDevice(deviceId);
+                            }
+                        }
                         if(hasChange) saveDeviceStatusToDb();
                     }
                 } catch (Exception e) {
@@ -415,7 +424,7 @@ public class DeviceManager {
                     e.printStackTrace();
                 }
             }
-            deviceReponsitory.delete(deviceStatus.device);
+//            deviceReponsitory.delete(deviceStatus.device);
             if (deleteSuccess) {
                 try {
                     deviceStatus.time = System.currentTimeMillis();

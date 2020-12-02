@@ -145,7 +145,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
         outString = readSerial();
         if (outString.isEmpty() || outString.startsWith("AT")) return;
 
-        System.out.println(outString);
+        System.out.println(lastCmd + ":" + outString);
         if (outString.equals("^SYSSTART")) {
 //            isStop = true;
             lastCmd = "";
@@ -210,7 +210,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                 System.out.println(simInfo.commName + " : sim id : " + simInfo.simId);
                 runCmd(Contract.NETWORK);
             }
-        } else if (lastCmd.equals(Contract.NETWORK)) {
+        } else if (lastCmd.equals(Contract.NETWORK) && !outString.equals("OK")) {
             if (outString.contains("+COPS")) {
                 String[] splits = outString.split(",");
                 if (splits.length == 3) {
@@ -219,9 +219,9 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                     simInfo.time = TimeUtil.getTime();
                     System.out.println(simInfo.commName + " : network: " + network);
 //                    runCmd(Contract.BALANCE);
-                    repeatReadingSimInfo();
                 }
             }
+            repeatReadingSimInfo();
         } else if (lastCmd.equals(Contract.BALANCE) && !outString.equals("OK")) {
             if (!outString.equals("ERROR")) {
                 if (simInfo.nhaMang.equals("VN VINAPHONE")) {

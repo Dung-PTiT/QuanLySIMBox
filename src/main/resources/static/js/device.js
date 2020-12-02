@@ -276,7 +276,7 @@ function showTable(dataTable) {
                         '<td></td>\n' +
                         '<td>' + genButtonActionDevice(row.script, row.account, row.status, row.deviceId, row.isActive, row.isStarting) +
                         '</tr>';
-                } else if (row.script != "" && row.account != "") {x``
+                } else if (row.script != "" && row.account != "") {
                     contentString = contentString +
                         '<tr style="height: 53px">' +
                         '<td>' + genCheckox(row.index, row.deviceId) + '</td>\n' +
