@@ -254,6 +254,7 @@ function showTable(dataTable) {
                     '<tr style="height: 53px">' +
                     '<td>' + genCheckox(row.index, row.deviceId) + '</td>\n' +
                     '<td>' + row.deviceId + '</td>\n' +
+                    '<td>' + genActive(row.isActive) + '</td>\n' +
                     '<td></td>\n' +
                     '<td></td>\n' +
                     '<td></td>\n' +
@@ -268,6 +269,7 @@ function showTable(dataTable) {
                         '<tr style="height: 53px">' +
                         '<td>' + genCheckox(row.index, row.deviceId) + '</td>\n' +
                         '<td>' + row.deviceId + '</td>\n' +
+                        '<td>' + genActive(row.isActive) + '</td>\n' +
                         '<td>' + genStatus(row.status) + '</td>\n' +
                         '<td></td>\n' +
                         '<td></td>\n' +
@@ -281,6 +283,7 @@ function showTable(dataTable) {
                         '<tr style="height: 53px">' +
                         '<td>' + genCheckox(row.index, row.deviceId) + '</td>\n' +
                         '<td>' + row.deviceId + '</td>\n' +
+                        '<td>' + genActive(row.isActive) + '</td>\n' +
                         '<td>' + genStatus(row.status) + '</td>\n' +
                         '<td><img src="' + row.appIcon + '" width="20" height="20">\n' +
                         '<span class="ml-2">' + row.app + '</span></td>\n' +

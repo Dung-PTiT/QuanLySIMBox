@@ -20,8 +20,9 @@ public class DeviceApi {
     @PostMapping(value = "/api/turnon_device")
     public ArrayList<ApiResponse<DeviceStatistic>> turnOnDevice(@RequestBody DeviceIdList deviceIdList) {
         ArrayList<ApiResponse<DeviceStatistic>> list = new ArrayList<>();
-        for (String deviceId : deviceIdList.deviceIdList) {
-            list.add(deviceManager.turnOnDevice(deviceId));
+        for (int i = 0; i < deviceIdList.deviceIdList.size(); i++) {
+            String deviceId = deviceIdList.deviceIdList.get(i);
+            list.add(deviceManager.turnOnDevice(deviceId, (i/5) * 10000));
         }
         return list;
     }
