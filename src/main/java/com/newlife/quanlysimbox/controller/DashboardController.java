@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class DashboardController {
 
-    @GetMapping({"/","/simbox"})
+    @GetMapping({"/", "/simbox"})
     public String goToSimbox() {
         return "simbox";
     }
@@ -14,6 +14,11 @@ public class DashboardController {
     @GetMapping("/device")
     public String goToDashboard() {
         return "device";
+    }
+
+    @GetMapping("/statistic")
+    public String goToStatistic() {
+        return "statistic";
     }
 
 }
