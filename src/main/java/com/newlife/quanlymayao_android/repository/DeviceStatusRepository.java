@@ -28,4 +28,11 @@ public interface DeviceStatusRepository extends JpaRepository<DeviceStatus, Long
 
     @Query("SELECT s FROM DeviceStatus s where s.device.deviceId = :deviceId ORDER BY s.time DESC")
     ArrayList<DeviceStatus> getLogDivice(Pageable pageable, @Param("deviceId") String deviceId);
+
+    @Query("SELECT max(s.runTimes) from DeviceStatus s")
+    Long getMaxScriptRunTimes();
+
+    @Query("select max(d.runTimes) from DeviceStatus d")
+    Long getTotalRunTimes();
+
 }

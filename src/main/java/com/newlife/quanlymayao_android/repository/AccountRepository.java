@@ -13,5 +13,5 @@ import java.util.List;
 @Transactional
 public interface AccountRepository extends JpaRepository<Account, Long> {
     @Query("select a from Account a where a.type like %:appName% and a.status = 'free'")
-    public List<Account> findAccountByType(@Param("appName") String appName);
+    List<Account> findAccountByType(@Param("appName") String appName);
 }

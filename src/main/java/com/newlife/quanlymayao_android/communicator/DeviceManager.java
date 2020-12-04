@@ -3,17 +3,18 @@ package com.newlife.quanlymayao_android.communicator;
 import com.newlife.Contract;
 import com.newlife.base.ApiResponse;
 import com.newlife.base.SystemUtil;
+import com.newlife.base.TimeUtil;
 import com.newlife.quanlymayao_android.model.*;
-import com.newlife.quanlymayao_android.repository.AccountRepository;
-import com.newlife.quanlymayao_android.repository.DeviceReponsitory;
-import com.newlife.quanlymayao_android.repository.DeviceStatusRepository;
-import com.newlife.quanlymayao_android.repository.ScriptReponsitory;
+import com.newlife.quanlymayao_android.model.RunScriptDuration;
+import com.newlife.quanlymayao_android.repository.*;
 import com.newlife.quanlymayao_android.util.CmdUtil;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -22,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -38,6 +40,10 @@ public class DeviceManager {
     @Autowired
     public DeviceStatusRepository deviceStatusRepository;
 
+    @PersistenceContext
+    public EntityManager entityManager;
+
+    public ScriptStatisticDao scriptStatisticDao = new ScriptStatisticDao();
     public ArrayList<DeviceStatus> dvStatusList;
     private boolean justStop = false;
 
@@ -264,6 +270,8 @@ public class DeviceManager {
             deviceStatus.message = "";
             deviceStatus.code = "";
             account.status = "using";
+            long maxRunTimes = deviceStatusRepository.getMaxScriptRunTimes();
+            deviceStatus.runTimes = maxRunTimes + 1;
             saveDeviceStatusToDb();
             accountRepository.save(account);
             new Thread(() -> {
@@ -517,6 +525,27 @@ public class DeviceManager {
             e.printStackTrace();
         }
     }
+
+    public SummaryScriptStatistic getSummaryStatistic(){
+        SummaryScriptStatistic summaryScriptStatistic = new SummaryScriptStatistic();
+        summaryScriptStatistic.totalRunTimes = scriptStatisticDao.countRunScriptTimes("");
+        summaryScriptStatistic.successRunTimes = scriptStatisticDao.countRunScriptTimes("complete");
+        summaryScriptStatistic.failRunTimes = scriptStatisticDao.countRunScriptTimes("fail");
+
+        long countDate = 0;
+        long endDate = 0;
+        ArrayList<RunScriptDuration> listScriptDuration = scriptStatisticDao.getRunScriptDurationList();
+        for(RunScriptDuration duration : listScriptDuration){
+            if(duration.begin > endDate){
+                countDate += 1;
+                endDate = TimeUtil.getEndTimeOfDate(duration.begin);
+            }
+        }
+        System.out.println(countDate);
+        summaryScriptStatistic.avg = summaryScriptStatistic.totalRunTimes/countDate;
+        return summaryScriptStatistic;
+    }
+
 
     // Todo mirror thiết bị
     // Todo quản lý tài khoản

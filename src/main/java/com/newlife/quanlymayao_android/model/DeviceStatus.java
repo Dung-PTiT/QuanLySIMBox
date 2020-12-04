@@ -25,6 +25,8 @@ public class DeviceStatus implements Serializable, Cloneable {
     public boolean isStarting;
     @Column(name = "is_deleted")
     public boolean isDeleted = false;
+    @Column(name = "run_times")
+    public long runTimes;
 
     @ManyToOne
     @JoinColumn(name = "device_id")

@@ -5,7 +5,6 @@ import com.newlife.quanlymayao_android.communicator.DeviceManager;
 import com.newlife.quanlymayao_android.model.*;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
@@ -133,6 +132,11 @@ public class DeviceApi {
     @PostMapping("/api/find_account")
     public List<Account> findAccount(@RequestParam(name = "appName") String appName) {
         return deviceManager.accountRepository.findAccountByType(appName);
+    }
+
+    @GetMapping("/api/get_summary_statistic")
+    public SummaryScriptStatistic getSummaryStatistic(){
+        return deviceManager.getSummaryStatistic();
     }
 
 

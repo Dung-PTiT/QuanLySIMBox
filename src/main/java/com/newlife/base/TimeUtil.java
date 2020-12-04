@@ -1,6 +1,7 @@
 package com.newlife.base;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class TimeUtil {
@@ -25,5 +26,17 @@ public class TimeUtil {
             e.printStackTrace();
         }
         return new Date();
+    }
+
+    public static long getEndTimeOfDate(long time){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(time);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        long result = calendar.getTimeInMillis();
+        return result;
     }
 }
