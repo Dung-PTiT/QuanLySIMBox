@@ -1,109 +1,188 @@
+var startDate = "";
+var endDate = "";
+var pieChart1;
+
 $(function () {
-    var date_input = $('.dateInput');
-    date_input.datepicker({
+    $('.dateInput').datepicker({
         format: 'dd/mm/yyyy',
         todayHighlight: true,
-        autoclose: true
+        autoclose: true,
     });
-    showPieChart1();
-    showPieChart2();
+    setupPieChart1();
+    setupPieChart2();
     showColumnChart();
 });
 
-function showPieChart1() {
-    var chart = am4core.create("pie_chart_1", am4charts.PieChart);
+$(document).ready(function () {
+    loadSummary();
+});
 
-    chart.logo.disabled = true;
-
-    chart.data = [{
-        "country": "Lithuania",
-        "litres": 501.9
-    }, {
-        "country": "Czech Republic",
-        "litres": 301.9
-    }, {
-        "country": "Ireland",
-        "litres": 201.1
-    }, {
-        "country": "Germany",
-        "litres": 165.8
-    }, {
-        "country": "Australia",
-        "litres": 139.9
-    }, {
-        "country": "Austria",
-        "litres": 128.3
-    }, {
-        "country": "UK",
-        "litres": 99
-    }, {
-        "country": "Belgium",
-        "litres": 60
-    }, {
-        "country": "The Netherlands",
-        "litres": 50
-    }];
-
-    var pieSeries = chart.series.push(new am4charts.PieSeries());
-    pieSeries.dataFields.value = "litres";
-    pieSeries.dataFields.category = "country";
-    pieSeries.innerRadius = am4core.percent(50);
-    pieSeries.ticks.template.disabled = true;
-    pieSeries.labels.template.disabled = true;
-
-    pieSeries.slices.template.strokeOpacity = 0.4;
-    pieSeries.slices.template.strokeWidth = 0;
-
-    chart.legend = new am4charts.Legend();
-    chart.legend.position = "right";
+function loadSummary() {
+    $.ajax({
+        type: "GET",
+        url: "/api/get_summary_statistic",
+        cache: false,
+        crossDomain: true,
+        processData: true,
+        dataType: "json",
+        success: function (data) {
+            $('#total_run_times').html(data.totalRunTimes);
+            $('#total_fail_run_times').html(data.failRunTimes);
+            $('#total_success_run_times').html(data.successRunTimes);
+            $('#avg_run_times').html(data.avg);
+        }
+    });
 }
 
-function showPieChart2() {
-    var chart = am4core.create("pie_chart_2", am4charts.PieChart);
+function dateInputChange(type, event) {
+    if (type === "start") {
+        if (event.value != startDate) {
+            startDate = event.value;
+            getKichBanLanChay();
+            getLastRunScriptInfo();
+        }
+    } else if (type === "end") {
+        if (event.value != endDate) {
+            endDate = event.value;
+            getKichBanLanChay();
+            getLastRunScriptInfo();
+        }
+    }
+}
 
-    chart.logo.disabled = true;
 
-    chart.data = [{
-        "country": "Lithuania",
-        "litres": 501.9
-    }, {
-        "country": "Czech Republic",
-        "litres": 301.9
-    }, {
-        "country": "Ireland",
-        "litres": 201.1
-    }, {
-        "country": "Germany",
-        "litres": 165.8
-    }, {
-        "country": "Australia",
-        "litres": 139.9
-    }, {
-        "country": "Austria",
-        "litres": 128.3
-    }, {
-        "country": "UK",
-        "litres": 99
-    }, {
-        "country": "Belgium",
-        "litres": 60
-    }, {
-        "country": "The Netherlands",
-        "litres": 50
-    }];
+function getRunScriptInfo() {
+    if (startDate !== "" && endDate !== "") {
+        $.ajax({
+            type: "POST",
+            url: "/api/get_run_script_times_info",
+            cache: false,
+            crossDomain: true,
+            processData: true,
+            dataType: "json",
+            data: {
+                "startTime": startDate,
+                "endTime": endDate
+            },
+            success: function (data) {
+                if (data.success === true) {
+                    showPieChart1(data.data);
+                } else {
+                    alert(data.error)
+                }
+            }
+        });
+    }
+}
 
-    var pieSeries = chart.series.push(new am4charts.PieSeries());
-    pieSeries.dataFields.value = "litres";
-    pieSeries.dataFields.category = "country";
-    pieSeries.innerRadius = am4core.percent(50);
-    pieSeries.ticks.template.disabled = true;
-    pieSeries.labels.template.disabled = true;
+function getKichBanLanChay() {
+    if (startDate !== "" && endDate !== "") {
+        $.ajax({
+            type: "POST",
+            url: "/api/get_kichban_lanchay",
+            cache: false,
+            crossDomain: true,
+            processData: true,
+            dataType: "json",
+            data: {
+                "startTime": startDate,
+                "endTime": endDate
+            },
+            success: function (data) {
+                if (data.success === true) {
+                    showPieChart1(data.data);
+                } else {
+                    alert(data.error)
+                }
+            }
+        });
+    }
+}
 
-    pieSeries.slices.template.strokeOpacity = 0.4;
-    pieSeries.slices.template.strokeWidth = 0;
+function getLastRunScriptInfo() {
+    if (startDate !== "" && endDate !== "") {
+        $.ajax({
+            type: "POST",
+            url: "/api/get_last_run_script_times_info",
+            cache: false,
+            crossDomain: true,
+            processData: true,
+            dataType: "json",
+            data: {
+                "startTime": startDate,
+                "endTime": endDate
+            },
+            success: function (data) {
+                if (data.success === true) {
+                    showPieChart2(data.data);
+                } else {
+                    alert(data.error)
+                }
+            }
+        });
+    }
+}
 
-    chart.legend = new am4charts.Legend();
-    chart.legend.position = "right";
+function showPieChart1(list) {
+    let data = [];
+    let total = 0;
+    for (let i = 0; i < list.length; i++) {
+        let tmp = list[i];
+        total += tmp.count;
+        data.push({
+            "country": tmp.scriptName,
+            "litres": tmp.count
+        })
+    }
+    $('#total_script_run_in_time').html(total);
+    pieChart1.data = data;
+}
+
+function showPieChart2(list) {
+    let data = [];
+    let running = 0;
+    let stopped = 0;
+    let fail = 0;
+    let complete = 0;
+
+    for (let i = 0; i < list.length; i++) {
+        let tmp = list[i];
+        switch (tmp.status) {
+            case "running":
+                running += 1;
+                break;
+            case "stopped":
+                stopped += 1;
+                break;
+            case "fail":
+                fail += 1;
+                break;
+            case "complete":
+                complete += 1;
+                break;
+        }
+    }
+    let total = running + stopped + fail + complete;
+    $('#total_status_in_time').html(total);
+
+    data.push({
+        "country": "running",
+        "litres": running
+    });
+    data.push({
+        "country": "stopped",
+        "litres": stopped
+    });
+    data.push({
+        "country": "fail",
+        "litres": fail
+    });
+    data.push({
+        "country": "complete",
+        "litres": complete
+    });
+
+    pieChart2.data = data;
 }
 
 function showColumnChart() {
@@ -219,4 +298,40 @@ function showColumnChart() {
             }
         }
     }
+}
+
+function setupPieChart1() {
+    pieChart1 = am4core.create("pie_chart_1", am4charts.PieChart);
+
+    pieChart1.logo.disabled = true;
+    var pieSeries = pieChart1.series.push(new am4charts.PieSeries());
+    pieSeries.dataFields.value = "litres";
+    pieSeries.dataFields.category = "country";
+    pieSeries.innerRadius = am4core.percent(50);
+    pieSeries.ticks.template.disabled = true;
+    pieSeries.labels.template.disabled = true;
+
+    pieSeries.slices.template.strokeOpacity = 0.4;
+    pieSeries.slices.template.strokeWidth = 0;
+
+    pieChart1.legend = new am4charts.Legend();
+    pieChart1.legend.position = "right";
+}
+
+function setupPieChart2() {
+    pieChart2 = am4core.create("pie_chart_2", am4charts.PieChart);
+
+    pieChart2.logo.disabled = true;
+    var pieSeries = pieChart2.series.push(new am4charts.PieSeries());
+    pieSeries.dataFields.value = "litres";
+    pieSeries.dataFields.category = "country";
+    pieSeries.innerRadius = am4core.percent(50);
+    pieSeries.ticks.template.disabled = true;
+    pieSeries.labels.template.disabled = true;
+
+    pieSeries.slices.template.strokeOpacity = 0.4;
+    pieSeries.slices.template.strokeWidth = 0;
+
+    pieChart2.legend = new am4charts.Legend();
+    pieChart2.legend.position = "right";
 }

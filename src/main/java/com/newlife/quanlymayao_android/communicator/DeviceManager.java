@@ -23,7 +23,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -163,6 +162,7 @@ public class DeviceManager {
                 }
                 justStop = true;
                 deviceStatus.isActive = false;
+                deviceStatus.runTimes = 0;
                 deviceStatus.clear();
                 saveDeviceStatusToDb();
                 return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
@@ -465,6 +465,7 @@ public class DeviceManager {
                         accountRepository.save(deviceStatus.account);
                     }
                     dvStatusList.remove(deviceStatus);
+                    deviceStatus.runTimes = 0;
                     deviceStatusRepository.save(deviceStatus.clone());
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -541,10 +542,39 @@ public class DeviceManager {
                 endDate = TimeUtil.getEndTimeOfDate(duration.begin);
             }
         }
-        System.out.println(countDate);
+//        System.out.println(countDate);
         summaryScriptStatistic.avg = summaryScriptStatistic.totalRunTimes/countDate;
         return summaryScriptStatistic;
     }
+
+    public ArrayList<RunScriptTimesInfo> getRunScriptTimesInfo(String startTimeStr, String endTimeStr){
+        long[] times = TimeUtil.parseTimeString(startTimeStr, endTimeStr);
+        if(times==null){
+            return null;
+        } else {
+            return scriptStatisticDao.getRunScriptTimesInfo(times[0], times[1]);
+        }
+    }
+
+    public List<KichBan_LanChay> getKichBanLanChay(String startTimeStr, String endTimeStr){
+        long[] times = TimeUtil.parseTimeString(startTimeStr, endTimeStr);
+        if(times==null){
+            return null;
+        } else {
+            return scriptStatisticDao.getKichBanLanChayList(times[0], times[1]);
+        }
+    }
+
+    public List<RunScriptTimesInfo> getLastRunScriptTimesInfo(String startTimeStr, String endTimeStr){
+        long[] times = TimeUtil.parseTimeString(startTimeStr, endTimeStr);
+        if(times==null){
+            return null;
+        } else {
+            return scriptStatisticDao.getLastRunScriptTimesInfo(times[0], times[1]);
+        }
+    }
+
+
 
 
     // Todo mirror thiết bị

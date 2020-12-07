@@ -14,4 +14,5 @@ public class Account {
     public String simId;
     public String type;
     public String status;
+    public String sdt;
 }

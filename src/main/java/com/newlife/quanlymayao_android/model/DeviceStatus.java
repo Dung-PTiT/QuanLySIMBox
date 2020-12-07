@@ -78,6 +78,7 @@ public class DeviceStatus implements Serializable, Cloneable {
         progress = 0;
         account = null;
         script = null;
+        runTimes = 0;
     }
 
     public DeviceStatus clone() throws CloneNotSupportedException {

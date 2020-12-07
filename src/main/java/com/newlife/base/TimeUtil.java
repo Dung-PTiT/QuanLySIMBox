@@ -39,4 +39,21 @@ public class TimeUtil {
         long result = calendar.getTimeInMillis();
         return result;
     }
+
+    public static long[] parseTimeString(String startTimeStr, String endTimeStr){
+        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        try {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(df.parse(startTimeStr));
+            long startTime = calendar.getTimeInMillis();
+
+            calendar.setTime(df.parse(endTimeStr));
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            long endTime = calendar.getTimeInMillis();
+            return new long[]{startTime, endTime};
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

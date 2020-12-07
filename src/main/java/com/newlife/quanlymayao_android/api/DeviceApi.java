@@ -5,6 +5,7 @@ import com.newlife.quanlymayao_android.communicator.DeviceManager;
 import com.newlife.quanlymayao_android.model.*;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.Serializable;
@@ -139,7 +140,38 @@ public class DeviceApi {
         return deviceManager.getSummaryStatistic();
     }
 
+    @PostMapping("/api/get_run_script_times_info")
+    public ApiResponse<List<RunScriptTimesInfo>> getRunScriptTimesInfo(@RequestParam(name = "startTime") String startTime,
+                                                          @RequestParam(name = "endTime") String endTime){
+        List<RunScriptTimesInfo> list = deviceManager.getRunScriptTimesInfo(startTime, endTime);
+        if(list == null){
+            return new ApiResponse<>(false, new ArrayList<>(), "Định dạng thời gian lỗi");
+        } else {
+            return new ApiResponse<>(true, list, "");
+        }
+    }
 
+    @PostMapping("/api/get_last_run_script_times_info")
+    public ApiResponse<List<RunScriptTimesInfo>> getLastRunScriptTimesInfo(@RequestParam(name = "startTime") String startTime,
+                                                                       @RequestParam(name = "endTime") String endTime){
+        List<RunScriptTimesInfo> list = deviceManager.getLastRunScriptTimesInfo(startTime, endTime);
+        if(list == null){
+            return new ApiResponse<>(false, new ArrayList<>(), "Định dạng thời gian lỗi");
+        } else {
+            return new ApiResponse<>(true, list, "");
+        }
+    }
+
+    @PostMapping("/api/get_kichban_lanchay")
+    public ApiResponse<List<KichBan_LanChay>> getKichBanLanChay(@RequestParam(name = "startTime") String startTime,
+                                                                @RequestParam(name = "endTime") String endTime){
+        List<KichBan_LanChay> list = deviceManager.getKichBanLanChay(startTime, endTime);
+        if(list == null){
+            return new ApiResponse<>(false, new ArrayList<>(), "Địch dạng thời gian lỗi");
+        } else {
+            return new ApiResponse<>(true, list, "");
+        }
+    }
 }
 
 @Data
