@@ -20,7 +20,7 @@
     border: 1px solid #ddd;
     text-align: center;
     background-color: #FFFFFF;
-    border-radius: 7px;
+    border-radius: 3px;
 }
 
 .card-banner {
@@ -29,8 +29,9 @@
 }
 
 .card-banner-icon {
-    width: 26% !important;
-    border-radius: 10px;
+    border-radius: 8px;
+    width: 56px;
+    height: 56px;
 }
 
 .card-banner-icon i {
@@ -38,7 +39,7 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 30px
+    font-size: 22px
 }
 
 .card-banner-percent span {
@@ -48,9 +49,9 @@
 }
 
 .card-banner-content {
-    width: 74%;
+    margin-left: 10px;
 }
 
 .card-banner-title {
-    font-size: 11px;
+    font-size: 12px;
 }

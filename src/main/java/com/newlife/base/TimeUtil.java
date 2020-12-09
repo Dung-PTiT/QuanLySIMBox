@@ -41,7 +41,7 @@ public class TimeUtil {
     }
 
     public static long[] parseTimeString(String startTimeStr, String endTimeStr){
-        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         try {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(df.parse(startTimeStr));

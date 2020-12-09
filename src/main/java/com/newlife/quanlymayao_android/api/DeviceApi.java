@@ -162,6 +162,17 @@ public class DeviceApi {
         }
     }
 
+    @PostMapping("/api/get_fail_run_script_times_info")
+    public ApiResponse<List<RunScriptTimesInfo>> getFailRunScriptTimesInfo(@RequestParam(name = "startTime") String startTime,
+                                                                           @RequestParam(name = "endTime") String endTime){
+        List<RunScriptTimesInfo> list = deviceManager.getFailRunScriptTimesInfo(startTime, endTime);
+        if(list == null){
+            return new ApiResponse<>(false, new ArrayList<>(), "Định dạng thời gian lỗi");
+        } else {
+            return new ApiResponse<>(true, list, "");
+        }
+    }
+
     @PostMapping("/api/get_kichban_lanchay")
     public ApiResponse<List<KichBan_LanChay>> getKichBanLanChay(@RequestParam(name = "startTime") String startTime,
                                                                 @RequestParam(name = "endTime") String endTime){

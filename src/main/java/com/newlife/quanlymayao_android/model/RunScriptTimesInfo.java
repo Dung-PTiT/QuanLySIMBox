@@ -8,4 +8,6 @@ public class RunScriptTimesInfo {
     public String action;
     public String info;
     public String runTimes;
+    public int scriptId;
+    public String scriptName;
 }

@@ -154,7 +154,7 @@ public class ScriptStatisticDao {
         try {
             Statement stmt = conn.createStatement();
             ResultSet rs;
-            String sql = "select sum(script_id) as sum, script_id\n" +
+            String sql = "select count(script_id) as sum, script_id\n" +
                     "from (\n" +
                     "         select *\n" +
                     "         from (\n" +
@@ -202,7 +202,7 @@ public class ScriptStatisticDao {
         try {
             Statement stmt = conn.createStatement();
             ResultSet rs;
-            String sql = "select id, device_id, time, status, action, info, run_times\n" +
+            String sql = "select id, device_id, time, status, action, info, script_id, run_times\n" +
                     "from device_status\n" +
                     "where id in (\n" +
                     "    select max(a.id)\n" +
@@ -230,6 +230,60 @@ public class ScriptStatisticDao {
                     "    )\n" +
                     "    group by a.run_times\n" +
                     ");";
+            rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                runScriptTimesInfo = new RunScriptTimesInfo();
+                runScriptTimesInfo.id = rs.getLong("id");
+                runScriptTimesInfo.scriptId = rs.getInt("script_id");
+                runScriptTimesInfo.scriptName = getScriptName(runScriptTimesInfo.scriptId);
+                runScriptTimesInfo.deviceId = rs.getString("device_id");
+                runScriptTimesInfo.time = rs.getLong("time");
+                runScriptTimesInfo.status = rs.getString("status");
+                runScriptTimesInfo.info = rs.getString("info");
+                runScriptTimesInfo.runTimes = rs.getString("run_times");
+                list.add(runScriptTimesInfo);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public ArrayList<RunScriptTimesInfo> getFailRunScriptTimesInfo(long startTime, long endTime){
+        ArrayList<RunScriptTimesInfo> list = new ArrayList<>();
+        if (conn == null) return list;
+        RunScriptTimesInfo runScriptTimesInfo;
+        try {
+            Statement stmt = conn.createStatement();
+            ResultSet rs;
+            String sql = "select id, device_id, time, status, action, info, run_times\n" +
+                    "from device_status\n" +
+                    "where id in (\n" +
+                    "    select max(a.id)\n" +
+                    "    from (\n" +
+                    "             select id, device_id, time, status, action, info, run_times\n" +
+                    "             from device_status\n" +
+                    "             where is_active = true\n" +
+                    "               and status != 'free'\n" +
+                    "               and run_times != 0\n" +
+                    "             group by run_times, status, action, info) as a\n" +
+                    "    where a.run_times in (\n" +
+                    "        select run_times\n" +
+                    "        from (\n" +
+                    "                 select run_times, min(time) as begin, max(time) as finish\n" +
+                    "                 from (select time, run_times\n" +
+                    "                       from device_status\n" +
+                    "                       where is_active = true\n" +
+                    "                         and status != 'free'\n" +
+                    "                         and run_times != 0\n" +
+                    "                       group by run_times, status, action, info) as a\n" +
+                    "                 group by run_times\n" +
+                    "             ) as b\n" +
+                    "        where b.begin >= "+ startTime + "\n" +
+                    "          and b.finish <= " + endTime + "\n" +
+                    "    )\n" +
+                    "    group by a.run_times\n" +
+                    ") and status = 'fail';";
             rs = stmt.executeQuery(sql);
             while (rs.next()) {
                 runScriptTimesInfo = new RunScriptTimesInfo();

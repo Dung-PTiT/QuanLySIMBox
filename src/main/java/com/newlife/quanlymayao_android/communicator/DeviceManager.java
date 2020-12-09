@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -256,7 +257,7 @@ public class DeviceManager {
     public void runScript(DeviceStatus deviceStatus, Script script, Account account, boolean isFirstTime) {
         try {
             String cmd = Contract.AUTO_TOOL + " " + script.name + " " + deviceStatus.device.deviceId + " "
-                    + account.username + " " + account.password + " " + account.simId + " " + deviceStatus.device.noxId;
+                    + account.username + " " + account.password + " " + account.simId + " " + deviceStatus.device.noxId + " " + account.sdt;
             ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", cmd);
             builder.directory(new File(Contract.AUTO_TOOL_FOLDER));
             builder.redirectErrorStream(true);
@@ -350,7 +351,13 @@ public class DeviceManager {
     public void retryRunScript(DeviceStatus deviceStatus, Script script, Account account){
         new Thread(()->{
             try {
+                deviceStatus.status = "running";
                 deviceStatus.action = "Wait to retry";
+                deviceStatus.info = "";
+                deviceStatus.message = "";
+                deviceStatus.code = "";
+                deviceStatus.progress = 0;
+                deviceStatus.time = System.currentTimeMillis();
                 Thread.sleep(11000);
                 runScript(deviceStatus, script, account, false);
             }catch (Exception e){
@@ -571,6 +578,15 @@ public class DeviceManager {
             return null;
         } else {
             return scriptStatisticDao.getLastRunScriptTimesInfo(times[0], times[1]);
+        }
+    }
+
+    public List<RunScriptTimesInfo> getFailRunScriptTimesInfo(String startTimeStr, String endTimeStr){
+        long[] times = TimeUtil.parseTimeString(startTimeStr, endTimeStr);
+        if(times==null){
+            return null;
+        } else {
+            return scriptStatisticDao.getFailRunScriptTimesInfo(times[0], times[1]);
         }
     }
 

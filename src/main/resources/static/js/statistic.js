@@ -1,6 +1,10 @@
-var startDate = "";
-var endDate = "";
-var pieChart1;
+let startDate = "";
+let endDate = "";
+let lastRunScriptInfo;
+
+let pieChart1;
+let pieChart2;
+let multiColumnChart;
 
 $(function () {
     $('.dateInput').datepicker({
@@ -8,14 +12,37 @@ $(function () {
         todayHighlight: true,
         autoclose: true,
     });
-    setupPieChart1();
-    setupPieChart2();
-    showColumnChart();
+
+
 });
 
 $(document).ready(function () {
+    setupPieChart1();
+    setupPieChart2();
+    setupMultiColumnChart();
+
     loadSummary();
+
+    setDefaultDateInput();
 });
+
+function setDefaultDateInput(){
+    let date = new Date();
+    let day = ("0" + date.getDate()).slice(-2);
+    let month = ("0" + (date.getMonth() + 1)).slice(-2);
+    let endDay = date.getFullYear()+"-"+(month)+"-"+(day);
+    $('#end_date_input').val(endDay);
+    endDate = $('#end_date_input').val();
+
+    date.setDate(date.getDate()-30);
+    day = ("0" + date.getDate()).slice(-2);
+    month = ("0" + (date.getMonth() + 1)).slice(-2);
+    let startDay = date.getFullYear()+"-"+(month)+"-"+(day);
+    $('#start_date_input').val(startDay);
+    startDate = $('#start_date_input').val();
+
+    loadStatisticByTime();
+}
 
 function loadSummary() {
     $.ajax({
@@ -34,45 +61,28 @@ function loadSummary() {
     });
 }
 
-function dateInputChange(type, event) {
+function dateInputChange(type) {
+    let start = $('#start_date_input');
+    let end = $('#end_date_input');
+
+
     if (type === "start") {
-        if (event.value != startDate) {
-            startDate = event.value;
-            getKichBanLanChay();
-            getLastRunScriptInfo();
+        if (start.value != startDate) {
+            startDate = start.val();
+            loadStatisticByTime();
         }
     } else if (type === "end") {
-        if (event.value != endDate) {
-            endDate = event.value;
-            getKichBanLanChay();
-            getLastRunScriptInfo();
+        if (end.value != endDate) {
+            endDate = end.val();
+            loadStatisticByTime();
         }
     }
 }
 
-
-function getRunScriptInfo() {
-    if (startDate !== "" && endDate !== "") {
-        $.ajax({
-            type: "POST",
-            url: "/api/get_run_script_times_info",
-            cache: false,
-            crossDomain: true,
-            processData: true,
-            dataType: "json",
-            data: {
-                "startTime": startDate,
-                "endTime": endDate
-            },
-            success: function (data) {
-                if (data.success === true) {
-                    showPieChart1(data.data);
-                } else {
-                    alert(data.error)
-                }
-            }
-        });
-    }
+function loadStatisticByTime() {
+    getKichBanLanChay();
+    getLastRunScriptInfo();
+    getFailRunScriptTimes();
 }
 
 function getKichBanLanChay() {
@@ -114,7 +124,33 @@ function getLastRunScriptInfo() {
             },
             success: function (data) {
                 if (data.success === true) {
-                    showPieChart2(data.data);
+                    lastRunScriptInfo = data.data;
+                    showPieChart2(lastRunScriptInfo);
+                    showMultiColumnChart(lastRunScriptInfo);
+                } else {
+                    alert(data.error)
+                }
+            }
+        });
+    }
+}
+
+function getFailRunScriptTimes() {
+    if (startDate !== "" && endDate !== "") {
+        $.ajax({
+            type: "POST",
+            url: "/api/get_fail_run_script_times_info",
+            cache: false,
+            crossDomain: true,
+            processData: true,
+            dataType: "json",
+            data: {
+                "startTime": startDate,
+                "endTime": endDate
+            },
+            success: function (data) {
+                if (data.success === true) {
+                    showFailChart(data.data);
                 } else {
                     alert(data.error)
                 }
@@ -140,7 +176,6 @@ function showPieChart1(list) {
 
 function showPieChart2(list) {
     let data = [];
-    let running = 0;
     let stopped = 0;
     let fail = 0;
     let complete = 0;
@@ -148,9 +183,6 @@ function showPieChart2(list) {
     for (let i = 0; i < list.length; i++) {
         let tmp = list[i];
         switch (tmp.status) {
-            case "running":
-                running += 1;
-                break;
             case "stopped":
                 stopped += 1;
                 break;
@@ -162,13 +194,9 @@ function showPieChart2(list) {
                 break;
         }
     }
-    let total = running + stopped + fail + complete;
+    let total = stopped + fail + complete;
     $('#total_status_in_time').html(total);
 
-    data.push({
-        "country": "running",
-        "litres": running
-    });
     data.push({
         "country": "stopped",
         "litres": stopped
@@ -185,28 +213,105 @@ function showPieChart2(list) {
     pieChart2.data = data;
 }
 
-function showColumnChart() {
-    am4core.useTheme(am4themes_animated);
+function showMultiColumnChart(list) {
+    let map = new Map();
+    for (let i = 0; i < list.length; i++) {
+        let tmp = list[i];
+        if (!map.has(tmp.scriptName)) {
+            map.set(tmp.scriptName, {
+                "running": 0,
+                "stopped": 0,
+                "fail": 0,
+                "complete": 0
+            })
+        }
+        map.set(tmp.scriptName, updateScriptDetail(map.get(tmp.scriptName), tmp));
+    }
 
-    var chart = am4core.create('column_chart', am4charts.XYChart);
-    chart.colors.step = 9;
+    let data = [];
+    map.forEach(function (value, key) {
+        data.push({
+            "category": key,
+            "first": value.stopped,
+            "second": value.fail,
+            "third": value.complete
+        })
+    });
 
-    chart.logo.disabled = true;
-    chart.legend = new am4charts.Legend();
-    chart.legend.position = 'bottom';
-    chart.legend.labels.template.maxWidth = 10;
+    multiColumnChart.data = data;
+}
 
-    var xAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+function updateScriptDetail(node, data) {
+    switch (data.status) {
+        case "running":
+            node.running += 1;
+            break;
+        case "stopped":
+            node.stopped += 1;
+            break;
+        case "fail":
+            node.fail += 1;
+            break;
+        case "complete":
+            node.complete += 1;
+            break;
+    }
+    return node;
+}
+
+function showFailChart(list) {
+    let map = new Map();
+    let total = list.length;
+
+    for(let i =0; i<list.length; i++) {
+        if (!map.has(list[i].info)) {
+            map.set(list[i].info, 1);
+        } else {
+            map.set(list[i].info, map.get(list[i].info) + 1);
+        }
+    }
+
+    let content = "";
+    map.forEach(function (value, key) {
+        content = content +
+            "<div>\n" +
+            "   <div class=\"d-flex justify-content-between\">\n" +
+            "       <span>" + key + "</span>\n" +
+            "       <span>" + value + "</span>\n" +
+            "   </div>\n" +
+            "   <div class=\"progress rounded-round\" style=\" height:0.4rem\">\n" +
+            "       <div class=\"progress-bar bg-info\" style=\"width: " + (value/total*100) +"%;\">\n" +
+            "           <span class=\"text-grey\"></span>\n" +
+            "       </div>\n" +
+            "   </div>\n" +
+            "</div>";
+    });
+    $('#fail_chart').html(content);
+}
+
+function setupMultiColumnChart() {
+    // am4core.useTheme(am4themes_myTheme);
+
+    multiColumnChart = am4core.create('column_chart', am4charts.XYChart);
+    multiColumnChart.colors.step = 9;
+
+    multiColumnChart.logo.disabled = true;
+    multiColumnChart.legend = new am4charts.Legend();
+    multiColumnChart.legend.position = 'bottom';
+    multiColumnChart.legend.labels.template.maxWidth = 10;
+
+    var xAxis = multiColumnChart.xAxes.push(new am4charts.CategoryAxis());
     xAxis.dataFields.category = 'category';
     xAxis.renderer.cellStartLocation = 0.2;
     xAxis.renderer.cellEndLocation = 0.8;
     xAxis.renderer.grid.template.location = 0;
 
-    var yAxis = chart.yAxes.push(new am4charts.ValueAxis());
+    var yAxis = multiColumnChart.yAxes.push(new am4charts.ValueAxis());
     yAxis.min = 0;
 
+
     function createSeries(value, name) {
-        var series = chart.series.push(new am4charts.ColumnSeries());
+        var series = multiColumnChart.series.push(new am4charts.ColumnSeries());
         series.dataFields.valueY = value;
         series.dataFields.categoryX = 'category';
         series.name = name;
@@ -223,68 +328,36 @@ function showColumnChart() {
         return series;
     }
 
-    chart.data = [
-        {
-            category: '2020',
-            first: 40,
-            second: 55,
-            third: 60,
-            four: 30
-        },
-        {
-            category: '2021',
-            first: 30,
-            second: 78,
-            third: 69,
-            four: 60
-        },
-        {
-            category: '2022',
-            first: 27,
-            second: 40,
-            third: 45,
-            four: 70
-        },
-        {
-            category: '2023',
-            first: 50,
-            second: 33,
-            third: 22,
-            four: 50
-        }
-    ];
-
-    createSeries('first', 'Toal');
-    createSeries('second', 'To do');
-    createSeries('third', 'Completed');
-    createSeries('four', 'Overdue');
+    createSeries('first', 'Stopped');
+    createSeries('second', 'Fail');
+    createSeries('third', 'Complete');
 
     function arrangeColumns() {
 
-        var series = chart.series.getIndex(0);
+        var series = multiColumnChart.series.getIndex(0);
 
         var w = 1 - xAxis.renderer.cellStartLocation - (1 - xAxis.renderer.cellEndLocation);
         if (series.dataItems.length > 1) {
             var x0 = xAxis.getX(series.dataItems.getIndex(0), "categoryX");
             var x1 = xAxis.getX(series.dataItems.getIndex(1), "categoryX");
-            var delta = ((x1 - x0) / chart.series.length) * w;
+            var delta = ((x1 - x0) / multiColumnChart.series.length) * w;
             if (am4core.isNumber(delta)) {
-                var middle = chart.series.length / 2;
+                var middle = multiColumnChart.series.length / 2;
 
                 var newIndex = 0;
-                chart.series.each(function (series) {
+                multiColumnChart.series.each(function (series) {
                     if (!series.isHidden && !series.isHiding) {
                         series.dummyData = newIndex;
                         newIndex++;
                     } else {
-                        series.dummyData = chart.series.indexOf(series);
+                        series.dummyData = multiColumnChart.series.indexOf(series);
                     }
                 });
                 var visibleCount = newIndex;
                 var newMiddle = visibleCount / 2;
 
-                chart.series.each(function (series) {
-                    var trueIndex = chart.series.indexOf(series);
+                multiColumnChart.series.each(function (series) {
+                    var trueIndex = multiColumnChart.series.indexOf(series);
                     var newIndex = series.dummyData;
 
                     var dx = (newIndex - trueIndex + middle - newMiddle) * delta
@@ -334,4 +407,10 @@ function setupPieChart2() {
 
     pieChart2.legend = new am4charts.Legend();
     pieChart2.legend.position = "right";
+
+    var colorSet = new am4core.ColorSet();
+    colorSet.list = ["#fbc02d", "#ec2169", "#27d257"].map(function (color) {
+        return new am4core.color(color);
+    });
+    pieSeries.colors = colorSet;
 }
