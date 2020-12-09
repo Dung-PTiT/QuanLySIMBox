@@ -5,7 +5,6 @@ import com.newlife.quanlymayao_android.model.KichBan_LanChay;
 import com.newlife.quanlymayao_android.model.RunScriptDuration;
 import com.newlife.quanlymayao_android.model.RunScriptTimesInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.jpa.EntityManagerFactoryInfo;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -113,7 +112,7 @@ public class ScriptStatisticDao {
                     "             group by run_times\n" +
                     "         ) as b\n" +
                     "    where b.begin >= " + startTime + "\n" +
-                    "      and b.finish <= " + endTime + "\n" +
+                    "      and b.finish <= " + (endTime + 120000) + "\n" +
                     ");";
             rs = stmt.executeQuery(sql);
             while (rs.next()) {
@@ -123,6 +122,7 @@ public class ScriptStatisticDao {
                 runScriptTimesInfo.time = rs.getLong("time");
                 runScriptTimesInfo.status = rs.getString("status");
                 runScriptTimesInfo.info = rs.getString("info");
+                runScriptTimesInfo.action = rs.getString("action");
                 runScriptTimesInfo.runTimes = rs.getString("run_times");
                 list.add(runScriptTimesInfo);
             }
@@ -177,7 +177,7 @@ public class ScriptStatisticDao {
                     "                      group by run_times\n" +
                     "                  ) as b\n" +
                     "             where b.begin >= " + startTime + "\n" +
-                    "               and b.finish <= " + endTime + "\n" +
+                    "               and b.finish <= " + (endTime + 120000) + "\n" +
                     "         )\n" +
                     "     ) as c\n" +
                     "group by script_id;";
@@ -195,7 +195,7 @@ public class ScriptStatisticDao {
         return list;
     }
 
-    public ArrayList<RunScriptTimesInfo> getLastRunScriptTimesInfo(long startTime, long endTime){
+    public ArrayList<RunScriptTimesInfo> getLastRunScriptTimesInfo(long startTime, long endTime) {
         ArrayList<RunScriptTimesInfo> list = new ArrayList<>();
         if (conn == null) return list;
         RunScriptTimesInfo runScriptTimesInfo;
@@ -225,8 +225,8 @@ public class ScriptStatisticDao {
                     "                       group by run_times, status, action, info) as a\n" +
                     "                 group by run_times\n" +
                     "             ) as b\n" +
-                    "        where b.begin >= " + startTime +"\n" +
-                    "          and b.finish <= " + endTime + "\n" +
+                    "        where b.begin >= " + startTime + "\n" +
+                    "          and b.finish <= " + (endTime + 120000) + "\n" +
                     "    )\n" +
                     "    group by a.run_times\n" +
                     ");";
@@ -241,6 +241,7 @@ public class ScriptStatisticDao {
                 runScriptTimesInfo.status = rs.getString("status");
                 runScriptTimesInfo.info = rs.getString("info");
                 runScriptTimesInfo.runTimes = rs.getString("run_times");
+                runScriptTimesInfo.action = rs.getString("action");
                 list.add(runScriptTimesInfo);
             }
         } catch (Exception e) {
@@ -249,7 +250,7 @@ public class ScriptStatisticDao {
         return list;
     }
 
-    public ArrayList<RunScriptTimesInfo> getFailRunScriptTimesInfo(long startTime, long endTime){
+    public ArrayList<RunScriptTimesInfo> getFailRunScriptTimesInfo(long startTime, long endTime) {
         ArrayList<RunScriptTimesInfo> list = new ArrayList<>();
         if (conn == null) return list;
         RunScriptTimesInfo runScriptTimesInfo;
@@ -279,8 +280,8 @@ public class ScriptStatisticDao {
                     "                       group by run_times, status, action, info) as a\n" +
                     "                 group by run_times\n" +
                     "             ) as b\n" +
-                    "        where b.begin >= "+ startTime + "\n" +
-                    "          and b.finish <= " + endTime + "\n" +
+                    "        where b.begin >= " + startTime + "\n" +
+                    "          and b.finish <= " + (endTime + 120000) + "\n" +
                     "    )\n" +
                     "    group by a.run_times\n" +
                     ") and status = 'fail';";
@@ -293,6 +294,7 @@ public class ScriptStatisticDao {
                 runScriptTimesInfo.status = rs.getString("status");
                 runScriptTimesInfo.info = rs.getString("info");
                 runScriptTimesInfo.runTimes = rs.getString("run_times");
+                runScriptTimesInfo.action = rs.getString("action");
                 list.add(runScriptTimesInfo);
             }
         } catch (Exception e) {

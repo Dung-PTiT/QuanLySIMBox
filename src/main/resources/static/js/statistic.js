@@ -238,6 +238,8 @@ function showMultiColumnChart(list) {
         })
     });
 
+    console.log(data);
+
     multiColumnChart.data = data;
 }
 
@@ -274,7 +276,7 @@ function showFailChart(list) {
     let content = "";
     map.forEach(function (value, key) {
         content = content +
-            "<div>\n" +
+            "<div class='mt-3'>\n" +
             "   <div class=\"d-flex justify-content-between\">\n" +
             "       <span>" + key + "</span>\n" +
             "       <span>" + value + "</span>\n" +

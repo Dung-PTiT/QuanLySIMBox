@@ -17,10 +17,8 @@ public class DeviceStatistic {
         this.isActive = isActive;
         this.account = account;
         this.app = app;
-//        this.app = "Facebook";
         this.action = action;
         this.progress = progress;
-//        this.progress = 45;
         this.script = script;
         this.simId = simId;
         this.info = info;
@@ -41,10 +39,15 @@ public class DeviceStatistic {
             case "Skype":
                 this.appIcon = Contract.SKYPE_ICON;
                 break;
-            case "Gmail":
-                this.appIcon = Contract.GMAIL_ICON;
+            case "Line":
+                this.appIcon = Contract.LINE_ICON;
                 break;
-
+            case "Viper":
+                this.appIcon = Contract.VIPER_ICON;
+                break;
+            case "Whatsapp":
+                this.appIcon = Contract.WHATSAPP_ICON;
+                break;
         }
     }
 

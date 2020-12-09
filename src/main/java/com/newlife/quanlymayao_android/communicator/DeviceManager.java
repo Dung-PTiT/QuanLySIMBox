@@ -262,14 +262,18 @@ public class DeviceManager {
             builder.directory(new File(Contract.AUTO_TOOL_FOLDER));
             builder.redirectErrorStream(true);
             deviceStatus.status = "running";
+            if (isFirstTime) deviceStatus.action = "";
+            else deviceStatus.action = "Wait to retry";
+            deviceStatus.action = "Wait to retry";
+            deviceStatus.info = "";
+            deviceStatus.message = "";
+            deviceStatus.code = "";
+            deviceStatus.progress = 0;
+            deviceStatus.time = System.currentTimeMillis();
             deviceStatus.isActive = true;
             deviceStatus.isStarting = false;
             deviceStatus.script = script;
             deviceStatus.account = account;
-            deviceStatus.progress = 0;
-            deviceStatus.info = "";
-            deviceStatus.message = "";
-            deviceStatus.code = "";
             account.status = "using";
             long maxRunTimes = deviceStatusRepository.getMaxScriptRunTimes();
             deviceStatus.runTimes = maxRunTimes + 1;
@@ -277,6 +281,9 @@ public class DeviceManager {
             accountRepository.save(account);
             new Thread(() -> {
                 try {
+                    if (!isFirstTime) {
+                        Thread.sleep(11000);
+                    }
                     Process process = builder.start();
                     BufferedReader r = new BufferedReader(new InputStreamReader(process.getInputStream()));
                     String line;
@@ -320,7 +327,7 @@ public class DeviceManager {
                                 accountRepository.save(deviceStatus.account);
                             }
 
-                            if(isFirstTime) {
+                            if (isFirstTime) {
                                 retryRunScript(deviceStatus, script, account);
                             }
                             hasChange = true;
@@ -348,22 +355,24 @@ public class DeviceManager {
         }
     }
 
-    public void retryRunScript(DeviceStatus deviceStatus, Script script, Account account){
-        new Thread(()->{
-            try {
-                deviceStatus.status = "running";
-                deviceStatus.action = "Wait to retry";
-                deviceStatus.info = "";
-                deviceStatus.message = "";
-                deviceStatus.code = "";
-                deviceStatus.progress = 0;
-                deviceStatus.time = System.currentTimeMillis();
-                Thread.sleep(11000);
-                runScript(deviceStatus, script, account, false);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }).start();
+    public void retryRunScript(DeviceStatus deviceStatus, Script script, Account account) {
+        runScript(deviceStatus, script, account, false);
+
+//        new Thread(()->{
+//            try {
+//                deviceStatus.status = "running";
+//                deviceStatus.action = "Wait to retry";
+//                deviceStatus.info = "";
+//                deviceStatus.message = "";
+//                deviceStatus.code = "";
+//                deviceStatus.progress = 0;
+//                deviceStatus.time = System.currentTimeMillis();
+//                Thread.sleep(11000);
+//                runScript(deviceStatus, script, account, false);
+//            }catch (Exception e){
+//                e.printStackTrace();
+//            }
+//        }).start();
     }
 
     public ApiResponse<DeviceStatistic> restartDevice(String deviceId) {
@@ -534,7 +543,7 @@ public class DeviceManager {
         }
     }
 
-    public SummaryScriptStatistic getSummaryStatistic(){
+    public SummaryScriptStatistic getSummaryStatistic() {
         SummaryScriptStatistic summaryScriptStatistic = new SummaryScriptStatistic();
         summaryScriptStatistic.totalRunTimes = scriptStatisticDao.countRunScriptTimes("");
         summaryScriptStatistic.successRunTimes = scriptStatisticDao.countRunScriptTimes("complete");
@@ -543,54 +552,52 @@ public class DeviceManager {
         long countDate = 0;
         long endDate = 0;
         ArrayList<RunScriptDuration> listScriptDuration = scriptStatisticDao.getRunScriptDurationList();
-        for(RunScriptDuration duration : listScriptDuration){
-            if(duration.begin > endDate){
+        for (RunScriptDuration duration : listScriptDuration) {
+            if (duration.begin > endDate) {
                 countDate += 1;
                 endDate = TimeUtil.getEndTimeOfDate(duration.begin);
             }
         }
 //        System.out.println(countDate);
-        summaryScriptStatistic.avg = summaryScriptStatistic.totalRunTimes/countDate;
+        summaryScriptStatistic.avg = summaryScriptStatistic.totalRunTimes / countDate;
         return summaryScriptStatistic;
     }
 
-    public ArrayList<RunScriptTimesInfo> getRunScriptTimesInfo(String startTimeStr, String endTimeStr){
+    public ArrayList<RunScriptTimesInfo> getRunScriptTimesInfo(String startTimeStr, String endTimeStr) {
         long[] times = TimeUtil.parseTimeString(startTimeStr, endTimeStr);
-        if(times==null){
+        if (times == null) {
             return null;
         } else {
             return scriptStatisticDao.getRunScriptTimesInfo(times[0], times[1]);
         }
     }
 
-    public List<KichBan_LanChay> getKichBanLanChay(String startTimeStr, String endTimeStr){
+    public List<KichBan_LanChay> getKichBanLanChay(String startTimeStr, String endTimeStr) {
         long[] times = TimeUtil.parseTimeString(startTimeStr, endTimeStr);
-        if(times==null){
+        if (times == null) {
             return null;
         } else {
             return scriptStatisticDao.getKichBanLanChayList(times[0], times[1]);
         }
     }
 
-    public List<RunScriptTimesInfo> getLastRunScriptTimesInfo(String startTimeStr, String endTimeStr){
+    public List<RunScriptTimesInfo> getLastRunScriptTimesInfo(String startTimeStr, String endTimeStr) {
         long[] times = TimeUtil.parseTimeString(startTimeStr, endTimeStr);
-        if(times==null){
+        if (times == null) {
             return null;
         } else {
             return scriptStatisticDao.getLastRunScriptTimesInfo(times[0], times[1]);
         }
     }
 
-    public List<RunScriptTimesInfo> getFailRunScriptTimesInfo(String startTimeStr, String endTimeStr){
+    public List<RunScriptTimesInfo> getFailRunScriptTimesInfo(String startTimeStr, String endTimeStr) {
         long[] times = TimeUtil.parseTimeString(startTimeStr, endTimeStr);
-        if(times==null){
+        if (times == null) {
             return null;
         } else {
             return scriptStatisticDao.getFailRunScriptTimesInfo(times[0], times[1]);
         }
     }
-
-
 
 
     // Todo mirror thiết bị

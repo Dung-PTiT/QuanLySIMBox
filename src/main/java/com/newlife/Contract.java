@@ -37,5 +37,8 @@ public class Contract {
     public static String YOUTUBE_ICON = "./images/brands/youtube.png";
     public static String SKYPE_ICON = "./images/brands/skype.png";
     public static String GMAIL_ICON = "./images/brands/gmail.png";
+    public static String LINE_ICON = "./images/brands/line.png";
+    public static String VIPER_ICON = "./images/brands/viper.png";
+    public static String WHATSAPP_ICON = "./images/brands/whatsapp.png";
 
 }

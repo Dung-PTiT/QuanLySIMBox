@@ -356,11 +356,11 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                     index += 1;
                     while (index < messageLineList.size() && !messageLineList.get(index).startsWith("+CMGL")) {
                         String nextLine = messageLineList.get(index);
-                        content += nextLine;
+                        content += " " + nextLine;
                         index += 1;
                     }
                     if(!content.contains(" ")) {
-                        content = StringUtil.hexStringToText(content.trim()).replaceAll("[^a-zA-Z0-9' ']", "");
+                        content = StringUtil.hexStringToText(content.trim());
                     }
                     System.out.println(id + "," + type + "," + sdt + "," + time + "," + content);
                     tempList.add(new Messages(id, type, sdt.toUpperCase(), time, content, simInfo.simId));
