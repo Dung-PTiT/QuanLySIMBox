@@ -3,14 +3,13 @@ package com.newlife.quanlymayao_android.api;
 import com.newlife.base.ApiResponse;
 import com.newlife.quanlymayao_android.communicator.DeviceManager;
 import com.newlife.quanlymayao_android.model.*;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class DeviceApi {
@@ -38,11 +37,29 @@ public class DeviceApi {
 
     @PostMapping("/api/run_script_device")
     public ArrayList<ApiResponse<DeviceStatistic>> runScriptDevice(@RequestBody RequestScriptList requestList) {
-        ArrayList<ApiResponse<DeviceStatistic>> deviceList = new ArrayList<>();
+        ArrayList<ApiResponse<DeviceStatistic>> statisticList = new ArrayList<>();
+        Map<String, RequestScriptList> map = new HashMap<>();
         requestList.list.forEach(request -> {
-            deviceList.add(deviceManager.runScript(request.deviceId, request.scriptId, request.accountId));
+            if(!map.containsKey(request.deviceId)){
+                map.put(request.deviceId, new RequestScriptList());
+            }
+            map.get(request.deviceId).list.add(request);
         });
-        return deviceList;
+
+        for(String deviceId : map.keySet()){
+            DeviceStatus deviceStatus = deviceManager.getDeviceStatus(deviceId);
+            if(deviceStatus == null){
+                statisticList.add(new ApiResponse<>(false, new DeviceStatistic(), "Không tìm thấy thiết bị (" + deviceId + ")"));
+            } else if(!deviceStatus.finish){
+                statisticList.add(new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị đang chạy kịch bản khác.\nHãy kết thúc nó và chạy lại."));
+            } else {
+                deviceStatus.requestScriptList = map.get(deviceId);
+                deviceStatus.finish = false;
+                deviceStatus.scriptIndex = 0;
+                statisticList.add(deviceManager.runScript(deviceStatus.device.deviceId));
+            }
+        }
+        return statisticList;
     }
 
     @PostMapping("/api/stop_script")
@@ -54,11 +71,20 @@ public class DeviceApi {
         return list;
     }
 
+    @PostMapping("/api/finish_script")
+    public ArrayList<ApiResponse<DeviceStatistic>> finishScript(@RequestBody DeviceIdList deviceIdList) {
+        ArrayList<ApiResponse<DeviceStatistic>> list = new ArrayList<>();
+        for (String deviceId : deviceIdList.deviceIdList) {
+            list.add(deviceManager.finishScriptDevice(deviceId));
+        }
+        return list;
+    }
+
     @PostMapping("/api/start_script")
     public ArrayList<ApiResponse<DeviceStatistic>> startScript(@RequestBody DeviceIdList deviceIdList) {
         ArrayList<ApiResponse<DeviceStatistic>> list = new ArrayList<>();
         for (String deviceId : deviceIdList.deviceIdList) {
-            list.add(deviceManager.startScriptDevice(deviceId));
+            list.add(deviceManager.runScript(deviceId));
         }
         return list;
     }
@@ -183,29 +209,4 @@ public class DeviceApi {
             return new ApiResponse<>(true, list, "");
         }
     }
-}
-
-@Data
-class RequestScript implements Serializable {
-    String deviceId;
-    Integer scriptId;
-    Long accountId;
-}
-
-@Data
-class RequestScriptList implements Serializable {
-    ArrayList<RequestScript> list = new ArrayList<>();
-}
-
-@Data
-class DeviceIdList implements Serializable {
-    ArrayList<String> deviceIdList = new ArrayList<>();
-}
-
-@Data
-class ManageDeviceList{
-    ArrayList<String> deviceIdList = new ArrayList<>();
-    String filterDeviceId;
-    int page;
-    int size;
 }

@@ -28,6 +28,15 @@ public class DeviceStatus implements Serializable, Cloneable {
     @Column(name = "run_times")
     public long runTimes;
 
+    @Column(name = "script_index")
+    public int scriptIndex = 0;
+
+    @Column(name = "finish")
+    public Boolean finish = true;
+
+    @Transient
+    public RequestScriptList requestScriptList;
+
     @ManyToOne
     @JoinColumn(name = "device_id")
     public Device device;
@@ -79,9 +88,24 @@ public class DeviceStatus implements Serializable, Cloneable {
         account = null;
         script = null;
         runTimes = 0;
+        scriptIndex = 0;
+        finish = true;
+        requestScriptList = null;
     }
 
     public DeviceStatus clone() throws CloneNotSupportedException {
         return (DeviceStatus) super.clone();
+    }
+
+    public boolean hasNextScript(){
+        if(requestScriptList!=null){
+            if (scriptIndex >= requestScriptList.list.size()-1){
+                return false;
+            } else {
+                scriptIndex += 1;
+                return true;
+            }
+        }
+        return false;
     }
 }
