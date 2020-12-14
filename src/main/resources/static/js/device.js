@@ -6,6 +6,47 @@ var scriptMap = new Map();
 var deviceIdToAccountMap = new Map();
 var accountList = [];
 
+var scriptListTest = [
+    {
+        id: 1,
+        name: "facebook_login_logout_1"
+    },
+    {
+        id: 2,
+        name: "facebook_login_logout_2"
+    },
+    {
+        id: 3,
+        name: "facebook_login_logout_3"
+    },
+    {
+        id: 4,
+        name: "facebook_login_logout_4"
+    },
+    {
+        id: 5,
+        name: "facebook_login_logout_5"
+    },
+    {
+        id: 6,
+        name: "facebook_login_logout_6"
+    },
+    {
+        id: 7,
+        name: "facebook_login_logout_7"
+    },
+    {
+        id: 8,
+        name: "facebook_login_logout_8"
+    },
+    {
+        id: 9,
+        name: "facebook_login_logout_9"
+    }
+];
+
+var scriptRunListTest = [];
+
 $(document).ready(function () {
     getData();
     selectAllClickListener();
@@ -13,7 +54,28 @@ $(document).ready(function () {
         buttondown_class: "btn btn-light",
         buttonup_class: "btn btn-light"
     });
+    $('#run_script_one_device_dialog').modal('show');
+
+
+    for (let i = 0; i < scriptListTest.length; i++) {
+        var str = '<li class="list-group-item cursor-pointer border-bottom-li" onclick="addToScriptRun(' + scriptListTest[i] + ')">' + scriptListTest[i].name + '</li>';
+        $("#li_list").append(str);
+    }
+
+    for (let i = 0; i < scriptRunListTest.length; i++) {
+        $("#body_table_script_list").append(
+            '<tr class="table-bordered tr-script cursor-pointer">\n' +
+            '<td class="pl-2">' + scriptRunListTest[i].name + '</td>\n' +
+            '<td class="pr-2"><i class="icon-pencil font-size-sm float-right"></i>\n' +
+            '</td>\n' +
+            '</tr>');
+    }
+
 });
+
+function addToScriptRun(script) {
+    console.log(script);
+}
 
 function selectAllClickListener() {
     $('#select_all').on('click', function () {
@@ -1231,7 +1293,7 @@ function viewLog(deviceID) {
 }
 
 function genMessage(message, code, status) {
-    if(status == "complete" && message == ""){
+    if (status == "complete" && message == "") {
         return "<p class=\"text-danger font-weight-semibold m-0\" style=\"text-align: center; cursor: pointer\">No message</p>";
     } else if (message != '' && code != '') {
         return "<p class=\"text-primary font-weight-semibold m-0\" style=\"text-align: center; cursor: pointer\" title='" + message + "'>" + code + "</p>"
