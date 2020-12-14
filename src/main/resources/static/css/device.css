@@ -169,3 +169,21 @@ input[type=number] {
     -webkit-transform: scale(0.4);
     transform: scale(0.4);
 }
+
+.border-bottom-li{
+    border-bottom: 1px solid #dddddd;
+}
+
+.list-group-item:hover{
+    z-index: 2;
+    color: #fff;
+    background-color: #26a69a;
+    border-color: #26a69a
+}
+
+.tr-script:hover{
+    z-index: 2;
+    color: #fff;
+    background-color: #26a69a;
+    border-color: #26a69a
+}
