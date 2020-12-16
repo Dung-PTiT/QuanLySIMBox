@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.Cache;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.BufferedReader;
@@ -30,6 +31,9 @@ import java.util.Map;
 
 @Service
 public class DeviceManager {
+    @Autowired
+    public ScriptChainRepository scriptChainRepository;
+
     @Autowired
     DeviceReponsitory deviceReponsitory;
 
@@ -191,7 +195,7 @@ public class DeviceManager {
         } else return new ApiResponse<>(false, new DeviceStatistic(), "Không tìm thấy thiết bị (" + deviceId + ")");
     }
 
-    public ApiResponse<DeviceStatistic> finishScriptDevice(String deviceId){
+    public ApiResponse<DeviceStatistic> finishScriptDevice(String deviceId) {
         DeviceStatus deviceStatus = getDeviceStatus(deviceId);
         if (deviceStatus != null) {
             if (deviceStatus.isStarting) {
@@ -384,10 +388,23 @@ public class DeviceManager {
                         e.printStackTrace();
                     }
                 } else {
-                    deviceStatus.finish = true;
-                    deviceStatus.scriptIndex = 0;
-                    deviceStatus.status = "finished";
-                    saveDeviceStatusToDb();
+                    new Thread(()->{
+                        try{
+                            Thread.sleep(5000);
+                            deviceStatus.finish = true;
+                            deviceStatus.scriptIndex = 0;
+                            deviceStatus.status = "finished";
+                            deviceStatus.action = "";
+                            deviceStatus.progress = 0;
+                            deviceStatus.info = "";
+                            deviceStatus.message = "";
+                            deviceStatus.code = "";
+
+                            saveDeviceStatusToDb();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }).start();
                 }
             }).start();
         } catch (Exception e) {
@@ -413,6 +430,12 @@ public class DeviceManager {
                 deviceStatus.finish = true;
                 deviceStatus.scriptIndex = 0;
                 deviceStatus.status = "finished";
+                deviceStatus.action = "";
+                deviceStatus.progress = 0;
+                deviceStatus.info = "";
+                deviceStatus.message = "";
+                deviceStatus.code = "";
+
                 saveDeviceStatusToDb();
             }
         }

@@ -27,6 +27,8 @@ public class DeviceStatus implements Serializable, Cloneable {
     public boolean isDeleted = false;
     @Column(name = "run_times")
     public long runTimes;
+    @Column(name = "scrip_chain_id")
+    public int scriptChainId;
 
     @Column(name = "script_index")
     public int scriptIndex = 0;
@@ -72,7 +74,8 @@ public class DeviceStatus implements Serializable, Cloneable {
                 account == null ? "" : account.simId,
                 isStarting,
                 message,
-                code
+                code,
+                scriptChainId
         );
     }
 

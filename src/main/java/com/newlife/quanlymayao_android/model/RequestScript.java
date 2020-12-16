@@ -9,4 +9,5 @@ public class RequestScript implements Serializable {
     public String deviceId;
     public Integer scriptId;
     public Long accountId;
+    public Integer scriptChainId;
 }

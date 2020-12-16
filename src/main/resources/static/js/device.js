@@ -54,8 +54,8 @@ $(document).ready(function () {
         buttondown_class: "btn btn-light",
         buttonup_class: "btn btn-light"
     });
-    $('#run_script_one_device_dialog').modal('show');
 
+    $('#test_dialog').modal('show');
 
     for (let i = 0; i < scriptListTest.length; i++) {
         var str = '<li class="list-group-item cursor-pointer border-bottom-li" onclick="addToScriptRun(' + scriptListTest[i] + ')">' + scriptListTest[i].name + '</li>';
@@ -326,7 +326,21 @@ function showTable(dataTable) {
                     '<td>' + genButtonActionDevice(row.script, row.account, row.status, row.deviceId, row.isActive, row.isStarting) +
                     '</tr>';
             } else if (row.isActive == true) {
-                if (row.script == "" || row.account == "") {
+                if (row.status == "finished") {
+                    contentString = contentString +
+                        '<tr style="height: 53px">' +
+                        '<td>' + genCheckox(row.index, row.deviceId) + '</td>\n' +
+                        '<td>' + row.deviceId + '</td>\n' +
+                        '<td>' + genActive(row.isActive) + '</td>\n' +
+                        '<td>' + genStatus(row.status) + '</td>\n' +
+                        '<td></td>\n' +
+                        '<td></td>\n' +
+                        '<td></td>\n' +
+                        '<td></td>\n' +
+                        '<td></td>\n' +
+                        '<td>' + genButtonActionDevice(row.script, row.account, row.status, row.deviceId, row.isActive, row.isStarting) +
+                        '</tr>';
+                } else if (row.script == "" || row.account == "") {
                     contentString = contentString +
                         '<tr style="height: 53px">' +
                         '<td>' + genCheckox(row.index, row.deviceId) + '</td>\n' +
@@ -407,6 +421,8 @@ function genStatus(statusValue) {
         status = '<span class="badge bg-danger" style="min-width: 48px">Fail</span>';
     } else if (statusValue == "stopped") {
         status = '<span class="badge bg-warning" style="min-width: 48px">Stopped</span>';
+    } else if (statusValue == "finished") {
+        status = '<span class="badge bg-indigo" style="min-width: 48px">Finished</span>';
     }
     return status;
 }
@@ -478,7 +494,7 @@ function genButtonActionDevice(script, account, status, deviceId, isActived, isS
                 '    <button onclick="showTurnoffSingleDeviceConfirm(\'' + deviceId + '\')" class="btn btn-action-device" title="Tắt thiết bị" style="display: none" >\n' +
                 '        <fa class="fa fa-power-off text-danger"></fa>\n' +
                 '    </button>\n' +
-                '    <button onclick="showModalRunOneScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Thiết lập kịch bản" disabled>\n' +
+                '    <button onclick="showModalRunOneScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Thiết lập kịch bản" >\n' +
                 '        <i class="icon-cog text-dark"></i>\n' +
                 '    </button>\n' +
                 '    <button onclick="viewLog(\'' + deviceId + '\')" class="btn btn-action-device" title="Xem log">\n' +
@@ -571,7 +587,7 @@ function genButtonActionDevice(script, account, status, deviceId, isActived, isS
                     '    </button>\n' +
                     '</div>\n' +
                     '</div>';
-            } else if ((status == 'fail') || status == 'complete' || status == 'stopped') {
+            } else if ((status == 'fail') || status == 'complete' || status == 'stopped' || status == 'finished') {
                 button =
                     ' <div class="list-icons">\n' +
                     '<div x-placement="bottom-start">\n' +
@@ -1111,7 +1127,7 @@ function showDeviceToAccountMap() {
             tableContent = tableContent +
                 "<tr>\n" +
                 "<td>\n" +
-                "    <span class='pl-2 font-weight-semibold text-primary'>" + selectedDeviceIdList[i] + "</span>\n" +
+                "    <span class='pl-2 font-weight-semibold text-dark'>" + selectedDeviceIdList[i] + "</span>\n" +
                 "</td>\n" +
                 "<td>\n" +
                 "<div style=\"display:flex; align-items: center;\">\n" +
@@ -1136,7 +1152,7 @@ function showDeviceToAccountMap() {
             tableContent = tableContent +
                 "<tr>\n" +
                 "<td>\n" +
-                "    <span class='pl-2 font-weight-semibold text-primary'>" + selectedDeviceIdList[i] + "</span>\n" +
+                "    <span class='pl-2 font-weight-semibold text-dark'>" + selectedDeviceIdList[i] + "</span>\n" +
                 "</td>\n" +
                 "<td>\n" +
                 "<div style=\"display:flex; align-items: center;\">\n" +
@@ -1167,7 +1183,7 @@ function removeAccount(deviceId) {
 
 function runScriptForMultiDivice() {
     if (findInMap(deviceIdToAccountMap, null)) {
-        cosole.log("Hãy chọn tài khoản cho tất cả thiết bị");
+        alert("Hãy chọn tài khoản cho tất cả thiết bị");
     } else {
         $('#run_script_multi_device').modal('hide');
         let scriptRequestList = [];
@@ -1241,46 +1257,46 @@ function viewLog(deviceID) {
                         if (row.isActive == false) {
                             content = content +
                                 '<tr>' +
-                                '<td>' + timeConverter(row.time) + '</td>\n' +
-                                '<td>' + genActive(row.isActive) + '</td>\n' +
-                                '<td></td>\n' +
-                                '<td></td>\n' +
-                                '<td></td>\n' +
-                                '<td></td>\n' +
-                                '<td></td>\n' +
-                                '<td></td>\n' +
-                                '<td></td>\n' +
-                                '<td></td>\n' +
+                                '<td style=" width: 8%;">' + timeConverter(row.time) + '</td>\n' +
+                                '<td style=" width: 6%;">' + genActive(row.isActive) + '</td>\n' +
+                                '<td style=" width: 7%;"></td>\n' +
+                                '<td style=" width: 9%;"></td>\n' +
+                                '<td style=" width: 10%;"></td>\n' +
+                                '<td style=" width: 10%;"></td>\n' +
+                                '<td style=" width: 11%;"></td>\n' +
+                                '<td style=" width: 10%;"></td>\n' +
+                                '<td style=" width: 14%;"></td>\n' +
+                                '<td style=" width: 14.7%;"></td>\n' +
                                 '</tr>';
                         } else {
                             if (row.script == "" || row.account == "") {
                                 content = content +
                                     '<tr>' +
-                                    '<td>' + timeConverter(row.time) + '</td>\n' +
-                                    '<td>' + genActive(row.isActive) + '</td>\n' +
-                                    '<td>' + genStatus(row.status) + '</td>\n' +
-                                    '<td></td>\n' +
-                                    '<td></td>\n' +
-                                    '<td></td>\n' +
-                                    '<td></td>\n' +
-                                    '<td></td>\n' +
-                                    '<td></td>\n' +
-                                    '<td></td>\n' +
+                                    '<td style=" width: 8%;">' + timeConverter(row.time) + '</td>\n' +
+                                    '<td style=" width: 6%;">' + genActive(row.isActive) + '</td>\n' +
+                                    '<td style=" width: 7%;">' + genStatus(row.status) + '</td>\n' +
+                                    '<td style=" width: 9%;"></td>\n' +
+                                    '<td style=" width: 10%;"></td>\n' +
+                                    '<td style=" width: 10%;"></td>\n' +
+                                    '<td style=" width: 11%;"></td>\n' +
+                                    '<td style=" width: 10%;"></td>\n' +
+                                    '<td style=" width: 14%;"></td>\n' +
+                                    '<td style=" width: 14.7%;"></td>\n' +
                                     '</tr>';
                             } else {
                                 content = content +
                                     '<tr>' +
-                                    '<td>' + timeConverter(row.time) + '</td>\n' +
-                                    '<td>' + genActive(row.isActive) + '</td>\n' +
-                                    '<td>' + genStatus(row.status) + '</td>\n' +
-                                    '<td><img src="' + row.appIcon + '" width="20" height="20">\n' +
+                                    '<td style=" width: 8%;">' + timeConverter(row.time) + '</td>\n' +
+                                    '<td style=" width: 6%;">' + genActive(row.isActive) + '</td>\n' +
+                                    '<td style=" width: 7%;">' + genStatus(row.status) + '</td>\n' +
+                                    '<td style=" width: 9%;"><img src="' + row.appIcon + '" width="20" height="20">\n' +
                                     '<span class="ml-2">' + row.app + '</span></td>\n' +
-                                    '<td>' + row.account + '</td>\n' +
-                                    '<td>' + row.script + '</td>\n' +
-                                    '<td>' + row.simId + '</td>\n' +
-                                    '<td>' + genProgress(row.progress, row.action, row.status) + '</td>\n' +
-                                    '<td>' + genMessage(row.message, row.code, row.status) + '</td>\n' +
-                                    '<td>' + row.info + '</td>\n' +
+                                    '<td style=" width: 10%;">' + row.account + '</td>\n' +
+                                    '<td style=" width: 10%;">' + row.script + '</td>\n' +
+                                    '<td style=" width: 11%;">' + row.simId + '</td>\n' +
+                                    '<td style=" width: 10%;">' + genProgress(row.progress, row.action, row.status) + '</td>\n' +
+                                    '<td style=" width: 14%;">' + genMessage(row.message, row.code, row.status) + '</td>\n' +
+                                    '<td style=" width: 14.7%;">' + row.info + '</td>\n' +
                                     '</tr>';
                             }
                         }
@@ -1311,6 +1327,52 @@ function genActive(isActive) {
         content = '<fa class="fa fa-circle text-danger" title="Tắt" style="font-size:12px !important"></fa>';
     }
     return content;
+}
+
+function showManageScriptChainDialog() {
+    $('#manage_script_chain_table_body').html();
+    $('#manage_script_chain_dialog').modal('show');
+    $.ajax({
+        type: "GET",
+        url: "/api/get_all_script_chain",
+        cache: false,
+        crossDomain: true,
+        processData: true,
+        dataType: "json",
+        success: function (data) {
+            if(data!=null && data.length>0) {
+                let content = ""
+                for (let i = 0; i < data.length; i++) {
+                    let scripts = "";
+                    for (let j = 0; j < data[i].scriptList.length; j++) {
+                        scripts += "<p class=\"m-0\">" + data[i].scriptList[j].name + "</p>\n";
+                    }
+                    content = content +
+                        "<tr class=\"text-center text-dark font-weight-semibold\">\n" +
+                        "   <td style=\" width: 5%;\">" + (i+1) + "</td>\n" +
+                        "   <td style=\" width: 15%;\">" + data[i].id + "</td>\n" +
+                        "   <td class=\"text-left pl-2\" style=\" width: 25%;\">" + data[i].name + "</td>\n" +
+                        "   <td class=\"text-left pl-2\" style=\" width: 35%;\">\n" + scripts +"</td>\n" +
+                        "   <td style=\" width: 19%;\">\n" +
+                        "       <div class=\"list-icons\">\n" +
+                        "           <button onclick=\"editScriptChain(" + data[i].id + ")\" class=\"btn btn-action-device\"\n" +
+                        "                   title=\"Chỉnh sửa\"\n" +
+                        "                   data-target=\"#edit_manage_script_chain_dialog\">\n" +
+                        "               <i class=\"icon-pencil5 text-grey\"></i>\n" +
+                        "           </button>\n" +
+                        "           <button onclick=\"showDeleteScriptChainConfirm(" + data[i].id + ", '" + data[i].name + "')\"\n" +
+                        "                   class=\"btn btn-action-device ml-2\" title=\"Xóa\"\n" +
+                        "                   data-target=\"#confirm_popup\">\n" +
+                        "               <i class=\"icon-trash text-grey\"></i>\n" +
+                        "           </button>\n" +
+                        "       </div>\n" +
+                        "   </td>\n" +
+                        "</tr>"
+                }
+                $('#manage_script_chain_table_body').html(content)
+            }
+        }
+    });
 }
 
 function showDeleteDeviceConfirm() {
@@ -1350,6 +1412,24 @@ function deleteDevice() {
     });
     selectedDeviceIdList = [];
     updateSelectAllChecked();
+}
+
+function editScriptChain(scriptChainId) {
+    $('#edit_manage_script_chain_dialog').modal('show')
+}
+
+function showDeleteScriptChainConfirm(scriptChainId, scriptChainName) {
+    $('#btn_ok_comfirm').prop("onclick", null).off("click");
+    $('#btn_ok_comfirm').click(function () {
+        deleteScriptChain(sciptChainId);
+    });
+    $('#btn_ok_comfirm').html("Xóa");
+    $('#comfirm_title').html("Xác nhận xóa");
+    $('#confirm_content').html("Bạn chắc chắn muốn xóa chuỗi kịch bản <span class=\"font-weight-semibold\">" + scriptChainName +"</span> ?");
+    $('#confirm_popup').modal('show');
+}
+
+function deleteScriptChain(sciptChainId){
 }
 
 function timeConverter(UNIX_timestamp) {

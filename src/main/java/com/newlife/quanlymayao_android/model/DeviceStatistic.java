@@ -9,7 +9,7 @@ public class DeviceStatistic {
 
     public DeviceStatistic(String deviceId, String status, long time, int index, boolean isActive,
                            String account, String app, String action, int progress, String info, String script,
-                           String simId, boolean isStarting, String message, String code) {
+                           String simId, boolean isStarting, String message, String code, int scriptChainId) {
         this.deviceId = deviceId;
         this.status = status;
         this.time = time;
@@ -25,6 +25,7 @@ public class DeviceStatistic {
         this.isStarting = isStarting;
         this.message = message;
         this.code = code;
+        this.scriptChainId = scriptChainId;
 
         switch (this.app){
             case "Facebook":
@@ -67,4 +68,5 @@ public class DeviceStatistic {
     public boolean isStarting;
     public String message = "";
     public String code;
+    public int scriptChainId;
 }

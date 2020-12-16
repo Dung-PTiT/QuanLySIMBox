@@ -56,6 +56,7 @@ public class DeviceApi {
                 deviceStatus.requestScriptList = map.get(deviceId);
                 deviceStatus.finish = false;
                 deviceStatus.scriptIndex = 0;
+                deviceStatus.scriptChainId = deviceStatus.requestScriptList.list.get(0).scriptChainId;
                 statisticList.add(deviceManager.runScript(deviceStatus.device.deviceId));
             }
         }
@@ -154,6 +155,31 @@ public class DeviceApi {
     @GetMapping("/api/get_all_script")
     public List<Script> getAllScrip() {
         return deviceManager.scriptReponsitory.findAll();
+    }
+
+    @GetMapping("/api/get_all_script_chain")
+    public List<ScriptChain> getAllScripChain() {
+        List<ScriptChain> scriptChains = deviceManager.scriptChainRepository.findAll();
+        for (int i = 0; i < scriptChains.size(); i++) {
+            scriptChains.get(i).scriptList = getScriptList(scriptChains.get(i).strScriptIds);
+        }
+        return scriptChains;
+    }
+
+    public ArrayList<Script> getScriptList(String strScriptIds){
+        ArrayList<Script> scriptList = new ArrayList<>();
+        String[] splits = strScriptIds.split(",");
+        for (int i = 0; i < splits.length; i++) {
+            try{
+                if(splits[i].isEmpty()) continue;
+                int id = Integer.parseInt(splits[i]);
+                Script script = deviceManager.scriptReponsitory.findById(id).orElse(null);
+                if(script!=null) scriptList.add(script);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return scriptList;
     }
 
     @PostMapping("/api/find_account")
