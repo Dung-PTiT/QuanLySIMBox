@@ -1,6 +1,6 @@
 package com.newlife.quanlymayao_android.repository;
 
-import com.newlife.quanlymayao_android.communicator.DeviceManager;
+import com.newlife.quanlymayao_android.controller.DeviceManager;
 import com.newlife.quanlymayao_android.model.KichBan_LanChay;
 import com.newlife.quanlymayao_android.model.RunScriptDuration;
 import com.newlife.quanlymayao_android.model.RunScriptTimesInfo;

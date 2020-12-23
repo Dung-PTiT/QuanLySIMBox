@@ -5,10 +5,9 @@
 
 .table > thead > tr > th,
 .table > thead > tr > td {
-    height: 40px;
+    height: 35px;
     font-weight: 400;
     border-bottom: 0;
-    letter-spacing: 1px;
     vertical-align: center;
     padding: 4px;
     background: #444a77;
@@ -19,6 +18,7 @@
     display: block;
     max-height: 450px;
     overflow-y: scroll;
+    background: white;
 }
 
 .header-fixed > thead,
@@ -121,6 +121,7 @@ input[type=number] {
     -moz-appearance: textfield;
 }
 
+
 .radio {
     margin: 16px 0;
     display: block;
@@ -218,4 +219,44 @@ input[type=number] {
     color: #fff;
     background-color: #26a69a;
     border-color: #26a69a
+}
+
+.table_align_left thead tr th {
+    text-align: left;
+    padding-left: 10px;
+    margin: 0;
+}
+
+.table_align_left td {
+    font-weight: 500;
+    margin: 0;
+    height: 35px;
+    color: black;
+    text-align: left;
+    padding: 0 10px !important;
+}
+
+.table_align_left p {
+    width: 100% !important;
+    margin: 0;
+}
+
+.table_align_left button {
+    width: 10% !important;
+    padding: 5px;
+    align-items: center;
+}
+
+.table_align_left tbody {
+    max-height: 200px;
+}
+
+.disable {
+    pointer-events: none;
+    opacity: 0.4;
+}
+
+.disable div,
+.disable textarea {
+    overflow: hidden;
 }

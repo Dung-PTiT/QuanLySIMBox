@@ -277,9 +277,9 @@ function showFailChart(list) {
     map.forEach(function (value, key) {
         content = content +
             "<div class='mt-3'>\n" +
-            "   <div class=\"d-flex justify-content-between\">\n" +
-            "       <span>" + key + "</span>\n" +
-            "       <span>" + value + "</span>\n" +
+            "   <div class=\"d-flex col-12 p-0\">\n" +
+            "       <span class='col-10 p-0 font-weight-semibold'>" + key + "</span>\n" +
+            "       <span class='col-2 p-0 text-right'>" + value + "</span>\n" +
             "   </div>\n" +
             "   <div class=\"progress rounded-round\" style=\" height:0.4rem\">\n" +
             "       <div class=\"progress-bar bg-info\" style=\"width: " + (value/total*100) +"%;\">\n" +

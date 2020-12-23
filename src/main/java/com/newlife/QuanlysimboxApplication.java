@@ -1,6 +1,6 @@
 package com.newlife;
 
-import com.newlife.quanlymayao_android.communicator.DeviceManager;
+import com.newlife.quanlymayao_android.controller.DeviceManager;
 import com.newlife.quanlysimbox.communicator.CommPortIdentifierManager;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

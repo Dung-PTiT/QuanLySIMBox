@@ -6,7 +6,11 @@
     <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
     <title>Quản lý thiết bị</title>
     <link th:href="@{/css/device.css}" rel="stylesheet" type="text/css">
+
     <script th:src="@{/js/device.js}"></script>
+    <script th:src="@{/js/script_chain.js}"></script>
+    <script th:src="@{/js/util.js}"></script>
+    <script th:src="@{/js/select_script_for_one_device.js}"></script>
     <style>
         .container-fluid {
             padding-left: 0 !important;
@@ -318,64 +322,130 @@
                 </div>
             </div>
         </div>
-<!--        <div class="modal fade" id="run_script_one_device_dialog" tabindex="-1" role="dialog"-->
-<!--             aria-labelledby="exampleModalLabel"-->
-<!--             aria-hidden="true" style="top: 40px!important;">-->
-<!--            <div class="modal-dialog" role="document" style="width: 700px; max-width: 700px">-->
-<!--                <div class="modal-content" style="background-color: #f5f5f5">-->
-<!--                    <div class="modal-header">-->
-<!--                        <h6 class="card-title font-weight-bold mb-2">Chạy kịch bản</h6>-->
-<!--                        <h5 id="run_script_one_device_title" class="card-title font-size-sm">-->
-<!--                            <span>Thiết bị: </span>-->
-<!--                            <span class="text-primary">127.0.0.1:6001</span>-->
-<!--                        </h5>-->
-<!--                    </div>-->
-<!--                    <div class="modal-body">-->
-<!--                        <div class="row h-100">-->
-<!--                            <div class="col-lg-4">-->
-<!--                                <p>Kịch bản</p>-->
-<!--                                <ul class="list-group p-0" id="li_list" style="height: 300px; overflow: auto;"></ul>-->
-<!--                            </div>-->
-<!--                            <div class="col-lg-1 align-self-center">-->
-<!--                                <button type="button" class="btn btn-default p-1 mt-2 bg-white"-->
-<!--                                        style="border: 1px solid #dddddd">-->
-<!--                                    <i class="icon-arrow-right13"></i>-->
-<!--                                </button>-->
-<!--                                <button type="button" class="btn btn-default p-1 mt-2 bg-white"-->
-<!--                                        style="border: 1px solid #dddddd">-->
-<!--                                    <i class="icon-arrow-left12"></i>-->
-<!--                                </button>-->
-<!--                            </div>-->
-<!--                            <div class="col-lg-7 bg-white p-0" style="height: 330px; overflow: auto;">-->
-<!--                                <table class="table bg-white">-->
-<!--                                    <thead>-->
-<!--                                    <tr class="text-left" style="background-color: #f5f5f5;">-->
-<!--                                        <th class="font-weight-normal text-dark" style="width: 50%">Kịch bản sẽ chạy-->
-<!--                                        </th>-->
-<!--                                        <th class="font-weight-normal text-dark" style="width: 50%">Tài khoản</th>-->
-<!--                                    </tr>-->
-<!--                                    </thead>-->
-<!--                                    <tbody id="body_table_script_list">-->
+        <div class="modal fade" id="run_script_one_device_dialog" tabindex="-1" role="dialog"
+             aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document" style="width: 700px; max-width: 700px">
+                <div class="modal-content" style="background-color: #f5f5f5">
+                    <div class="modal-header">
+                        <h6 class="card-title font-weight-bold mb-2">Chạy kịch bản</h6>
+                        <div class="row">
+                            <p class="m-0">Thiết bị: </p>
+                            <p id="run_script_one_device_title" class="font-weight-semibold text-dark m-0 ml-2">
+                                <span class="text-primary"></span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <input type="radio" id="single_script" value="single_script" name="script_type">
+                        <label class="font-weight-semibold" for="single_script">Một kịch bản</label><br>
+                        <div id="single_script_group">
+                            <div class="col-12 d-flex align-items-center pl-2 pr-0">
+                                <div class="col-3">
+                                    <span>Kịch bản</span>
+                                </div>
+                                <select style="height: 27px" onchange="getAccountByScriptForOneDevice()"
+                                        class="col-9 filterInput"
+                                        id="one_script_select">
+                                    <option disabled selected>Chọn kịch bản</option>
+                                </select>
+                            </div>
+                            <div class="col-12 d-flex mt-1">
+                                <div class="col-3"></div>
+                                <div class="col-9">
+                                    <span class="text-danger" style="display: none" id="error_empty_account">Không còn tài khoản rảnh cho kịch bản</span>
+                                </div>
+                            </div>
+                            <div class="col-12 d-flex align-items-center mt-1 pl-2 pr-0">
+                                <div class="col-3">
+                                    <span>Tài khoản</span>
+                                </div>
+                                <select style="height: 27px"
+                                        class="col-9 filterInput"
+                                        id="account_select">
+                                </select>
+                            </div>
+                        </div>
+                        <input class="mt-3" type="radio" id="script_chain" value="script_chain" name="script_type">
+                        <label class="font-weight-semibold" for="script_chain">Chuỗi kịch bản</label><br>
+                        <div id="script_chain_group">
+                            <div class="col-12 d-flex align-items-center pl-2 pr-0">
+                                <div class="col-3">
+                                    <span>Chuỗi kịch bản</span>
+                                </div>
+                                <select style="height: 27px" onchange="onScriptChainChange()"
+                                        class="col-9 filterInput"
+                                        id="script_chain_select">
+                                    <option disabled selected>Chọn chuỗi kịch bản</option>
+                                </select>
+                            </div>
+                            <div class="mt-3 ml-3" style="display: flex; justify-content: space-between">
+                                <div>
+                                    <span>Chọn tài khoản cho mỗi kịch bản</span>
+                                </div>
+                                <!--                            <div>-->
+                                <!--                                <button class="btn btn-filter legitRipple"-->
+                                <!--                                        style="padding: 4px 5px 4px 6px !important; border: none !important;"-->
+                                <!--                                        onclick="autoMatchDeviceWithAccount()">-->
+                                <!--                                    <span class="text-primary">Auto</span>-->
+                                <!--                                </button>-->
 
-<!--                                    </tbody>-->
-<!--                                </table>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                    <div class="modal-footer justify-content-end mt-2">-->
-<!--                        <button type="button" class="btn bg-primary legitRipple mr-3"-->
-<!--                                id="btn_runOneScript"-->
-<!--                                onclick="runOneScript()"-->
-<!--                                style="text-transform: none; width: 80px; padding: 4px 2px 4px 2px;">Chạy-->
-<!--                        </button>-->
-<!--                        <button type="button" class="btn legitRipple" data-dismiss="modal"-->
-<!--                                style="text-transform: none; width: 80px; background-color: #dddddd; padding: 4px 2px 4px 2px;">-->
-<!--                            Đóng-->
-<!--                        </button>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
+                                <!--                                <button class="btn btn-filter legitRipple"-->
+                                <!--                                        style="padding: 4px 5px 4px 6px !important; border: none !important;"-->
+                                <!--                                        onclick="clearMatchDeviceWithAccount()">-->
+                                <!--                                    <span class="text-primary">Reset</span>-->
+                                <!--                                </button>-->
+                                <!--                            </div>-->
+                            </div>
+                            <form id="" class="ml-3">
+                                <div>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered text-center table_align_left header-fixed table-striped"
+                                               style="height: 200px">
+                                            <thead style="height: 30px !important;">
+                                            <tr style="background-color: #f1f1f1">
+                                                <th style="width: 40%">Kịch bản</th>
+                                                <th style="width: 60%">Tài khoản</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="script_account_map_body">
+                                            <tr>
+                                                <td style="width: 40.4%">
+                                                    facebook
+                                                </td>
+                                                <td style="width: 60%">
+                                                    <div style="display:flex; align-items: center;">
+                                                        <p>khoa_moya</p>
+                                                        <button type="button" class="btn legitRipple"
+                                                                onclick="showSelectAccountDialog('',null)"
+                                                                data-target="#select_account_for_script_dialog">
+                                                            <fa class="far fa-caret-square-down"></fa>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer justify-content-end mt-2">
+                        <button type="button" class="btn bg-primary legitRipple mr-3"
+                                id="btn_runOneScript"
+                                onclick="runOneScript()"
+                                style="text-transform: none; width: 80px; padding: 4px 2px 4px 2px;">Chạy
+                        </button>
+                        <button type="button" class="btn legitRipple" data-dismiss="modal"
+                                style="text-transform: none; width: 80px; background-color: #dddddd; padding: 4px 2px 4px 2px;">
+                            Đóng
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <!--        <div class="modal fade" id="run_script_one_device_dialog" tabindex="-1" role="dialog"-->
         <!--             aria-labelledby="exampleModalLabel"-->
         <!--             aria-hidden="true" style="top: 180px!important;">-->
@@ -439,7 +509,8 @@
                         <!--                        </button>-->
                     </div>
                     <div class="modal-body">
-                        <table class="table table-bordered text-center header-fixed" style="height: 450px">
+                        <table class="table table-bordered text-center header-fixed table-striped"
+                               style="height: 450px">
                             <thead>
                             <tr class="text-center text-grey" style="background-color: #f2f2f2">
                                 <th style=" width: 5%;">TT</th>
@@ -450,34 +521,16 @@
                             </tr>
                             </thead>
                             <tbody id="manage_script_chain_table_body">
-                            <tr class="text-center text-dark font-weight-semibold">
-                                <td style=" width: 5%;">TT</td>
-                                <td style=" width: 15%;">ID</td>
-                                <td class="text-left pl-2" style=" width: 25%;">Tên</td>
-                                <td class="text-left pl-2" style=" width: 35%;">
-                                    <p class="m-0">Kich ban 1</p>
-                                    <p class="m-0">Kich ban 2</p>
-                                    <p class="m-0">Kich ban 3</p>
-                                </td>
-                                <td style=" width: 19%;">
-                                    <div class="list-icons">
-                                        <button onclick="editScriptChain(123)" class="btn btn-action-device"
-                                                title="Chỉnh sửa"
-                                                data-target="#edit_manage_script_chain_dialog">
-                                            <i class="icon-pencil5 text-grey"></i>
-                                        </button>
-                                        <button onclick="showDeleteScriptChainConfirm(123, 'fb_zl_gm')"
-                                                class="btn btn-action-device ml-2" title="Xóa"
-                                                data-target="#confirm_popup">
-                                            <i class="icon-trash text-grey"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
                             </tbody>
                         </table>
                     </div>
-                    <div class="modal-footer justify-content-end mt-2">
+                    <div class="modal-footer justify-content-between mt-2">
+                        <button id="btn_add_script_chain" type="button" class="btn bg-primary legitRipple mr-3"
+                                style="text-transform: none; width: 80px; padding: 4px 2px 4px 2px;"
+                                onclick="editScriptChain(0)"
+                                data-target="#edit_script_chain_dialog">
+                            Thêm mới
+                        </button>
                         <button type="button" class="btn legitRipple" data-dismiss="modal"
                                 style="text-transform: none; width: 80px; background-color: #dddddd; padding: 4px 2px 4px 2px;">
                             Đóng
@@ -566,7 +619,7 @@
                 </div>
             </div>
         </div>
-        <div id="select_account_dialog" class="modal fade" tabindex="-1" aria-hidden="true"
+        <div class="modal fade" id="select_account_for_device_dialog" tabindex="-1" aria-hidden="true"
              style="display: none; margin-top: 80px!important;">
             <div class="modal-dialog modal-xs">
                 <div class="modal-content">
@@ -587,27 +640,7 @@
                         <!--                                </div>-->
                         <!--                            </div>-->
                         <!--                        </div>-->
-                        <div class="col-md-8 mb-3" id="select_account_radio_group">
-                            <tr>
-                                <td>
-                                    <span class="pl-2 font-weight-semibold text-primary">127.0.0.1:62028</span>
-                                </td>
-                                <td style="display:flex; align-items: center; justify-content: space-between">
-                                    <div>
-                                        <span class="pl-2 font-weight-semibold">dhaskd_acc1</span>
-                                    </div>
-                                    <button type="button" class="btn legitRipple"
-                                            onclick="clickSelectAccountDialog('127.0.0.1:62028',1)"
-                                            data-target="#select_account_dialog">
-                                        <fa class="fa fa-pencil-alt"></fa>
-                                    </button>
-                                    <button type="button" class="btn legitRipple"
-                                            onclick="clickSelectAccountDialog('127.0.0.1:62028',1)"
-                                            data-target="#select_account_dialog">
-                                        <fa class="fa fa-pencil-alt"></fa>
-                                    </button>
-                                </td>
-                            </tr>
+                        <div class="col-md-8 mb-3" id="select_account_device_radio_group">
                         </div>
                         <div class="modal-footer justify-content-center p-0 mt-4">
                             <button type="button" class="btn bg-primary legitRipple mr-3"
@@ -623,49 +656,103 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="edit_manage_script_chain_dialog" tabindex="-1" role="dialog"
+        <div class="modal fade" id="select_account_for_script_dialog" tabindex="-1" aria-hidden="true"
+             style="display: none; margin-top: 80px!important;">
+            <div class="modal-dialog modal-xs">
+                <div class="modal-content">
+                    <div class="modal-header justify-content-center bg-grey-600 p-0"
+                         style="height: 46px; align-items: center">
+                        <h6 class="modal-title text-white font-weight-semibold">Chọn tài khoản</h6>
+                    </div>
+                    <div class="modal-body">
+                        <!--                        <div class="mb-4">-->
+                        <!--                            <div class="form-group form-group-feedback form-group-feedback-right">-->
+                        <!--                                <input type="text" class="form-control ui-autocomplete-input"-->
+                        <!--                                       autocomplete="off"-->
+                        <!--                                       style="    border: 1px solid #dddddd !important; border-radius: 5px; padding-left: 10px">-->
+                        <!--                                <div class="form-control-feedback">-->
+                        <!--                                    <button class="btn" style="margin-bottom: 1px;color: #6d6d6d">-->
+                        <!--                                        <i class="icon-search4 font-size-base"></i>-->
+                        <!--                                    </button>-->
+                        <!--                                </div>-->
+                        <!--                            </div>-->
+                        <!--                        </div>-->
+                        <div class="col-md-8 mb-3" id="select_account_script_radio_group">
+                        </div>
+                        <div class="modal-footer justify-content-center p-0 mt-4">
+                            <button type="button" class="btn bg-primary legitRipple mr-3"
+                                    onclick="getAccountSelectedInRadioGroup_forScript()"
+                                    style="text-transform: none; width: 80px; padding: 4px 2px 4px 2px;">Xong
+                            </button>
+                            <button type="button" class="btn legitRipple" data-dismiss="modal"
+                                    style="text-transform: none; width: 80px; background-color: #dddddd; padding: 4px 2px 4px 2px;">
+                                Hủy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="edit_script_chain_dialog" tabindex="-1" role="dialog"
              aria-labelledby="exampleModalLabel"
              aria-hidden="true">
             <div class="modal-dialog" role="document" style="max-width: 800px;">
                 <div class="modal-content" style="background-color: #f5f5f5">
                     <div class="modal-header">
-                        <h6 class="card-title font-weight-bold mb-2">Chỉnh sửa chuỗi kịch bản</h6>
+                        <h6 id="title_edit_script_chain" class="card-title font-weight-bold mb-2">Chỉnh sửa chuỗi kịch
+                            bản</h6>
                     </div>
                     <div class="modal-body">
                         <div class="d-flex align-items-center">
-                            <p class="font-weight-semibold m-0 p-0">Tên</p>
-                            <input type="text" style="width: 300px; height: 28px; margin-left: 30px; padding: 3px 8px">
+                            <p class="font-weight-semibold m-0 p-0">Tên chuỗi kịch bản</p>
+                            <input id="input_script_chain_name" type="text"
+                                   style="width: 300px; height: 28px; margin-left: 30px; padding: 3px 8px">
                         </div>
                         <div class="row h-100 mt-3">
-                            <div class="col-lg-4 p-0">
-                                <p class="font-weight-semibold m-0 p-0">Kịch bản</p>
-                                <ul class="list-group p-0 mt-1" id="list_all_scripts" style="height: 300px; overflow: auto;"></ul>
+                            <div class="col-lg-5 p-0">
+                                <p class="font-weight-semibold m-0 p-0">Tất cả kịch bản</p>
+                                <select id="list_all_script" multiple="multiple"
+                                        style="height: 300px; width: 100%; margin-top: 10px">
+                                    <!--                                    <option value="elem_3" selected="selected">elem 3</option>-->
+                                </select>
                             </div>
                             <div class="col-lg-1 align-self-center">
                                 <button type="button" class="btn btn-default p-1 bg-white h-100 w-100"
-                                        style="border: 1px solid #dddddd">
+                                        style="border: 1px solid #dddddd"
+                                        onclick="selectScript()">
                                     <i class="icon-arrow-right13"></i>
                                 </button>
                             </div>
-                            <div class="col-lg-7 bg-white p-0" style="height: 330px; overflow: auto;">
-                                <table class="table bg-white">
-                                    <thead>
-                                    <tr class="text-left" style="background-color: #f5f5f5;">
-                                        <th class="font-weight-normal text-dark" style="width: 50%">Kịch bản sẽ chạy
-                                        </th>
-                                        <th class="font-weight-normal text-dark" style="width: 50%">Tài khoản</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody id="">
-                                    </tbody>
-                                </table>
+                            <div class="col-lg-5 p-0">
+                                <p class="font-weight-semibold m-0 p-0">Kịch bản đã chọn</p>
+                                <select id="selected_scipt_list" size="9"
+                                        style="height: 300px; width: 100%; margin-top: 10px">
+                                </select>
+                            </div>
+
+                            <div class="col-lg-1 align-self-center pr-0">
+                                <button id="btn_move_up" type="button" class="btn btn-default p-1 bg-white h-100 w-100"
+                                        onclick="moveUpScript()"
+                                        style="border: 1px solid #dddddd">
+                                    <i class="icon-arrow-up12"></i>
+                                </button>
+                                <button id="btn_move_down" ype="button" class="btn btn-default p-1 bg-white h-100 w-100 mt-3"
+                                        onclick="moveDownScript()"
+                                        style="border: 1px solid #dddddd">
+                                    <i class="icon-arrow-down12"></i>
+                                </button>
+                                <button id="btn_delete_script" type="button" class="btn btn-default p-1 bg-white h-100 w-100 mt-3 text-danger"
+                                        onclick="deleteScript()"
+                                        style="border: 1px solid #dddddd">
+                                    <i class="note-icon-close"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer justify-content-end mt-2">
                         <button type="button" class="btn bg-primary legitRipple mr-3"
                                 id="btn_save_edit_script_chain"
-                                onclick=""
+                                onclick="saveScriptChain()"
                                 style="text-transform: none; width: 80px; padding: 4px 2px 4px 2px;">Lưu
                         </button>
                         <button type="button" class="btn legitRipple" data-dismiss="modal"
@@ -698,42 +785,26 @@
                 </div>
             </div>
         </div>
-
-        <div class="modal fade" id="test_dialog" tabindex="-1" role="dialog"
-             aria-labelledby="exampleModalLabel"
-             aria-hidden="true">
-            <div class="modal-dialog" role="document" style="max-width: 800px;">
-                <div class="modal-content" style="background-color: #f5f5f5">
-                    <div class="row">
-                        <div class="col-xs-5">
-                            <select name="from" id="lstview" class="form-control" size="13" multiple="multiple">
-                                <option value="HTML">HTML</option>
-                                <option value="2">CSS</option>
-                                <option value="CSS">CSS3</option>
-                                <option value="jQuery">jQuery</option>
-                                <option value="JavaScript">JavaScript</option>
-                                <option value="Bootstrap">Bootstrap</option>
-                                <option value="MySQL">MySQL</option>
-                                <option value="PHP">PHP</option>
-                                <option value="JSP">JSP</option>
-                                <option value="Rubi on Rails">Rubi on Rails</option>
-                                <option value="SQL">SQL</option>
-                                <option value="Java">Java</option>
-                                <option value="Python">Python</option>
-                            </select>
-                        </div>
-
-                        <div class="col-xs-2">
-                            <button type="button" id="lstview_undo" class="btn btn-danger btn-block">undo</button>
-                            <button type="button" id="lstview_rightAll" class="btn btn-default btn-block"><i class="glyphicon glyphicon-forward"></i></button>
-                            <button type="button" id="lstview_rightSelected" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-right"></i></button>
-                            <button type="button" id="lstview_leftSelected" class="btn btn-default btn-block"><i class="glyphicon glyphicon-chevron-left"></i></button>
-                            <button type="button" id="lstview_leftAll" class="btn btn-default btn-block"><i class="glyphicon glyphicon-backward"></i></button>
-                            <button type="button" id="lstview_redo" class="btn btn-warning btn-block">redo</button>
-                        </div>
-
-                        <div class="col-xs-5">
-                            <select name="to" id="lstview_to" class="form-control" size="13" multiple="multiple"></select>
+        <div class="modal fade" id="confirm_stop_script_popup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true" style="top: 180px!important;">
+            <div class="modal-dialog" role="document" style="width: 400px">
+                <div class="modal-content">
+                    <div class="modal-header" style="height: 50px">
+                        <h5 id="comfirm_stop_script_title" class="card-title font-weight-bold m-0">Dừng kịch bản</h5>
+                    </div>
+                    <div class="modal-body">
+                        <p id="confirm_stop_script_content">Việc <b>Tạm dừng</b> thiết bị sẽ dừng kịch bản đang chạy và có thể tiếp tục lại từ kịch bản đã tạm dừng. Chuỗi kịch bản sẽ chạy lại từ đầu nếu như chọn <b>Kết thúc</b> sau đó tiếp tục lại.</p>
+                        <div class="modal-footer justify-content-end mt-4 p-0">
+                            <button id="btn_finish_script" type="button" class="btn bg-warning legitRipple mr-3"
+                                    style="text-transform: none; width: 80px; padding: 4px 2px 4px 2px;">Kết thúc
+                            </button>
+                            <button id="btn_stop_script" type="button" class="btn bg-primary legitRipple mr-3"
+                                    style="text-transform: none; width: 80px; padding: 4px 2px 4px 2px;">Tạm dừng
+                            </button>
+                            <button type="button" class="btn legitRipple" data-dismiss="modal"
+                                    style="text-transform: none; width: 80px; background-color: #dddddd; padding: 4px 2px 4px 2px;">
+                                Đóng
+                            </button>
                         </div>
                     </div>
                 </div>

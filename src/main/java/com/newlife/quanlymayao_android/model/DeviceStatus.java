@@ -2,7 +2,7 @@ package com.newlife.quanlymayao_android.model;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.util.ArrayList;
 
 @Entity
 @Table(name = "device_status")
@@ -27,8 +27,6 @@ public class DeviceStatus implements Serializable, Cloneable {
     public boolean isDeleted = false;
     @Column(name = "run_times")
     public long runTimes;
-    @Column(name = "scrip_chain_id")
-    public int scriptChainId;
 
     @Column(name = "script_index")
     public int scriptIndex = 0;
@@ -37,7 +35,13 @@ public class DeviceStatus implements Serializable, Cloneable {
     public Boolean finish = true;
 
     @Transient
-    public RequestScriptList requestScriptList;
+    public ArrayList<RequestScript> requestScriptList;
+
+    @Column(name = "script_chain_id")
+    public int scriptChainId;
+
+    @Transient
+    public ScriptChain scriptChain;
 
     @ManyToOne
     @JoinColumn(name = "device_id")
@@ -75,12 +79,13 @@ public class DeviceStatus implements Serializable, Cloneable {
                 isStarting,
                 message,
                 code,
-                scriptChainId
+                scriptChain,
+                requestScriptList,
+                finish
         );
     }
 
-    public void clear(){
-        status = "";
+    public void clear() {
         info = "";
         action = "";
         info = "";
@@ -88,21 +93,18 @@ public class DeviceStatus implements Serializable, Cloneable {
         code = "";
         isStarting = false;
         progress = 0;
-        account = null;
-        script = null;
         runTimes = 0;
         scriptIndex = 0;
         finish = true;
-        requestScriptList = null;
     }
 
     public DeviceStatus clone() throws CloneNotSupportedException {
         return (DeviceStatus) super.clone();
     }
 
-    public boolean hasNextScript(){
-        if(requestScriptList!=null){
-            if (scriptIndex >= requestScriptList.list.size()-1){
+    public boolean hasNextScript() {
+        if (requestScriptList != null) {
+            if (scriptIndex >= requestScriptList.size() - 1) {
                 return false;
             } else {
                 scriptIndex += 1;

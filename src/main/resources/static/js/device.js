@@ -6,47 +6,6 @@ var scriptMap = new Map();
 var deviceIdToAccountMap = new Map();
 var accountList = [];
 
-var scriptListTest = [
-    {
-        id: 1,
-        name: "facebook_login_logout_1"
-    },
-    {
-        id: 2,
-        name: "facebook_login_logout_2"
-    },
-    {
-        id: 3,
-        name: "facebook_login_logout_3"
-    },
-    {
-        id: 4,
-        name: "facebook_login_logout_4"
-    },
-    {
-        id: 5,
-        name: "facebook_login_logout_5"
-    },
-    {
-        id: 6,
-        name: "facebook_login_logout_6"
-    },
-    {
-        id: 7,
-        name: "facebook_login_logout_7"
-    },
-    {
-        id: 8,
-        name: "facebook_login_logout_8"
-    },
-    {
-        id: 9,
-        name: "facebook_login_logout_9"
-    }
-];
-
-var scriptRunListTest = [];
-
 $(document).ready(function () {
     getData();
     selectAllClickListener();
@@ -54,28 +13,7 @@ $(document).ready(function () {
         buttondown_class: "btn btn-light",
         buttonup_class: "btn btn-light"
     });
-
-    $('#test_dialog').modal('show');
-
-    for (let i = 0; i < scriptListTest.length; i++) {
-        var str = '<li class="list-group-item cursor-pointer border-bottom-li" onclick="addToScriptRun(' + scriptListTest[i] + ')">' + scriptListTest[i].name + '</li>';
-        $("#li_list").append(str);
-    }
-
-    for (let i = 0; i < scriptRunListTest.length; i++) {
-        $("#body_table_script_list").append(
-            '<tr class="table-bordered tr-script cursor-pointer">\n' +
-            '<td class="pl-2">' + scriptRunListTest[i].name + '</td>\n' +
-            '<td class="pr-2"><i class="icon-pencil font-size-sm float-right"></i>\n' +
-            '</td>\n' +
-            '</tr>');
-    }
-
 });
-
-function addToScriptRun(script) {
-    console.log(script);
-}
 
 function selectAllClickListener() {
     $('#select_all').on('click', function () {
@@ -423,6 +361,8 @@ function genStatus(statusValue) {
         status = '<span class="badge bg-warning" style="min-width: 48px">Stopped</span>';
     } else if (statusValue == "finished") {
         status = '<span class="badge bg-indigo" style="min-width: 48px">Finished</span>';
+    } else if (statusValue == "wait") {
+        status = '<span class="badge bg-slate-300" style="min-width: 48px">WAIT</span>';
     }
     return status;
 }
@@ -494,7 +434,7 @@ function genButtonActionDevice(script, account, status, deviceId, isActived, isS
                 '    <button onclick="showTurnoffSingleDeviceConfirm(\'' + deviceId + '\')" class="btn btn-action-device" title="Tắt thiết bị" style="display: none" >\n' +
                 '        <fa class="fa fa-power-off text-danger"></fa>\n' +
                 '    </button>\n' +
-                '    <button onclick="showModalRunOneScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Thiết lập kịch bản" >\n' +
+                '    <button onclick="showModalRunOneScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Thiết lập kịch bản" disabled >\n' +
                 '        <i class="icon-cog text-dark"></i>\n' +
                 '    </button>\n' +
                 '    <button onclick="viewLog(\'' + deviceId + '\')" class="btn btn-action-device" title="Xem log">\n' +
@@ -560,7 +500,7 @@ function genButtonActionDevice(script, account, status, deviceId, isActived, isS
                     '    </button>\n' +
                     '</div>\n' +
                     '</div>';
-            } else if (status == 'running') {
+            } else if (status == 'running' || (status == 'fail') || status == 'complete' || status == 'wait') {
                 button =
                     ' <div class="list-icons">\n' +
                     '<div x-placement="bottom-start">\n' +
@@ -587,7 +527,7 @@ function genButtonActionDevice(script, account, status, deviceId, isActived, isS
                     '    </button>\n' +
                     '</div>\n' +
                     '</div>';
-            } else if ((status == 'fail') || status == 'complete' || status == 'stopped' || status == 'finished') {
+            } else if ( status == 'stopped' || status == 'finished') {
                 button =
                     ' <div class="list-icons">\n' +
                     '<div x-placement="bottom-start">\n' +
@@ -665,23 +605,46 @@ function startScript(deviceID) {
 }
 
 function showStopScriptConfirm(deviceID) {
-    $('#btn_ok_comfirm').prop("onclick", null).off("click");
-    $('#btn_ok_comfirm').click(function () {
-        stopScript(deviceID);
-    });
-    $('#btn_ok_comfirm').html("Dừng");
-    $('#comfirm_title').html("Xác nhận dừng");
-    $('#confirm_content').html("Bạn chắc chắn muốn dừng kịch bản đang chạy ?");
-    $('#confirm_popup').modal('show');
+    $('#btn_finish_script').prop("onclick", null).off("click");
+    $('#btn_stop_script').prop("onclick", null).off("click");
+    let deviceStatistics = dataOriginal.deviceStatistics.find(dv => dv.deviceId === deviceID);
+
+    if(deviceStatistics.status == "wait"){
+        $('#btn_finish_script').show();
+        $('#btn_finish_script').html("Hủy đợi");
+        $('#btn_finish_script').click(function () {
+            postRequestDevice(deviceID, "/api/remove_out_queue");
+        });
+        $('#btn_stop_script').hide();
+    } else {
+        if (deviceStatistics.scriptChain == null) {
+            // $('#btn_finish_script').prop('disabled', true);
+            $('#btn_finish_script').hide();
+        } else {
+            $('#btn_finish_script').show();
+            $('#btn_finish_script').html("Kết thúc");
+            // $('#btn_finish_script').prop('disabled', false);
+        }
+        $('#btn_stop_script').show();
+
+        $('#btn_finish_script').click(function () {
+            postRequestDevice(deviceID, "/api/finish_script");
+        });
+        $('#btn_stop_script').click(function () {
+            postRequestDevice(deviceID, "/api/stop_script");
+        });
+    }
+    $('#confirm_stop_script_popup').modal('show');
 }
 
-function stopScript(deviceID) {
+function postRequestDevice(deviceID, url) {
     let deviceIdList = [];
     deviceIdList.push(deviceID);
+
     $('#confirm_popup').modal('hide');
     $.ajax({
         type: "POST",
-        url: "/api/stop_script",
+        url: url,
         cache: false,
         crossDomain: true,
         processData: true,
@@ -907,94 +870,6 @@ function turnOffDecive(deviceIdList) {
     });
 }
 
-function showModalRunOneScript(deviceID) {
-    $('#run_script_one_device_title').html(deviceID);
-    $('#one_script_select').find('option')
-        .remove()
-        .end()
-        .append('<option disabled selected>Chọn kịch bản</option>');
-    $('#account_select').find('option')
-        .remove()
-        .end();
-    $("#error_empty_account").hide();
-    $("#btn_runOneScript").prop("disabled", true);
-    $('#run_script_one_device_dialog').modal('show');
-
-    scriptMap = new Map();
-    selectedDeviceId = deviceID;
-    $.ajax({
-        type: "GET",
-        url: "/api/get_all_script",
-        cache: false,
-        crossDomain: true,
-        processData: true,
-        dataType: "json",
-        success: function (data) {
-            if (data.length != 0) {
-                for (var i = 0; i < data.length; i++) {
-                    $('#one_script_select').append($("<option>").val("" + data[i].id + "").text("" + data[i].name + ""));
-                    scriptMap.set(data[i].id, data[i].app);
-                }
-            }
-        }
-    });
-}
-
-function getAccountByScriptForOneDevice() {
-    $('#account_select').find('option')
-        .remove()
-        .end();
-    let selectedScriptId = $("#one_script_select").val();
-    let appSelected = scriptMap.get(Number(selectedScriptId));
-
-    $.ajax({
-        type: "POST",
-        url: "/api/find_account",
-        cache: false,
-        crossDomain: true,
-        processData: true,
-        dataType: "json",
-        data: {
-            "appName": appSelected
-        },
-        success: function (data) {
-            if (data != 0) {
-                $("#error_empty_account").hide();
-                $("#account_select").removeAttr("disabled");
-                for (var i = 0; i < data.length; i++) {
-                    $('#account_select').append($("<option>").val("" + data[i].id + "").text("" + data[i].username + ""));
-                }
-                onSelectAccountForOneDevice();
-            } else {
-                $("#error_empty_account").show();
-                $("#account_select").prop('disabled', 'disabled');
-                $("#account_select").val("");
-                $("#btn_runOneScript").prop("disabled", true);
-            }
-        }
-    });
-}
-
-function onSelectAccountForOneDevice() {
-    if ($("#one_script_select").val() != '' && $("#account_select").val() != '') {
-        $("#btn_runOneScript").prop("disabled", false);
-    } else {
-        $("#btn_runOneScript").prop("disabled", true);
-    }
-}
-
-function runOneScript() {
-    let scriptRequestList = [];
-    scriptRequestList.push({
-        "accountId": parseInt($("#account_select").val()),
-        "deviceId": selectedDeviceId,
-        "scriptId": parseInt($("#one_script_select").val())
-    });
-
-    $('#run_script_one_device_dialog').modal('hide');
-
-    runScript(scriptRequestList)
-}
 
 function showModalMultiScript() {
     $('#multi_script_select').find('option').remove().end().append('<option disabled selected>Chọn kịch bản</option>');
@@ -1062,8 +937,8 @@ function clearMatchDeviceWithAccount() {
     showDeviceToAccountMap();
 }
 
-function clickSelectAccountDialog(deviceId, currentAccountId) {
-    $('#select_account_radio_group').html("");
+function showSelectAccountDialog(deviceId, currentAccountId) {
+    $('#select_account_device_radio_group').html("");
     selectedDeviceId = deviceId;
     let content = "";
     for (let i = 0; i < accountList.length; i++) {
@@ -1090,8 +965,8 @@ function clickSelectAccountDialog(deviceId, currentAccountId) {
             }
         }
     }
-    $('#select_account_radio_group').html(content);
-    $("#select_account_dialog").modal('show');
+    $('#select_account_device_radio_group').html(content);
+    $("#select_account_for_device_dialog").modal('show');
 }
 
 function autoMatchDeviceWithAccount() {
@@ -1139,7 +1014,7 @@ function showDeviceToAccountMap() {
                 "            style=\"width: 10%; padding: 5px; align-items: center; color: #ff2c2c\">X\n" +
                 "    </button>\n" +
                 "    <button type=\"button\" class=\"btn legitRipple\"\n" +
-                "            onclick=\"clickSelectAccountDialog('" + selectedDeviceIdList[i] + "'," + account.id + ")\"" +
+                "            onclick=\"showSelectAccountDialog('" + selectedDeviceIdList[i] + "'," + account.id + ")\"" +
                 "            data-target=\"#select_account_dialog\"\n" +
                 "            style=\"width: 10%; padding: 5px; align-items: center;\">\n" +
                 "        <fa class=\"far fa-caret-square-down\"></fa>\n" +
@@ -1160,7 +1035,7 @@ function showDeviceToAccountMap() {
                 "        <span class='pl-2 font-weight-semibold'>" + "" + "</span>\n" +
                 "    </div>\n" +
                 "    <button type=\"button\" class=\"btn legitRipple\"\n" +
-                "            onclick=\"clickSelectAccountDialog('" + selectedDeviceIdList[i] + "',null)\"" +
+                "            onclick=\"showSelectAccountDialog('" + selectedDeviceIdList[i] + "',null)\"" +
                 "            data-target=\"#select_account_dialog\"\n" +
                 "            style=\"width: 10%; padding: 5px; align-items: center;\">\n" +
                 "        <fa class=\"far fa-caret-square-down\"></fa>\n" +
@@ -1195,11 +1070,11 @@ function runScriptForMultiDivice() {
                 "scriptId": selectedScript
             });
         });
-        runScript(scriptRequestList);
+        runScript(scriptRequestList, 0);
     }
 }
 
-function runScript(scriptRequestList) {
+function runScript(requestScriptList, scriptChainId) {
     $.ajax({
         type: "POST",
         url: "/api/run_script_device",
@@ -1208,9 +1083,11 @@ function runScript(scriptRequestList) {
         processData: true,
         dataType: "json",
         contentType: "application/json",
-        data: JSON.stringify({
-            "list": scriptRequestList
-        }),
+        data: JSON.stringify(
+            {
+                "requestScriptList": requestScriptList,
+                "scriptChainId": scriptChainId
+            }),
         success: function (deviceListOffResp) {
             if (deviceListOffResp.length != 0) {
                 for (var i = 0; i < deviceListOffResp.length; i++) {
@@ -1269,7 +1146,7 @@ function viewLog(deviceID) {
                                 '<td style=" width: 14.7%;"></td>\n' +
                                 '</tr>';
                         } else {
-                            if (row.script == "" || row.account == "") {
+                            if (row.script == "" || row.account == "" || row.status == "finished") {
                                 content = content +
                                     '<tr>' +
                                     '<td style=" width: 8%;">' + timeConverter(row.time) + '</td>\n' +
@@ -1329,52 +1206,6 @@ function genActive(isActive) {
     return content;
 }
 
-function showManageScriptChainDialog() {
-    $('#manage_script_chain_table_body').html();
-    $('#manage_script_chain_dialog').modal('show');
-    $.ajax({
-        type: "GET",
-        url: "/api/get_all_script_chain",
-        cache: false,
-        crossDomain: true,
-        processData: true,
-        dataType: "json",
-        success: function (data) {
-            if(data!=null && data.length>0) {
-                let content = ""
-                for (let i = 0; i < data.length; i++) {
-                    let scripts = "";
-                    for (let j = 0; j < data[i].scriptList.length; j++) {
-                        scripts += "<p class=\"m-0\">" + data[i].scriptList[j].name + "</p>\n";
-                    }
-                    content = content +
-                        "<tr class=\"text-center text-dark font-weight-semibold\">\n" +
-                        "   <td style=\" width: 5%;\">" + (i+1) + "</td>\n" +
-                        "   <td style=\" width: 15%;\">" + data[i].id + "</td>\n" +
-                        "   <td class=\"text-left pl-2\" style=\" width: 25%;\">" + data[i].name + "</td>\n" +
-                        "   <td class=\"text-left pl-2\" style=\" width: 35%;\">\n" + scripts +"</td>\n" +
-                        "   <td style=\" width: 19%;\">\n" +
-                        "       <div class=\"list-icons\">\n" +
-                        "           <button onclick=\"editScriptChain(" + data[i].id + ")\" class=\"btn btn-action-device\"\n" +
-                        "                   title=\"Chỉnh sửa\"\n" +
-                        "                   data-target=\"#edit_manage_script_chain_dialog\">\n" +
-                        "               <i class=\"icon-pencil5 text-grey\"></i>\n" +
-                        "           </button>\n" +
-                        "           <button onclick=\"showDeleteScriptChainConfirm(" + data[i].id + ", '" + data[i].name + "')\"\n" +
-                        "                   class=\"btn btn-action-device ml-2\" title=\"Xóa\"\n" +
-                        "                   data-target=\"#confirm_popup\">\n" +
-                        "               <i class=\"icon-trash text-grey\"></i>\n" +
-                        "           </button>\n" +
-                        "       </div>\n" +
-                        "   </td>\n" +
-                        "</tr>"
-                }
-                $('#manage_script_chain_table_body').html(content)
-            }
-        }
-    });
-}
-
 function showDeleteDeviceConfirm() {
     $('#btn_ok_comfirm').prop("onclick", null).off("click");
     $('#btn_ok_comfirm').click(function () {
@@ -1412,83 +1243,6 @@ function deleteDevice() {
     });
     selectedDeviceIdList = [];
     updateSelectAllChecked();
-}
-
-function editScriptChain(scriptChainId) {
-    $('#edit_manage_script_chain_dialog').modal('show')
-}
-
-function showDeleteScriptChainConfirm(scriptChainId, scriptChainName) {
-    $('#btn_ok_comfirm').prop("onclick", null).off("click");
-    $('#btn_ok_comfirm').click(function () {
-        deleteScriptChain(sciptChainId);
-    });
-    $('#btn_ok_comfirm').html("Xóa");
-    $('#comfirm_title').html("Xác nhận xóa");
-    $('#confirm_content').html("Bạn chắc chắn muốn xóa chuỗi kịch bản <span class=\"font-weight-semibold\">" + scriptChainName +"</span> ?");
-    $('#confirm_popup').modal('show');
-}
-
-function deleteScriptChain(sciptChainId){
-}
-
-function timeConverter(UNIX_timestamp) {
-    let a = new Date(UNIX_timestamp);
-    let months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
-    let year = a.getFullYear();
-    let month = months[a.getMonth()];
-    let date = a.getDate();
-    let hour = a.getHours();
-    let min = a.getMinutes();
-    let sec = a.getSeconds();
-    let time = hour + ':' + min + ':' + sec + ' ' + date + '/' + month + '/' + year;
-    return time;
-//    return new Date(UNIX_timestamp).toISOString().slice(0, 19).replace('T', ' ');
-}
-
-function genToastSuccess(message) {
-    $.toast({
-        text: message,
-        icon: 'success',
-        showHideTransition: 'plain',
-        allowToastClose: true,
-        hideAfter: 3000,
-        stack: 5,
-        position: 'bottom-right',
-        textAlign: 'left',
-        loader: false,  // Whether to show loader or not. True by default
-        loaderBg: '#ffffff',  // Background color of the toast loader
-    });
-}
-
-function genToastInfo(message) {
-    $.toast({
-        text: message,
-        icon: 'info',
-        showHideTransition: 'plain',
-        allowToastClose: true,
-        hideAfter: 3000,
-        stack: 5,
-        position: 'bottom-right',
-        textAlign: 'left',
-        loader: false,  // Whether to show loader or not. True by default
-        loaderBg: '#ffffff',  // Background color of the toast loader
-    });
-}
-
-function genToastError(message) {
-    $.toast({
-        text: message,
-        icon: 'error', // Type of toast icon
-        showHideTransition: 'plain', // fade, slide or plain
-        allowToastClose: true, // Boolean value true or false
-        hideAfter: 3000, // false to make it sticky or number representing the miliseconds as time after which toast needs to be hidden
-        stack: 5, // false if there should be only one toast at a time or a number representing the maximum number of toasts to be shown at a time
-        position: 'bottom-right', // bottom-left or bottom-right or bottom-center or top-left or top-right or top-center or mid-center or an object representing the left, right, top, bottom values
-        textAlign: 'left',  // Text alignment i.e. left, right or center
-        loader: false,  // Whether to show loader or not. True by default
-        loaderBg: '#ffffff',  // Background color of the toast loader
-    });
 }
 
 function findInMap(map, val) {
