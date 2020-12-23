@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TooManyListenersException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class SerialPortCommunicator implements SerialPortEventListener {
@@ -55,6 +57,8 @@ public class SerialPortCommunicator implements SerialPortEventListener {
     public SimInfo simInfo = new SimInfo();
     public int countReadAllMessageError = 0;
     public int MaxReadAllMessageError = 3;
+
+    public ExecutorService executor = Executors.newFixedThreadPool(5);
 
 
     public SerialPortCommunicator(CommPortIdentifierManager manager, CommPortIdentifier commPortIdentifier) {
@@ -103,7 +107,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
 
     public void startTracking() {
         if (isStop) return;
-        new Thread(() -> {
+        executor.execute(() -> {
             status = SerialPortStatus.READING;
             runCmd(Contract.AT);
             try {
@@ -122,7 +126,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }).start();
+        });
     }
 
     public boolean initIOStream() {
@@ -145,12 +149,12 @@ public class SerialPortCommunicator implements SerialPortEventListener {
         outString = readSerial();
         if (outString.isEmpty() || outString.startsWith("AT")) return;
 
-        System.out.println(lastCmd + ":" + outString);
+//        System.out.println(lastCmd + ":" + outString);
         if (outString.equals("^SYSSTART")) {
 //            isStop = true;
             lastCmd = "";
             status = SerialPortStatus.SLEEPING;
-            new Thread(() -> {
+            executor.execute(() -> {
                 try {
                     Thread.sleep(3000);
 //                    System.out.println(manager == null);
@@ -161,18 +165,18 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }).start();
+            });
         } else if (outString.startsWith("RING")) {
             writeSerial(Contract.REJECT_CALL);
         } else if (outString.startsWith("+CMTI")) {
             updateMessageList(outString);
         } else if (lastCmd.equals(Contract.MESSAGES_ALL)) {
-            System.out.println("read all message: " + outString);
+//            System.out.println("read all message: " + outString);
             if (outString.trim().equalsIgnoreCase("ERROR")) {
                 lastCmd = "";
                 messageLineList.clear();
                 System.out.println("error read all messages");
-                if(countReadAllMessageError < MaxReadAllMessageError){
+                if (countReadAllMessageError < MaxReadAllMessageError) {
                     countReadAllMessageError += 1;
                     startUpdateAllMessage();
                 } else {
@@ -184,7 +188,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                 parseMessages();
             } else {
                 messageLineList.add(outString);
-                System.out.println(outString);
+//                System.out.println(outString);
             }
         } else if (lastCmd.equals(Contract.SIGNAL)) {
             if (outString.startsWith("+CSQ")) {
@@ -192,7 +196,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                     String[] splits = outString.split(":");
                     simInfo.tinHieu = Float.valueOf(splits[1].trim().replaceAll(",", "."));
                     simInfo.time = TimeUtil.getTime();
-                    System.out.println(simInfo.commName + " tinhieu: " + simInfo.tinHieu);
+//                    System.out.println(simInfo.commName + " tinhieu: " + simInfo.tinHieu);
 //                    manager.saveSimInfo(simInfo);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -207,7 +211,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                 isInsertedSim = true;
                 simInfo.simId = outString;
                 simInfo.time = TimeUtil.getTime();
-                System.out.println(simInfo.commName + " : sim id : " + simInfo.simId);
+//                System.out.println(simInfo.commName + " : sim id : " + simInfo.simId);
                 runCmd(Contract.NETWORK);
             }
         } else if (lastCmd.equals(Contract.NETWORK) && !outString.equals("OK")) {
@@ -217,7 +221,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                     String network = splits[2].replaceAll("\"", "");
                     simInfo.nhaMang = network;
                     simInfo.time = TimeUtil.getTime();
-                    System.out.println(simInfo.commName + " : network: " + network);
+//                    System.out.println(simInfo.commName + " : network: " + network);
 //                    runCmd(Contract.BALANCE);
                 }
             }
@@ -230,9 +234,9 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                     simInfo.taiKhoanPhu = tk[1];
                     simInfo.ngayHetHan = VinaUtil.ngayHetHanVina(outString);
                     simInfo.time = TimeUtil.getTime();
-                    System.out.println(simInfo.commName + " : taikhoanchinh: " + simInfo.taiKhoanChinh
-                            + ", taikhoanphu: " + simInfo.taiKhoanPhu
-                            + ", ngayhethan: " + simInfo.ngayHetHan);
+//                    System.out.println(simInfo.commName + " : taikhoanchinh: " + simInfo.taiKhoanChinh
+//                            + ", taikhoanphu: " + simInfo.taiKhoanPhu
+//                            + ", ngayhethan: " + simInfo.ngayHetHan);
                 } else if (simInfo.nhaMang.equals("")) {
 
                 }
@@ -245,7 +249,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
     public void repeatReadingSimInfo() {
         lastCmd = "";
         if (!isStop) {
-            new Thread(() -> {
+            executor.execute(() -> {
                 try {
                     if (simInfo.messagesList == null) {
                         startUpdateAllMessage();
@@ -262,7 +266,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
 
 
                     for (int i = 0; i < READ_SIGNAL_TIME; i++) {
-                        System.out.println(i + " : " + status );
+//                        System.out.println(i + " : " + status);
                         if (!isStop) {
                             while (!isFinishReadMsg) {
                                 status = SerialPortStatus.SLEEPING;
@@ -272,18 +276,18 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                             if (!isStop) {
                                 status = SerialPortStatus.READING;
                                 runCmd(Contract.SIGNAL);
-                                Thread.sleep(SLEEP_TIME/2);
-                                status  = SerialPortStatus.SLEEPING;
-                                Thread.sleep(SLEEP_TIME/2);
+                                Thread.sleep(SLEEP_TIME / 2);
+                                status = SerialPortStatus.SLEEPING;
+                                Thread.sleep(SLEEP_TIME / 2);
                             }
                         } else {
-                            status  = SerialPortStatus.SLEEPING;
+                            status = SerialPortStatus.SLEEPING;
                         }
                     }
 
                     if (simInfo.messagesList != null && simInfo.messagesList.size() > MGS_MAX_SIZE) {
                         int size = simInfo.messagesList.size();
-                        while(size > 10 ){
+                        while (size > 10) {
                             if (!isStop) {
                                 Messages messages = simInfo.messagesList.get(0);
                                 runCmd(Contract.DELETE_MGS + messages.mgsId);
@@ -302,7 +306,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }).start();
+            });
         }
     }
 
@@ -320,12 +324,13 @@ public class SerialPortCommunicator implements SerialPortEventListener {
 
     public void startUpdateAllMessage() {
         if (isStop) return;
-        new Thread(() -> {
+        executor.execute(() -> {
             try {
                 isFinishReadMsg = false;
                 messageLineList.clear();
                 while (status != SerialPortStatus.SLEEPING) {
                     Thread.sleep(200);
+                    System.out.println("last cmd: " + lastCmd);
                     System.out.println("wait sleep to read all message");
                 }
                 System.out.println("start update all message");
@@ -335,7 +340,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }).start();
+        });
     }
 
     public void parseMessages() {
@@ -359,9 +364,7 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                         content += " " + nextLine;
                         index += 1;
                     }
-                    if(!content.contains(" ")) {
-                        content = StringUtil.hexStringToText(content.trim());
-                    }
+                    content = StringUtil.hexStringToText(content.trim());
                     System.out.println(id + "," + type + "," + sdt + "," + time + "," + content);
                     tempList.add(new Messages(id, type, sdt.toUpperCase(), time, content, simInfo.simId));
                 } catch (Exception e) {
