@@ -53,7 +53,7 @@ public class DeviceManager {
     public ScriptStatisticDao scriptStatisticDao = new ScriptStatisticDao();
     public ArrayList<DeviceStatus> dvStatusList;
     public Queue<String> dvIdQueue = new LinkedList<>();
-    public final int MAX_QUEUE = 1;
+    public final int MAX_QUEUE = 2;
     public ExecutorService executor = Executors.newFixedThreadPool(5);
 
     public void trackingActiveDevice() {
@@ -190,13 +190,15 @@ public class DeviceManager {
             if (deviceStatus.isStarting) {
                 return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị bận (" + deviceId + ")");
             } else if (deviceStatus.isActive) {
-                deviceStatus.status = "stopped";
-                if (deviceStatus.account != null) {
-                    deviceStatus.account.status = "free";
-                    accountRepository.save(deviceStatus.account);
+                if (!deviceStatus.status.equals("finished")) {
+                    deviceStatus.status = "stopped";
+                    if (deviceStatus.account != null) {
+                        deviceStatus.account.status = "free";
+                        accountRepository.save(deviceStatus.account);
+                    }
+                    saveDeviceStatusToDb();
+                    exitApp(deviceStatus);
                 }
-                saveDeviceStatusToDb();
-                exitApp(deviceStatus);
                 return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
             } else {
                 return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị hiện không hoạt động (" + deviceId + ")");
@@ -288,10 +290,10 @@ public class DeviceManager {
             return new ApiResponse<>(false, new DeviceStatistic(), "Không tìm thấy thiết bị (" + deviceId + ")");
         } else {
             int countRunningDevice = countRunningDevice();
-            if (countRunningDevice > MAX_QUEUE && !deviceStatus.finish) {
-                dvIdQueue.remove(deviceId);
+            if (countRunningDevice > MAX_QUEUE && deviceStatus.status.equals("finished") ) {
                 dvIdQueue.add(deviceId);
                 deviceStatus.status = "wait";
+                saveDeviceStatusToDb();
                 return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
             } else {
                 if (deviceStatus.requestScriptList == null || deviceStatus.requestScriptList.isEmpty()) {
@@ -341,7 +343,6 @@ public class DeviceManager {
             deviceStatus.time = System.currentTimeMillis();
             deviceStatus.isActive = true;
             deviceStatus.isStarting = false;
-            deviceStatus.finish = false;
             deviceStatus.account.status = "using";
             long maxRunTimes = deviceStatusRepository.getMaxScriptRunTimes();
             deviceStatus.runTimes = maxRunTimes + 1;
@@ -432,7 +433,6 @@ public class DeviceManager {
                         executor.execute(() -> {
                             try {
                                 Thread.sleep(5000);
-                                deviceStatus.finish = true;
                                 deviceStatus.status = "finished";
                                 deviceStatus.clear();
 
@@ -739,10 +739,8 @@ public class DeviceManager {
     synchronized public int countRunningDevice() {
         int count = 0;
         for (DeviceStatus dv : dvStatusList) {
-            if (!dv.finish) count += 1;
+            if (!dv.status.equals("finished")) count += 1;
         }
-
-        System.out.println("count: " + count);
         return count;
     }
 

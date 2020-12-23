@@ -68,9 +68,7 @@ public class DeviceApi {
             DeviceStatus deviceStatus = deviceManager.getDeviceStatus(deviceId);
             if (deviceStatus == null) {
                 statisticList.add(new ApiResponse<>(false, new DeviceStatistic(), "Không tìm thấy thiết bị (" + deviceId + ")"));
-            } else if (!deviceStatus.finish) {
-                statisticList.add(new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị đang chạy kịch bản khác.\nHãy kết thúc nó và chạy lại."));
-            } else {
+            } else if (deviceStatus.status.equals("finished") || deviceStatus.status.equals("free")) {
                 if(requestScriptChain.scriptChainId == 0){
                     deviceStatus.scriptChain = null;
                     deviceStatus.scriptChainId = 0;
@@ -90,6 +88,8 @@ public class DeviceApi {
                         statisticList.add(deviceManager.runScript(deviceStatus.device.deviceId));
                     }
                 }
+            } else {
+                statisticList.add(new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị đang chạy kịch bản khác.\nHãy kết thúc nó và chạy lại."));
             }
         }
         return statisticList;

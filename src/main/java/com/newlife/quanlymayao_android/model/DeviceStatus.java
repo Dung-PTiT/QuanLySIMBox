@@ -31,9 +31,6 @@ public class DeviceStatus implements Serializable, Cloneable {
     @Column(name = "script_index")
     public int scriptIndex = 0;
 
-    @Column(name = "finish")
-    public Boolean finish = true;
-
     @Transient
     public ArrayList<RequestScript> requestScriptList;
 
@@ -80,8 +77,7 @@ public class DeviceStatus implements Serializable, Cloneable {
                 message,
                 code,
                 scriptChain,
-                requestScriptList,
-                finish
+                requestScriptList
         );
     }
 
@@ -95,7 +91,6 @@ public class DeviceStatus implements Serializable, Cloneable {
         progress = 0;
         runTimes = 0;
         scriptIndex = 0;
-        finish = true;
     }
 
     public DeviceStatus clone() throws CloneNotSupportedException {

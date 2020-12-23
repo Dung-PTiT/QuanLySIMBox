@@ -356,7 +356,8 @@ public class SerialPortCommunicator implements SerialPortEventListener {
                     int id = Integer.parseInt(splits[0].trim());
                     String type = splits[1].replaceAll("\"", "");
                     String sdt = splits[2].replaceAll("\"", "");
-                    Date time = TimeUtil.parseMgsTime((splits[4] + " " + splits[5]).replaceAll("\"", ""));
+//                    Date time = TimeUtil.parseMgsTime((splits[4] + " " + splits[5]).replaceAll("\"", ""));
+                    Date time = new Date();
                     String content = "";
                     index += 1;
                     while (index < messageLineList.size() && !messageLineList.get(index).startsWith("+CMGL")) {
