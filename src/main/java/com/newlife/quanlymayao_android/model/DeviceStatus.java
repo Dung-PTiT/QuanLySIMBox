@@ -104,12 +104,7 @@ public class DeviceStatus implements Serializable, Cloneable {
 
     public boolean hasNextScript() {
         if (requestScriptList != null) {
-            if (scriptIndex >= requestScriptList.size() - 1) {
-                return false;
-            } else {
-                scriptIndex += 1;
-                return true;
-            }
+            return scriptIndex < requestScriptList.size() - 1;
         }
         return false;
     }

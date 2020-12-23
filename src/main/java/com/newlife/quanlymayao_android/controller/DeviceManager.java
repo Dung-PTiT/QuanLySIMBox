@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 public class DeviceManager {
@@ -52,9 +54,10 @@ public class DeviceManager {
     public ArrayList<DeviceStatus> dvStatusList;
     public Queue<String> dvIdQueue = new LinkedList<>();
     public final int MAX_QUEUE = 1;
+    public ExecutorService executor = Executors.newFixedThreadPool(5);
 
     public void trackingActiveDevice() {
-        new Thread(() -> {
+        executor.execute(() -> {
             try {
                 loadActiveDevice();
                 saveDeviceStatusToDb();
@@ -63,11 +66,11 @@ public class DeviceManager {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }).start();
+        });
     }
 
     public void saveDeviceStatusToDb() {
-        new Thread(() -> {
+        executor.execute(() -> {
             for (DeviceStatus deviceStatus : dvStatusList) {
                 try {
                     deviceStatus.time = System.currentTimeMillis();
@@ -76,7 +79,7 @@ public class DeviceManager {
                     e.printStackTrace();
                 }
             }
-        }).start();
+        });
 
     }
 
@@ -128,7 +131,7 @@ public class DeviceManager {
             if (deviceStatus.isStarting) {
                 return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị bận (" + deviceId + ")");
             } else if (!deviceStatus.isActive) {
-                new Thread(() -> {
+                executor.execute(() -> {
                     try {
                         Thread.sleep(delay);
                         String cmd = Contract.NOX + " -clone:" + deviceStatus.device.noxId + " -resolution:720x1280 -performance:middle -root:false";
@@ -136,7 +139,7 @@ public class DeviceManager {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }).start();
+                });
                 deviceStatus.isStarting = true;
                 saveDeviceStatusToDb();
                 return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
@@ -344,7 +347,7 @@ public class DeviceManager {
             deviceStatus.runTimes = maxRunTimes + 1;
             saveDeviceStatusToDb();
             accountRepository.save(deviceStatus.account);
-            new Thread(() -> {
+            executor.execute(() -> {
                 try {
                     Process process = builder.start();
                     BufferedReader r = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -416,30 +419,33 @@ public class DeviceManager {
                     }
                     saveDeviceStatusToDb();
                 }
-                if (deviceStatus.hasNextScript()) {
-                    try {
-                        Thread.sleep(10000);
-                        runScript(deviceStatus.device.deviceId);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    new Thread(() -> {
+                if(!deviceStatus.status.equals("stopped")) {
+                    if (deviceStatus.hasNextScript()) {
+                        deviceStatus.scriptIndex += 1;
                         try {
-                            Thread.sleep(5000);
-                            deviceStatus.finish = true;
-                            deviceStatus.status = "finished";
-                            deviceStatus.clear();
-
-                            saveDeviceStatusToDb();
-                            runNextInQueue();
-
+                            Thread.sleep(10000);
+                            runScript(deviceStatus.device.deviceId);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                    }).start();
+                    } else {
+                        executor.execute(() -> {
+                            try {
+                                Thread.sleep(5000);
+                                deviceStatus.finish = true;
+                                deviceStatus.status = "finished";
+                                deviceStatus.clear();
+
+                                saveDeviceStatusToDb();
+                                runNextInQueue();
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        });
+                    }
                 }
-            }).start();
+            });
         } catch (Exception e) {
             e.printStackTrace();
             deviceStatus.status = "fail";
@@ -450,21 +456,23 @@ public class DeviceManager {
             }
             saveDeviceStatusToDb();
 
-            if (deviceStatus.hasNextScript()) {
-                new Thread(() -> {
-                    try {
-                        Thread.sleep(10000);
-                        runScript(deviceStatus.device.deviceId);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }).start();
-            } else {
-                deviceStatus.status = "finished";
-                deviceStatus.clear();
-                saveDeviceStatusToDb();
+            if(!deviceStatus.status.equals("stopped")) {
+                if (deviceStatus.hasNextScript()) {
+                    executor.execute(() -> {
+                        try {
+                            Thread.sleep(10000);
+                            runScript(deviceStatus.device.deviceId);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    });
+                } else {
+                    deviceStatus.status = "finished";
+                    deviceStatus.clear();
+                    saveDeviceStatusToDb();
 
-                runNextInQueue();
+                    runNextInQueue();
+                }
             }
         }
     }
@@ -505,7 +513,7 @@ public class DeviceManager {
                 deviceStatus.scriptChain = null;
 
                 saveDeviceStatusToDb();
-                new Thread(() -> {
+                executor.execute(() -> {
                     try {
                         Thread.sleep(5000);
                         deviceStatus.isStarting = true;
@@ -514,7 +522,7 @@ public class DeviceManager {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }).start();
+                });
                 return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
             } else {
                 deviceStatus.isStarting = true;

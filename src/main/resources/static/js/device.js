@@ -641,7 +641,7 @@ function postRequestDevice(deviceID, url) {
     let deviceIdList = [];
     deviceIdList.push(deviceID);
 
-    $('#confirm_popup').modal('hide');
+    $('#confirm_stop_script_popup').modal('hide');
     $.ajax({
         type: "POST",
         url: url,
