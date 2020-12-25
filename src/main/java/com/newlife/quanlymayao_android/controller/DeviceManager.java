@@ -8,7 +8,6 @@ import com.newlife.quanlymayao_android.model.*;
 import com.newlife.quanlymayao_android.model.RunScriptDuration;
 import com.newlife.quanlymayao_android.repository.*;
 import com.newlife.quanlymayao_android.util.CmdUtil;
-import com.sun.jmx.remote.internal.ArrayQueue;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -54,7 +53,7 @@ public class DeviceManager {
     public ArrayList<DeviceStatus> dvStatusList;
     public Queue<String> dvIdQueue = new LinkedList<>();
     public final int MAX_QUEUE = 2;
-    public ExecutorService executor = Executors.newFixedThreadPool(5);
+    public ExecutorService executor = Executors.newFixedThreadPool(10);
 
     public void trackingActiveDevice() {
         executor.execute(() -> {
@@ -116,10 +115,10 @@ public class DeviceManager {
                     });
                 }
             });
-            dvStatusList.forEach(dv -> {
-                System.out.println(dv.device.deviceId + " : " + dv.isActive);
-            });
-            System.out.println("---------------------");
+//            dvStatusList.forEach(dv -> {
+//                System.out.println(dv.device.deviceId + " : " + dv.isActive);
+//            });
+//            System.out.println("---------------------");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -191,11 +190,13 @@ public class DeviceManager {
                 return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị bận (" + deviceId + ")");
             } else if (deviceStatus.isActive) {
                 if (!deviceStatus.status.equals("finished")) {
+                    System.out.println("STOP");
                     deviceStatus.status = "stopped";
                     if (deviceStatus.account != null) {
                         deviceStatus.account.status = "free";
                         accountRepository.save(deviceStatus.account);
                     }
+                    deviceStatus.runScriptExecutor.shutdownNow();
                     saveDeviceStatusToDb();
                     exitApp(deviceStatus);
                 }
@@ -218,7 +219,9 @@ public class DeviceManager {
                     accountRepository.save(deviceStatus.account);
                 }
                 deviceStatus.status = "finished";
+                System.out.println("FINISH");
                 deviceStatus.clear();
+                deviceStatus.runScriptExecutor.shutdownNow();
                 saveDeviceStatusToDb();
                 exitApp(deviceStatus);
                 return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
@@ -241,6 +244,7 @@ public class DeviceManager {
                 deviceStatus.status = "finished";
                 deviceStatus.clear();
                 dvIdQueue.remove(deviceId);
+                deviceStatus.runScriptExecutor.shutdownNow();
                 saveDeviceStatusToDb();
                 return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
             } else {
@@ -290,7 +294,8 @@ public class DeviceManager {
             return new ApiResponse<>(false, new DeviceStatistic(), "Không tìm thấy thiết bị (" + deviceId + ")");
         } else {
             int countRunningDevice = countRunningDevice();
-            if (countRunningDevice > MAX_QUEUE && deviceStatus.status.equals("finished") ) {
+            System.out.println(countRunningDevice + " : " + deviceStatus.status);
+            if (countRunningDevice > MAX_QUEUE && deviceStatus.status.equals("finished")) {
                 dvIdQueue.add(deviceId);
                 deviceStatus.status = "wait";
                 saveDeviceStatusToDb();
@@ -299,12 +304,18 @@ public class DeviceManager {
                 if (deviceStatus.requestScriptList == null || deviceStatus.requestScriptList.isEmpty()) {
                     return new ApiResponse<>(false, deviceStatus.toStatistic(), "Chưa chọn kịch bản (" + deviceId + ")");
                 } else {
-                    Script script = scriptReponsitory.findById(deviceStatus.requestScriptList.get(deviceStatus.scriptIndex).scriptId).orElse(null);
                     Account account = accountRepository.findById(deviceStatus.requestScriptList.get(deviceStatus.scriptIndex).accountId).orElse(null);
-
+                    Script script = scriptReponsitory.findById(deviceStatus.requestScriptList.get(deviceStatus.scriptIndex).scriptId).orElse(null);
                     if (script == null || account == null)
                         return new ApiResponse<>(false, deviceStatus.toStatistic(), "Không thể chạy kịch bản (" + deviceId + ")");
-                    else if (!script.name.isEmpty() && !account.username.isEmpty()) {
+                    else if (account.status.equals("using")) {
+                        deviceStatus.status = "fail";
+                        deviceStatus.info = "Tài khoản đang chạy cho thiết bị khác";
+                        saveDeviceStatusToDb();
+                        runNextScript(deviceStatus);
+                        return new ApiResponse<>(false, deviceStatus.toStatistic(), "Tài khoản đang chạy cho thiết bị khác ("
+                                + deviceId + " : " + account.type + " : " + account.username + ")");
+                    } else if (!script.name.isEmpty() && !account.username.isEmpty()) {
                         deviceStatus.script = script;
                         deviceStatus.account = account;
                         if (!deviceStatus.isActive) {
@@ -312,6 +323,7 @@ public class DeviceManager {
                         } else if (deviceStatus.isStarting) {
                             return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị hiện đang bận (" + deviceId + ")");
                         } else {
+                            System.out.println("RUN");
                             runScript(deviceStatus);
                             return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
                         }
@@ -348,7 +360,9 @@ public class DeviceManager {
             deviceStatus.runTimes = maxRunTimes + 1;
             saveDeviceStatusToDb();
             accountRepository.save(deviceStatus.account);
-            executor.execute(() -> {
+            if (deviceStatus.runScriptExecutor.isShutdown())
+                deviceStatus.runScriptExecutor = Executors.newFixedThreadPool(5);
+            deviceStatus.runScriptExecutor.execute(() -> {
                 try {
                     Process process = builder.start();
                     BufferedReader r = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -360,120 +374,125 @@ public class DeviceManager {
                             break;
                         }
                         System.out.println(line);
-                        if (line.startsWith("Action:")) {
-                            hasChange = true;
-                            deviceStatus.action = line.substring(7).trim();
-                        }
-                        if (line.startsWith("Progress:")) {
-                            try {
-                                deviceStatus.progress = Integer.parseInt(line.substring(9).trim());
-                                if (deviceStatus.progress == 100) {
-                                    deviceStatus.status = "complete";
+                        if (deviceStatus.status.equals("stopped") || deviceStatus.status.equals("finished")) {
+                            break;
+                        } else {
+                            if (line.startsWith("Action:")) {
+                                hasChange = true;
+                                deviceStatus.action = line.substring(7).trim();
+                            }
+                            if (line.startsWith("Progress:")) {
+                                try {
+                                    deviceStatus.progress = Integer.parseInt(line.substring(9).trim());
+                                    if (deviceStatus.progress == 100) {
+                                        deviceStatus.status = "complete";
+                                        deviceStatus.account.status = "free";
+                                        accountRepository.save(deviceStatus.account);
+                                        hasChange = true;
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            if (line.startsWith("Message:")) {
+                                deviceStatus.message = line.substring(8).trim();
+                                hasChange = true;
+                            }
+                            if (line.startsWith("Code:")) {
+                                deviceStatus.code = line.substring(5).trim();
+                                hasChange = true;
+                            }
+                            if (line.startsWith("Error:")) {
+                                deviceStatus.status = "fail";
+                                deviceStatus.info = line.substring(6).trim();
+                                if (deviceStatus.account != null) {
                                     deviceStatus.account.status = "free";
                                     accountRepository.save(deviceStatus.account);
-                                    hasChange = true;
                                 }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        if (line.startsWith("Message:")) {
-                            deviceStatus.message = line.substring(8).trim();
-                            hasChange = true;
-                        }
-                        if (line.startsWith("Code:")) {
-                            deviceStatus.code = line.substring(5).trim();
-                            hasChange = true;
-                        }
-                        if (line.startsWith("Error:")) {
-                            deviceStatus.status = "fail";
-                            deviceStatus.info = line.substring(6).trim();
-                            if (deviceStatus.account != null) {
-                                deviceStatus.account.status = "free";
-                                accountRepository.save(deviceStatus.account);
-                            }
 
 //                            if (isFirstTime) {
 //                                retryRunScript(deviceStatus, script, account);
 //                            }
-                            hasChange = true;
-                        }
-                        // error: device '127.0.0.1:62025' not found
-                        if (line.startsWith("error: device") && line.endsWith("not found")) {
-                            String[] splits = line.split("'");
-                            String deviceId = splits[1];
-                            if (deviceId.startsWith("127")) {
-                                stopScriptDevice(deviceId);
-                                turnOffDevice(deviceId);
-                                return;
+                                hasChange = true;
                             }
+                            // error: device '127.0.0.1:62025' not found
+                            if (line.startsWith("error: device") && line.endsWith("not found")) {
+                                String[] splits = line.split("'");
+                                String deviceId = splits[1];
+                                if (deviceId.startsWith("127")) {
+                                    stopScriptDevice(deviceId);
+                                    turnOffDevice(deviceId);
+                                    return;
+                                }
+                            }
+                            if (hasChange) saveDeviceStatusToDb();
                         }
-                        if (hasChange) saveDeviceStatusToDb();
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    deviceStatus.status = "fail";
-                    deviceStatus.info = e.getMessage();
+//                    e.printStackTrace();
                     if (deviceStatus.account != null) {
                         deviceStatus.account.status = "free";
                         accountRepository.save(deviceStatus.account);
                     }
-                    saveDeviceStatusToDb();
-                }
-                if(!deviceStatus.status.equals("stopped")) {
-                    if (deviceStatus.hasNextScript()) {
-                        deviceStatus.scriptIndex += 1;
-                        try {
-                            Thread.sleep(10000);
-                            runScript(deviceStatus.device.deviceId);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                    if (deviceStatus.status.equals("stopped") || deviceStatus.status.equals("finished")) {
                     } else {
-                        executor.execute(() -> {
-                            try {
-                                Thread.sleep(5000);
-                                deviceStatus.status = "finished";
-                                deviceStatus.clear();
-
-                                saveDeviceStatusToDb();
-                                runNextInQueue();
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        });
+                        deviceStatus.status = "fail";
+                        deviceStatus.info = e.getMessage();
+                        saveDeviceStatusToDb();
                     }
                 }
+                System.out.println("status: " + deviceStatus.status);
+                runNextScript(deviceStatus);
             });
         } catch (Exception e) {
             e.printStackTrace();
-            deviceStatus.status = "fail";
-            deviceStatus.info = e.getMessage();
             if (deviceStatus.account != null) {
                 deviceStatus.account.status = "free";
                 accountRepository.save(deviceStatus.account);
             }
-            saveDeviceStatusToDb();
+            if (deviceStatus.status.equals("stopped") || deviceStatus.status.equals("finished")) {
+            } else {
+                deviceStatus.status = "fail";
+                deviceStatus.info = e.getMessage();
+                saveDeviceStatusToDb();
 
-            if(!deviceStatus.status.equals("stopped")) {
-                if (deviceStatus.hasNextScript()) {
-                    executor.execute(() -> {
-                        try {
-                            Thread.sleep(10000);
-                            runScript(deviceStatus.device.deviceId);
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                    });
-                } else {
-                    deviceStatus.status = "finished";
-                    deviceStatus.clear();
-                    saveDeviceStatusToDb();
-
-                    runNextInQueue();
-                }
+                runNextScript(deviceStatus);
             }
+        }
+    }
+
+    public void runNextScript(DeviceStatus deviceStatus){
+        try {
+            if (deviceStatus.hasNextScript()) {
+                deviceStatus.runScriptExecutor.execute(() -> {
+                    try {
+                        Thread.sleep(5000);
+                        if (deviceStatus.status.equals("stopped") || deviceStatus.status.equals("finished")) {
+                        } else {
+                            deviceStatus.scriptIndex += 1;
+                            runScript(deviceStatus.device.deviceId);
+                        }
+                    } catch (Exception ex) {
+                    }
+                });
+            } else {
+                deviceStatus.runScriptExecutor.execute(() -> {
+                    try {
+                        Thread.sleep(5000);
+                        if (deviceStatus.status.equals("stopped") || deviceStatus.status.equals("finished")) {
+                        } else {
+                            deviceStatus.status = "finished";
+                            deviceStatus.clear();
+
+                            saveDeviceStatusToDb();
+                            runNextInQueue();
+                        }
+                    } catch (Exception e) {
+                    }
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -676,7 +695,7 @@ public class DeviceManager {
             builder.directory(new File(Contract.AUTO_TOOL_FOLDER));
             builder.start();
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 
@@ -739,7 +758,7 @@ public class DeviceManager {
     synchronized public int countRunningDevice() {
         int count = 0;
         for (DeviceStatus dv : dvStatusList) {
-            if (!dv.status.equals("finished")) count += 1;
+            if (dv.isActive && !dv.status.equals("finished")) count += 1;
         }
         return count;
     }

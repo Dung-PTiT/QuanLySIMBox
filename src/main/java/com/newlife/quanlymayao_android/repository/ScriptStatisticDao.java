@@ -19,7 +19,7 @@ public class ScriptStatisticDao {
     public ScriptStatisticDao() {
         try {
             conn = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/quanlysimbox", "root", "phamvankhoa");
+                    "jdbc:mysql://localhost:3306/quanlysimbox", "root", "123456");
         } catch (SQLException e) {
             e.printStackTrace();
         }

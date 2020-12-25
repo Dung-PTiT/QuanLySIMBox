@@ -3,6 +3,8 @@ package com.newlife.quanlymayao_android.model;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Entity
 @Table(name = "device_status")
@@ -33,6 +35,9 @@ public class DeviceStatus implements Serializable, Cloneable {
 
     @Transient
     public ArrayList<RequestScript> requestScriptList;
+
+    @Transient
+    public ExecutorService runScriptExecutor = Executors.newFixedThreadPool(5);
 
     @Column(name = "script_chain_id")
     public int scriptChainId;
