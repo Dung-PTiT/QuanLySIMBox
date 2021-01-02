@@ -7,31 +7,33 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Table(name = "messages")
+@Table(name = "console_message")
 @Data
-public class Messages implements Serializable {
+public class ConsoleMessage implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long id;
     @Column(name = "mgs_id")
     public int mgsId;
     public String status;
-    public String sdt;
+    public String sdtGui;
     public Date time;
     public String content;
     @Column(name = "sim_id")
     public String simId;
+    public boolean isMessage = true;
+    public Date simTime;
 
-    public Messages(int mgsId, String status, String sdt, Date time, String content, String simId) {
+    public ConsoleMessage(int mgsId, String status, String sdtGui, Date time, String content, String simId) {
         this.mgsId = mgsId;
         this.status = status;
-        this.sdt = sdt;
+        this.sdtGui = sdtGui;
         this.time = time;
         this.content = content;
         this.simId = simId;
     }
 
-    public Messages() {
+    public ConsoleMessage() {
 
     }
 

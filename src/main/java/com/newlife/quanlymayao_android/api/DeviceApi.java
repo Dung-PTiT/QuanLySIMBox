@@ -38,18 +38,18 @@ public class DeviceApi {
     }
 
     @PostMapping("/api/get_device_statistic")
-    public ApiResponse<DeviceStatistic> getDeviceStatistic(@RequestParam("deviceId") String deviceId){
+    public ApiResponse<DeviceStatistic> getDeviceStatistic(@RequestParam("deviceId") String deviceId) {
         DeviceStatus deviceStatus = null;
-        for(DeviceStatus dv : deviceManager.dvStatusList){
-            if(dv.device.deviceId.equals(deviceId)){
+        for (DeviceStatus dv : deviceManager.dvStatusList) {
+            if (dv.device.deviceId.equals(deviceId)) {
                 deviceStatus = dv;
                 break;
             }
         }
-        if(deviceStatus == null){
-            return new ApiResponse<>(false, new DeviceStatistic(), "Không tìm thấy thiết bị (" + deviceId +")" );
+        if (deviceStatus == null) {
+            return new ApiResponse<>(false, new DeviceStatistic(), "Không tìm thấy thiết bị (" + deviceId + ")");
         } else {
-            return new ApiResponse<>(true, deviceStatus.toStatistic(), "" );
+            return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
         }
     }
 
@@ -68,12 +68,16 @@ public class DeviceApi {
             DeviceStatus deviceStatus = deviceManager.getDeviceStatus(deviceId);
             if (deviceStatus == null) {
                 statisticList.add(new ApiResponse<>(false, new DeviceStatistic(), "Không tìm thấy thiết bị (" + deviceId + ")"));
-            } else if (deviceStatus.status.equals("finished") || deviceStatus.status.equals("free")) {
-                if(requestScriptChain.scriptChainId == 0){
+            } else if (deviceStatus.status.equals("sleeping") || deviceStatus.status.equals("wait")) {
+                statisticList.add(new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị đang đợi.\nHãy hũy đợi trước khi chạy."));
+            } else if (deviceStatus.status.equals("finished") || deviceStatus.status.equals("free") || !deviceStatus.isActive) {
+                if (requestScriptChain.scriptChainId == 0) {
                     deviceStatus.scriptChain = null;
                     deviceStatus.scriptChainId = 0;
                     deviceStatus.requestScriptList = map.get(deviceId);
                     deviceStatus.scriptIndex = 0;
+                    deviceStatus.repeatTime = requestScriptChain.repeatTime;
+                    if (!deviceStatus.isActive) deviceStatus.runScriptAfterBoot = true;
                     statisticList.add(deviceManager.runScript(deviceStatus.device.deviceId));
                 } else {
                     ScriptChain scriptChain = deviceManager.scriptChainRepository.findById(requestScriptChain.scriptChainId).orElse(null);
@@ -85,6 +89,8 @@ public class DeviceApi {
                         deviceStatus.scriptChainId = scriptChain.id;
                         deviceStatus.requestScriptList = map.get(deviceId);
                         deviceStatus.scriptIndex = 0;
+                        deviceStatus.repeatTime = requestScriptChain.repeatTime;
+                        if (!deviceStatus.isActive) deviceStatus.runScriptAfterBoot = true;
                         statisticList.add(deviceManager.runScript(deviceStatus.device.deviceId));
                     }
                 }
@@ -93,6 +99,15 @@ public class DeviceApi {
             }
         }
         return statisticList;
+    }
+
+    @PostMapping("/api/cancel_sleep")
+    public ArrayList<ApiResponse<DeviceStatistic>> cancelStop(@RequestBody DeviceIdList deviceIdList) {
+        ArrayList<ApiResponse<DeviceStatistic>> list = new ArrayList<>();
+        for (String deviceId : deviceIdList.deviceIdList) {
+            list.add(deviceManager.cancelSleep(deviceId));
+        }
+        return list;
     }
 
     @PostMapping("/api/stop_script")
@@ -318,4 +333,5 @@ public class DeviceApi {
 class RequestScriptChain implements Serializable {
     public ArrayList<RequestScript> requestScriptList;
     public int scriptChainId;
+    public long repeatTime;
 }

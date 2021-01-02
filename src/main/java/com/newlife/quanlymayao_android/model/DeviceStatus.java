@@ -3,6 +3,7 @@ package com.newlife.quanlymayao_android.model;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -32,6 +33,18 @@ public class DeviceStatus implements Serializable, Cloneable {
 
     @Column(name = "script_index")
     public int scriptIndex = 0;
+
+    @Column(name = "repeat_time")
+    public long repeatTime = -1;
+
+    @Transient
+    public long startRunScriptTime;
+
+    @Transient
+    public Process runScriptProcess;
+
+    @Transient
+    public boolean runScriptAfterBoot = false;
 
     @Transient
     public ArrayList<RequestScript> requestScriptList;
@@ -82,7 +95,8 @@ public class DeviceStatus implements Serializable, Cloneable {
                 message,
                 code,
                 scriptChain,
-                requestScriptList
+                requestScriptList,
+                repeatTime
         );
     }
 

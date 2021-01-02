@@ -20,7 +20,8 @@ public class Contract {
 
 
     // nox
-    public static String NOX_FOLDER = "C:/Program Files (x86)/Nox";
+    public static String NOX_FOLDER = "C:/Nox";
+//    public static String NOX_FOLDER = "D:/Nox";
     public static String NOX_ADB = NOX_FOLDER + "\\bin\\nox_adb.exe";
     public static String NOX = NOX_FOLDER + "\\bin\\Nox.exe";
     public static String NOX_DEVICES = NOX_FOLDER + "\\bin\\BignoxVMS";
@@ -28,8 +29,8 @@ public class Contract {
 
 
     // auto tool
-    public static String AUTO_TOOL_FOLDER = "C:\\ToolAuto\\bin\\Debug\\netcoreapp3.1";
-    public static String AUTO_TOOL = "ToolTest.exe";
+    public static String AUTO_TOOL_FOLDER = "C:\\Users\\admin\\source\\repos\\Tool\\Tool\\bin\\x86\\Debug\\netcoreapp3.1";
+    public static String AUTO_TOOL = "Tool.exe";
 
     // icon
     public static String FACEBOOK_ICON = "./images/brands/facebook.png";

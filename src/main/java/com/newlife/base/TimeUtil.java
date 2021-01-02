@@ -28,7 +28,7 @@ public class TimeUtil {
         return new Date();
     }
 
-    public static long getEndTimeOfDate(long time){
+    public static long getEndTimeOfDate(long time) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(time);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -40,7 +40,7 @@ public class TimeUtil {
         return result;
     }
 
-    public static long[] parseTimeString(String startTimeStr, String endTimeStr){
+    public static long[] parseTimeString(String startTimeStr, String endTimeStr) {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         try {
             Calendar calendar = Calendar.getInstance();
@@ -51,9 +51,10 @@ public class TimeUtil {
             calendar.add(Calendar.DAY_OF_MONTH, 1);
             long endTime = calendar.getTimeInMillis();
             return new long[]{startTime, endTime};
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
+
 }

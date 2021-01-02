@@ -20,6 +20,7 @@ public class CmdUtil {
                 }
                 output.add(line);
             }
+            p.destroy();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -27,13 +28,17 @@ public class CmdUtil {
     }
 
     public static void runCmdWithoutOutput(String cmd) {
-        try {
-            ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", cmd);
-            builder.redirectErrorStream(true);
-            builder.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        new Thread(()->{
+            try {
+                ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", cmd);
+                builder.redirectErrorStream(true);
+                Process p = builder.start();
+                Thread.sleep(3000);
+                p.destroy();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     public static String getProcessIdOfNox(String noxId) {
@@ -55,7 +60,6 @@ public class CmdUtil {
     public static boolean killNoxVMHandle(String processId){
         ArrayList<String> outputs = runCmd("TASKKILL /PID /F " + processId);
         for (int i = 0; i < outputs.size(); i++) {
-//            System.out.println(outputs.get(i));
             if(outputs.get(i).contains("SUCCESS")){
                 return true;
             }

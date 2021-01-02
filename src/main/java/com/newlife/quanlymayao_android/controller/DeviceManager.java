@@ -1,9 +1,7 @@
 package com.newlife.quanlymayao_android.controller;
 
 import com.newlife.Contract;
-import com.newlife.base.ApiResponse;
-import com.newlife.base.SystemUtil;
-import com.newlife.base.TimeUtil;
+import com.newlife.base.*;
 import com.newlife.quanlymayao_android.model.*;
 import com.newlife.quanlymayao_android.model.RunScriptDuration;
 import com.newlife.quanlymayao_android.repository.*;
@@ -22,10 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -46,20 +41,28 @@ public class DeviceManager {
     @Autowired
     public DeviceStatusRepository deviceStatusRepository;
 
+    @Autowired
+    public AppConfigRepository appConfigRepository;
+
+    public AppConfig appConfig;
+
     @PersistenceContext
     public EntityManager entityManager;
 
     public ScriptStatisticDao scriptStatisticDao = new ScriptStatisticDao();
     public ArrayList<DeviceStatus> dvStatusList;
     public Queue<String> dvIdQueue = new LinkedList<>();
-    public final int MAX_QUEUE = 2;
-    public ExecutorService executor = Executors.newFixedThreadPool(10);
+    public ExecutorService executor = Executors.newFixedThreadPool(5);
+
+    public void loadAppConfig() {
+        if (appConfig == null) appConfig = appConfigRepository.findById(1L).orElse(new AppConfig());
+    }
 
     public void trackingActiveDevice() {
         executor.execute(() -> {
             try {
                 loadActiveDevice();
-                saveDeviceStatusToDb();
+                saveAllDeviceStatusToDb();
                 Thread.sleep(Contract.SAVE_DEVICE_STATUS_TIME);
                 trackingActiveDevice();
             } catch (Exception e) {
@@ -68,18 +71,32 @@ public class DeviceManager {
         });
     }
 
-    public void saveDeviceStatusToDb() {
+    public boolean isTimeOutRuningDevice(DeviceStatus deviceStatus) {
+        return System.currentTimeMillis() - deviceStatus.startRunScriptTime >= appConfig.RUN_SCRIPT_TIME_OUT;
+    }
+
+    synchronized public void saveAllDeviceStatusToDb() {
         executor.execute(() -> {
-            for (DeviceStatus deviceStatus : dvStatusList) {
-                try {
+            try {
+                for (DeviceStatus deviceStatus : dvStatusList) {
                     deviceStatus.time = System.currentTimeMillis();
                     deviceStatusRepository.save(deviceStatus.clone());
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
+    }
 
+    synchronized public void saveDeviceStatusToDb(DeviceStatus deviceStatus) {
+        executor.execute(() -> {
+            try {
+                deviceStatus.time = System.currentTimeMillis();
+                deviceStatusRepository.save(deviceStatus.clone());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public ArrayList<DeviceStatus> loadDeviceListFromDB() {
@@ -105,20 +122,41 @@ public class DeviceManager {
                     String id = line.replaceAll("device", "").trim();
                     dvStatusList.forEach(dv -> {
                         if (dv.device.deviceId.equals(id)) {
-                            dv.isStarting = false;
                             dv.isActive = true;
-
                             if (dv.script == null) {
                                 dv.status = "free";
+                            }
+                            if (dv.isStarting && dv.runScriptAfterBoot) {
+                                dv.isStarting = false;
+                                runScript(dv.device.deviceId);
+                            } else {
+                                dv.isStarting = false;
+                                if (dv.status.equals("stopped") || dv.status.equals("finished")) {
+                                } else {
+                                    if (dv.startRunScriptTime != 0 && isTimeOutRuningDevice(dv)) {
+                                        dv.info = "Chạy kịch bản tốn quá nhiều thời gian";
+                                        dv.status = "fail";
+
+                                        if (dv.account != null) {
+                                            dv.account.status = "free";
+                                            accountRepository.save(dv.account);
+                                        }
+                                        if (dv.runScriptProcess != null && dv.runScriptProcess.isAlive()) {
+                                            dv.runScriptProcess.destroy();
+                                            exitApp(dv);
+                                        }
+                                        saveDeviceStatusToDb(dv);
+                                    }
+                                }
                             }
                         }
                     });
                 }
             });
 //            dvStatusList.forEach(dv -> {
-//                System.out.println(dv.device.deviceId + " : " + dv.isActive);
+//                LogUtil.println(appConfig,dv.device.deviceId + " : " + dv.isActive);
 //            });
-//            System.out.println("---------------------");
+//            LogUtil.println(appConfig,"---------------------");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -140,7 +178,7 @@ public class DeviceManager {
                     }
                 });
                 deviceStatus.isStarting = true;
-                saveDeviceStatusToDb();
+                saveDeviceStatusToDb(deviceStatus);
                 return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
             } else {
                 return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị đang hoạt động (" + deviceId + ")");
@@ -173,7 +211,11 @@ public class DeviceManager {
                 deviceStatus.account = null;
                 deviceStatus.requestScriptList = null;
                 deviceStatus.scriptChain = null;
-                saveDeviceStatusToDb();
+                deviceStatus.runScriptAfterBoot = false;
+
+                deviceStatus.runScriptExecutor.shutdownNow();
+
+                saveDeviceStatusToDb(deviceStatus);
                 return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
             } else {
                 return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị hiện không hoạt động (" + deviceId + ")");
@@ -183,6 +225,29 @@ public class DeviceManager {
         }
     }
 
+    public ApiResponse<DeviceStatistic> cancelSleep(String deviceId) {
+        DeviceStatus deviceStatus = getDeviceStatus(deviceId);
+        if (deviceStatus != null) {
+            if (deviceStatus.isStarting) {
+                return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị bận (" + deviceId + ")");
+            } else if (deviceStatus.isActive) {
+                return turnOffDevice(deviceId);
+            } else {
+                deviceStatus.runTimes = 0;
+                deviceStatus.clear();
+                deviceStatus.status = "";
+                deviceStatus.script = null;
+                deviceStatus.account = null;
+                deviceStatus.requestScriptList = null;
+                deviceStatus.scriptChain = null;
+                deviceStatus.runScriptAfterBoot = false;
+                deviceStatus.runScriptExecutor.shutdownNow();
+                saveDeviceStatusToDb(deviceStatus);
+                return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
+            }
+        } else return new ApiResponse<>(false, new DeviceStatistic(), "Không tìm thấy thiết bị (" + deviceId + ")");
+    }
+
     public ApiResponse<DeviceStatistic> stopScriptDevice(String deviceId) {
         DeviceStatus deviceStatus = getDeviceStatus(deviceId);
         if (deviceStatus != null) {
@@ -190,14 +255,16 @@ public class DeviceManager {
                 return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị bận (" + deviceId + ")");
             } else if (deviceStatus.isActive) {
                 if (!deviceStatus.status.equals("finished")) {
-                    System.out.println("STOP");
+                    LogUtil.println(appConfig, "STOP");
                     deviceStatus.status = "stopped";
                     if (deviceStatus.account != null) {
                         deviceStatus.account.status = "free";
                         accountRepository.save(deviceStatus.account);
                     }
+                    if (deviceStatus.runScriptProcess != null && deviceStatus.runScriptProcess.isAlive())
+                        deviceStatus.runScriptProcess.destroy();
                     deviceStatus.runScriptExecutor.shutdownNow();
-                    saveDeviceStatusToDb();
+                    saveDeviceStatusToDb(deviceStatus);
                     exitApp(deviceStatus);
                 }
                 return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
@@ -219,11 +286,21 @@ public class DeviceManager {
                     accountRepository.save(deviceStatus.account);
                 }
                 deviceStatus.status = "finished";
-                System.out.println("FINISH");
+                LogUtil.println(appConfig, "FINISH");
                 deviceStatus.clear();
                 deviceStatus.runScriptExecutor.shutdownNow();
-                saveDeviceStatusToDb();
+                saveDeviceStatusToDb(deviceStatus);
                 exitApp(deviceStatus);
+                if (deviceStatus.runScriptAfterBoot) {
+                    executor.execute(() -> {
+                        try {
+                            Thread.sleep(5000);
+                            turnOffDevice(deviceId);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+                }
                 return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
             } else {
                 return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị hiện không hoạt động (" + deviceId + ")");
@@ -236,19 +313,18 @@ public class DeviceManager {
         if (deviceStatus != null) {
             if (deviceStatus.isStarting) {
                 return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị bận (" + deviceId + ")");
-            } else if (deviceStatus.isActive) {
+            } else {
                 if (deviceStatus.account != null) {
                     deviceStatus.account.status = "free";
                     accountRepository.save(deviceStatus.account);
                 }
-                deviceStatus.status = "finished";
+                deviceStatus.status = "";
+                deviceStatus.runScriptAfterBoot = false;
                 deviceStatus.clear();
                 dvIdQueue.remove(deviceId);
                 deviceStatus.runScriptExecutor.shutdownNow();
-                saveDeviceStatusToDb();
+                saveDeviceStatusToDb(deviceStatus);
                 return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
-            } else {
-                return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị hiện không hoạt động (" + deviceId + ")");
             }
         } else return new ApiResponse<>(false, new DeviceStatistic(), "Không tìm thấy thiết bị (" + deviceId + ")");
     }
@@ -293,42 +369,47 @@ public class DeviceManager {
         if (deviceStatus == null) {
             return new ApiResponse<>(false, new DeviceStatistic(), "Không tìm thấy thiết bị (" + deviceId + ")");
         } else {
-            int countRunningDevice = countRunningDevice();
-            System.out.println(countRunningDevice + " : " + deviceStatus.status);
-            if (countRunningDevice > MAX_QUEUE && deviceStatus.status.equals("finished")) {
-                dvIdQueue.add(deviceId);
+            int countActiveDevice = countActiveDevice();
+            if (countActiveDevice >= appConfig.MAX_DEVICE_QUEUE
+                    && (deviceStatus.status.equals("finished") || deviceStatus.status.isEmpty())) {
+                if (!dvIdQueue.contains(deviceId)) dvIdQueue.add(deviceId);
                 deviceStatus.status = "wait";
-                saveDeviceStatusToDb();
+                saveDeviceStatusToDb(deviceStatus);
                 return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
             } else {
                 if (deviceStatus.requestScriptList == null || deviceStatus.requestScriptList.isEmpty()) {
                     return new ApiResponse<>(false, deviceStatus.toStatistic(), "Chưa chọn kịch bản (" + deviceId + ")");
                 } else {
-                    Account account = accountRepository.findById(deviceStatus.requestScriptList.get(deviceStatus.scriptIndex).accountId).orElse(null);
-                    Script script = scriptReponsitory.findById(deviceStatus.requestScriptList.get(deviceStatus.scriptIndex).scriptId).orElse(null);
-                    if (script == null || account == null)
-                        return new ApiResponse<>(false, deviceStatus.toStatistic(), "Không thể chạy kịch bản (" + deviceId + ")");
-                    else if (account.status.equals("using")) {
-                        deviceStatus.status = "fail";
-                        deviceStatus.info = "Tài khoản đang chạy cho thiết bị khác";
-                        saveDeviceStatusToDb();
-                        runNextScript(deviceStatus);
-                        return new ApiResponse<>(false, deviceStatus.toStatistic(), "Tài khoản đang chạy cho thiết bị khác ("
-                                + deviceId + " : " + account.type + " : " + account.username + ")");
-                    } else if (!script.name.isEmpty() && !account.username.isEmpty()) {
-                        deviceStatus.script = script;
-                        deviceStatus.account = account;
-                        if (!deviceStatus.isActive) {
-                            return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị hiện không hoạt động (" + deviceId + ")");
-                        } else if (deviceStatus.isStarting) {
-                            return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị hiện đang bận (" + deviceId + ")");
-                        } else {
-                            System.out.println("RUN");
-                            runScript(deviceStatus);
-                            return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
-                        }
+                    if (!deviceStatus.isActive) {
+                        dvIdQueue.remove(deviceStatus.device.deviceId);
+                        return turnOnDevice(deviceStatus.device.deviceId, 2000);
                     } else {
-                        return new ApiResponse<>(false, deviceStatus.toStatistic(), "Không thể chạy kịch bản (" + deviceId + ")");
+                        Account account = accountRepository.findById(deviceStatus.requestScriptList.get(deviceStatus.scriptIndex).accountId).orElse(null);
+                        Script script = scriptReponsitory.findById(deviceStatus.requestScriptList.get(deviceStatus.scriptIndex).scriptId).orElse(null);
+                        if (script == null || account == null)
+                            return new ApiResponse<>(false, deviceStatus.toStatistic(), "Không thể chạy kịch bản (" + deviceId + ")");
+                        else if (account.status.equals("using")) {
+                            deviceStatus.status = "fail";
+                            deviceStatus.info = "Tài khoản đang chạy cho thiết bị khác";
+                            saveDeviceStatusToDb(deviceStatus);
+                            runNextScript(deviceStatus);
+                            return new ApiResponse<>(false, deviceStatus.toStatistic(), "Tài khoản đang chạy cho thiết bị khác ("
+                                    + deviceId + " : " + account.type + " : " + account.username + ")");
+                        } else if (!script.name.isEmpty() && !account.username.isEmpty()) {
+                            deviceStatus.script = script;
+                            deviceStatus.account = account;
+                            if (!deviceStatus.isActive) {
+                                turnOnDevice(deviceId, 2000);
+                                return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị hiện không hoạt động (" + deviceId + ")");
+                            } else if (deviceStatus.isStarting) {
+                                return new ApiResponse<>(false, deviceStatus.toStatistic(), "Thiết bị hiện đang bận (" + deviceId + ")");
+                            } else {
+                                runScript(deviceStatus);
+                                return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
+                            }
+                        } else {
+                            return new ApiResponse<>(false, deviceStatus.toStatistic(), "Không thể chạy kịch bản (" + deviceId + ")");
+                        }
                     }
                 }
             }
@@ -337,6 +418,7 @@ public class DeviceManager {
 
     public void runScript(DeviceStatus deviceStatus) {
         try {
+            deviceStatus.startRunScriptTime = System.currentTimeMillis();
             String cmd = Contract.AUTO_TOOL + " " + deviceStatus.script.name + " " + deviceStatus.device.deviceId + " "
                     + deviceStatus.account.username + " " + deviceStatus.account.password + " " + deviceStatus.account.simId
                     + " " + deviceStatus.device.noxId + " " + deviceStatus.account.sdt;
@@ -358,14 +440,14 @@ public class DeviceManager {
             deviceStatus.account.status = "using";
             long maxRunTimes = deviceStatusRepository.getMaxScriptRunTimes();
             deviceStatus.runTimes = maxRunTimes + 1;
-            saveDeviceStatusToDb();
+            saveDeviceStatusToDb(deviceStatus);
             accountRepository.save(deviceStatus.account);
             if (deviceStatus.runScriptExecutor.isShutdown())
                 deviceStatus.runScriptExecutor = Executors.newFixedThreadPool(5);
             deviceStatus.runScriptExecutor.execute(() -> {
                 try {
-                    Process process = builder.start();
-                    BufferedReader r = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    deviceStatus.runScriptProcess = builder.start();
+                    BufferedReader r = new BufferedReader(new InputStreamReader(deviceStatus.runScriptProcess.getInputStream()));
                     String line;
                     while (true) {
                         boolean hasChange = false;
@@ -373,7 +455,7 @@ public class DeviceManager {
                         if (line == null) {
                             break;
                         }
-                        System.out.println(line);
+                        LogUtil.println(appConfig, line);
                         if (deviceStatus.status.equals("stopped") || deviceStatus.status.equals("finished")) {
                             break;
                         } else {
@@ -425,9 +507,10 @@ public class DeviceManager {
                                     return;
                                 }
                             }
-                            if (hasChange) saveDeviceStatusToDb();
+                            if (hasChange) saveDeviceStatusToDb(deviceStatus);
                         }
                     }
+                    deviceStatus.runScriptProcess.destroy();
                 } catch (Exception e) {
 //                    e.printStackTrace();
                     if (deviceStatus.account != null) {
@@ -438,10 +521,9 @@ public class DeviceManager {
                     } else {
                         deviceStatus.status = "fail";
                         deviceStatus.info = e.getMessage();
-                        saveDeviceStatusToDb();
+                        saveDeviceStatusToDb(deviceStatus);
                     }
                 }
-                System.out.println("status: " + deviceStatus.status);
                 runNextScript(deviceStatus);
             });
         } catch (Exception e) {
@@ -454,14 +536,14 @@ public class DeviceManager {
             } else {
                 deviceStatus.status = "fail";
                 deviceStatus.info = e.getMessage();
-                saveDeviceStatusToDb();
+                saveDeviceStatusToDb(deviceStatus);
 
                 runNextScript(deviceStatus);
             }
         }
     }
 
-    public void runNextScript(DeviceStatus deviceStatus){
+    public void runNextScript(DeviceStatus deviceStatus) {
         try {
             if (deviceStatus.hasNextScript()) {
                 deviceStatus.runScriptExecutor.execute(() -> {
@@ -484,7 +566,47 @@ public class DeviceManager {
                             deviceStatus.status = "finished";
                             deviceStatus.clear();
 
-                            saveDeviceStatusToDb();
+                            saveDeviceStatusToDb(deviceStatus);
+
+                            if (deviceStatus.repeatTime >= 0) {
+                                if (deviceStatus.repeatTime > appConfig.TURN_OFF_TIME_LIMIT && deviceStatus.runScriptAfterBoot) {
+                                    Thread.sleep(3000);
+                                    if (deviceStatus.account != null) {
+                                        deviceStatus.account.status = "free";
+                                        accountRepository.save(deviceStatus.account);
+                                    }
+                                    String cmd = Contract.NOX + " -clone:" + deviceStatus.device.noxId + " -quit";
+                                    CmdUtil.runCmdWithoutOutput(cmd);
+
+                                    String processId = CmdUtil.getProcessIdOfNox(deviceStatus.device.noxId);
+                                    if (!processId.isEmpty()) {
+                                        CmdUtil.killNoxVMHandle(processId);
+                                    }
+                                    deviceStatus.isActive = false;
+                                }
+                                deviceStatus.scriptIndex = 0;
+                                deviceStatus.status = "sleeping";
+                                saveDeviceStatusToDb(deviceStatus);
+                                deviceStatus.runScriptExecutor.execute(() -> {
+                                    try {
+                                        Thread.sleep(deviceStatus.repeatTime * 60000);
+
+                                        if(!deviceStatus.isActive){
+                                            deviceStatus.isStarting = true;
+                                            turnOnDevice(deviceStatus.device.deviceId, 0);
+                                        } else {
+                                            runScript(deviceStatus.device.deviceId);
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                });
+
+                            } else if (deviceStatus.runScriptAfterBoot) {
+                                Thread.sleep(3000);
+                                turnOffDevice(deviceStatus.device.deviceId);
+                            }
+
                             runNextInQueue();
                         }
                     } catch (Exception e) {
@@ -531,12 +653,12 @@ public class DeviceManager {
                 deviceStatus.requestScriptList = null;
                 deviceStatus.scriptChain = null;
 
-                saveDeviceStatusToDb();
+                saveDeviceStatusToDb(deviceStatus);
                 executor.execute(() -> {
                     try {
                         Thread.sleep(5000);
                         deviceStatus.isStarting = true;
-                        saveDeviceStatusToDb();
+                        saveDeviceStatusToDb(deviceStatus);
                         CmdUtil.runCmdWithoutOutput(Contract.NOX + " -clone:" + deviceStatus.device.noxId + " -resolution:720x1280 -performance:middle -root:false");
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -545,7 +667,7 @@ public class DeviceManager {
                 return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
             } else {
                 deviceStatus.isStarting = true;
-                saveDeviceStatusToDb();
+                saveDeviceStatusToDb(deviceStatus);
                 CmdUtil.runCmdWithoutOutput(Contract.NOX + " -clone:" + deviceStatus.device.noxId + " -resolution:720x1280 -performance:middle -root:false");
                 return new ApiResponse<>(true, deviceStatus.toStatistic(), "");
             }
@@ -689,14 +811,18 @@ public class DeviceManager {
     }
 
     public void exitApp(DeviceStatus deviceStatus) {
-        try {
-            String cmd = Contract.AUTO_TOOL + " Exit " + deviceStatus.device.deviceId;
-            ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", cmd);
-            builder.directory(new File(Contract.AUTO_TOOL_FOLDER));
-            builder.start();
-        } catch (Exception e) {
-//            e.printStackTrace();
-        }
+        executor.execute(() -> {
+            try {
+                String cmd = Contract.AUTO_TOOL + " Exit " + deviceStatus.device.deviceId;
+                ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", cmd);
+                builder.directory(new File(Contract.AUTO_TOOL_FOLDER));
+                Process process = builder.start();
+                Thread.sleep(2000);
+                process.destroy();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public SummaryScriptStatistic getSummaryStatistic() {
@@ -714,7 +840,7 @@ public class DeviceManager {
                 endDate = TimeUtil.getEndTimeOfDate(duration.begin);
             }
         }
-//        System.out.println(countDate);
+//        LogUtil.println(appConfig,countDate);
         summaryScriptStatistic.avg = summaryScriptStatistic.totalRunTimes / countDate;
         return summaryScriptStatistic;
     }
@@ -761,6 +887,22 @@ public class DeviceManager {
             if (dv.isActive && !dv.status.equals("finished")) count += 1;
         }
         return count;
+    }
+
+    synchronized public int countActiveDevice() {
+        int count = 0;
+        for (DeviceStatus dv : dvStatusList) {
+            if (dv.isActive || dv.isStarting) count += 1;
+        }
+        return count;
+    }
+
+    public String[] getSdtAndAppRunningBySim(String simId) {
+        for (DeviceStatus deviceStatus : dvStatusList) {
+            if (deviceStatus.account != null && deviceStatus.account.simId.equals(simId))
+                return new String[]{deviceStatus.account.sdt, deviceStatus.script.app};
+        }
+        return new String[]{"N/A", "N/A"};
     }
 
     // Todo mirror thiết bị

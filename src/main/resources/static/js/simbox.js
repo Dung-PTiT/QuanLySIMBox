@@ -129,7 +129,7 @@ function showMessageList(simID) {
             '<td>' + (i + 1) + '</td>\n' +
             '<td>' + message.id + '</td>\n' +
             '<td>' + message.status + '</td>\n' +
-            '<td>' + message.sdt + '</td>\n' +
+            '<td>' + message.sdtGui + '</td>\n' +
             '<td>' + new Date(message.time).toLocaleString() + '</td>\n' +
             '<td class="text-left">' + message.content + '</td>' +
             '</tr>';
@@ -200,6 +200,7 @@ function timKiem() {
     var comm = ($('#inputComm').val() != '') ? $('#inputComm').val().trim() : 0;
     var loai_mang_1 = ($('#loai_mang_1').is(":checked") == true) ? 'VNM and VIETTEL' : 0;
     var loai_mang_2 = ($('#loai_mang_2').is(":checked") == true) ? 'VN VINAPHONE' : 0;
+    var loai_mang_3 = ($('#loai_mang_3').is(":checked") == true) ? 'VN MOBIFONE' : 0;
     var tien_nho_hon = ($('#tien_nho_hon').is(":checked") == true) ? $('#so_tien_nho_hon').val() : 0;
     var tien_lon_hon = ($('#tien_lon_hon').is(":checked") == true) ? $('#so_tien_lon_hon').val() : 0;
     var ngay_bat_dau = ($('#ngay_bat_dau').is(":checked") == true) ? $('#gia_tri_ngay_bat_dau').val() : 0;
@@ -219,6 +220,9 @@ function timKiem() {
     }
     if (loai_mang_2 != 0) {
         simObject.loaiMang.push(loai_mang_2);
+    }
+    if (loai_mang_3 != 0) {
+        simObject.loaiMang.push(loai_mang_3);
     }
     if (tien_nho_hon != 0) {
         simObject.tienNhoHon = tien_nho_hon;

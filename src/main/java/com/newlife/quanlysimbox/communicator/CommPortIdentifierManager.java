@@ -1,26 +1,42 @@
 package com.newlife.quanlysimbox.communicator;
 
-import com.newlife.quanlysimbox.model.Messages;
-import com.newlife.quanlysimbox.model.SimInfo;
-import com.newlife.quanlysimbox.model.SimStatistic;
-import com.newlife.quanlysimbox.repository.MessagesRepository;
-import com.newlife.quanlysimbox.repository.SimInfoRepository;
+import com.newlife.base.AppConfig;
+import com.newlife.base.AppConfigRepository;
+import com.newlife.quanlymayao_android.controller.DeviceManager;
+import com.newlife.quanlysimbox.model.*;
+import com.newlife.quanlysimbox.repository.*;
 import gnu.io.CommPortIdentifier;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.*;
 
 @Service
 public class CommPortIdentifierManager {
 
     @Autowired
+    MapAppNameReponsitory mapAppNameReponsitory;
+    @Autowired
+    MappedMessageRepository mappedMessageRepository;
+    @Autowired
+    RequestMessageReponsitory requestMessageReponsitory;
+    @Autowired
     SimInfoRepository simInfoRepository;
     @Autowired
-    MessagesRepository messagesRepository;
+    ConsoleMessageRepository consoleMessageRepository;
+    @Autowired
+    public AppConfigRepository appConfigRepository;
+
+    public AppConfig appConfig;
+
+    public DeviceManager deviceManager;
 
     public ArrayList<SerialPortCommunicator> commPortList = findAllCommPort();
+
+    public void loadAppConfig(){
+        if(appConfig == null) appConfig = appConfigRepository.findById(1L).orElse( new AppConfig());
+    }
 
     public void connectToSimbox() {
         System.out.println("size: " + commPortList.size());
@@ -160,11 +176,47 @@ public class CommPortIdentifierManager {
         }).start();
     }
 
-    public void saveMessages(String simId, ArrayList<Messages> messagesList){
+    public void saveMessages(String simId, ArrayList<ConsoleMessage> consoleMessageList){
         new Thread(() -> {
-            messagesRepository.deleteAllMessageOfSim(simId);
-            messagesRepository.saveAll(messagesList);
+            consoleMessageRepository.deleteAllMessageOfSim(simId);
+            consoleMessageRepository.saveAll(consoleMessageList);
         }).start();
     }
+
+    public void mapMessage(ConsoleMessage consoleMessage){
+        new Thread(()->{
+            String appName = getAppNameOfMessage(consoleMessage.content);
+            RequestMessage requestMessage = requestMessageReponsitory.getRequestMessage(
+                    consoleMessage.simId, appName,System.currentTimeMillis()).get(0);
+            if(requestMessage!=null && !requestMessage.appName.isEmpty()){
+                requestMessage.mapped = true;
+                requestMessageReponsitory.updateRequestMessage(requestMessage.id);
+                MappedMessage mappedMessage = new MappedMessage(consoleMessage, requestMessage);
+                mappedMessageRepository.save(mappedMessage);
+            }
+        }).start();
+    }
+
+    public String getAppNameOfMessage(String content){
+        HashMap<String, List<String>> hashMap = new HashMap<>();
+        List<MapAppName> mapAppNameList = mapAppNameReponsitory.findAll();
+        for(MapAppName mapAppName : mapAppNameList){
+            String[] splits = mapAppName.words.split(",");
+            hashMap.put(mapAppName.appName, Arrays.asList(splits));
+        }
+
+        String[] wordSplits = content.split(" ");
+        for(String word : wordSplits){
+            for(String key : hashMap.keySet()){
+                List<String> wordList = hashMap.get(key);
+                if(wordList.contains(word)){
+                    return key;
+                }
+            }
+        }
+        return "N/A";
+    }
+
+
 
 }

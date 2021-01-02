@@ -46,7 +46,7 @@ public class SimInfo implements Serializable, Cloneable {
     public String deviceId = "";
 
     @Transient
-    public ArrayList<Messages> messagesList = null;
+    public ArrayList<ConsoleMessage> consoleMessageList = null;
     @Transient
     public boolean isSapHetTien = false;
     @Transient

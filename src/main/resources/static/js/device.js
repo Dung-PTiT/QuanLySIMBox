@@ -249,13 +249,13 @@ function showTable(dataTable) {
         });
         for (var i = 0; i < dataTable.length; i++) {
             var row = dataTable[i];
-            if (row.isActive == false) {
+            if (row.status == "sleeping") {
                 contentString = contentString +
                     '<tr style="height: 53px">' +
                     '<td>' + genCheckox(row.index, row.deviceId) + '</td>\n' +
                     '<td>' + row.deviceId + '</td>\n' +
                     '<td>' + genActive(row.isActive) + '</td>\n' +
-                    '<td></td>\n' +
+                    '<td>' + genStatus(row.status) + '</td>\n' +
                     '<td></td>\n' +
                     '<td></td>\n' +
                     '<td></td>\n' +
@@ -263,6 +263,36 @@ function showTable(dataTable) {
                     '<td></td>\n' +
                     '<td>' + genButtonActionDevice(row.script, row.account, row.status, row.deviceId, row.isActive, row.isStarting) +
                     '</tr>';
+            } else if (row.isActive == false) {
+                if (row.status == "wait") {
+                    contentString = contentString +
+                        '<tr style="height: 53px">' +
+                        '<td>' + genCheckox(row.index, row.deviceId) + '</td>\n' +
+                        '<td>' + row.deviceId + '</td>\n' +
+                        '<td>' + genActive(row.isActive) + '</td>\n' +
+                        '<td>' + genStatus(row.status) + '</td>\n' +
+                        '<td></td>\n' +
+                        '<td></td>\n' +
+                        '<td></td>\n' +
+                        '<td></td>\n' +
+                        '<td></td>\n' +
+                        '<td>' + genButtonActionDevice(row.script, row.account, row.status, row.deviceId, row.isActive, row.isStarting) +
+                        '</tr>';
+                } else {
+                    contentString = contentString +
+                        '<tr style="height: 53px">' +
+                        '<td>' + genCheckox(row.index, row.deviceId) + '</td>\n' +
+                        '<td>' + row.deviceId + '</td>\n' +
+                        '<td>' + genActive(row.isActive) + '</td>\n' +
+                        '<td></td>\n' +
+                        '<td></td>\n' +
+                        '<td></td>\n' +
+                        '<td></td>\n' +
+                        '<td></td>\n' +
+                        '<td></td>\n' +
+                        '<td>' + genButtonActionDevice(row.script, row.account, row.status, row.deviceId, row.isActive, row.isStarting) +
+                        '</tr>';
+                }
             } else if (row.isActive == true) {
                 if (row.status == "finished") {
                     contentString = contentString +
@@ -362,7 +392,9 @@ function genStatus(statusValue) {
     } else if (statusValue == "finished") {
         status = '<span class="badge bg-indigo" style="min-width: 48px">Finished</span>';
     } else if (statusValue == "wait") {
-        status = '<span class="badge bg-slate-300" style="min-width: 48px">WAIT</span>';
+        status = '<span class="badge bg-slate-300" style="min-width: 48px">Wait</span>';
+    } else if (statusValue == "sleeping") {
+        status = '<span class="badge bg-brown-400" style="min-width: 48px">Sleeping</span>';
     }
     return status;
 }
@@ -407,7 +439,34 @@ function genProgress(progressValue, action, status) {
 
 function genButtonActionDevice(script, account, status, deviceId, isActived, isStaring) {
     let button = '';
-    if (isActived == false) {
+    if (status == "sleeping") {
+        button =
+            '<div class="list-icons">\n' +
+            '<div x-placement="bottom-start">\n' +
+            '    <button onclick="viewDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Xem màn hình thiết bị" disabled>\n' +
+            '        <i class="icon-mobile text-grey"></i>\n' +
+            '    </button>\n' +
+            '    <button onclick="startScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Chạy kịch bản" disabled>\n' +
+            '        <i class="icon-play4 text-grey" style="font-size: 18px !important;"></i>\n' +
+            '    </button>\n' +
+            '    <button onclick="showStopScriptConfirm(\'' + deviceId + '\')" class="btn btn-action-device" title="Dừng chạy kịch bản">\n' +
+            '        <i class="icon-square text-warning font-size-sm"></i>\n' +
+            '    </button>\n' +
+            '    <button onclick="turnonDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Bật thiết bị" disabled>\n' +
+            '        <fa class="fa fa-power-off text-success"></fa>\n' +
+            '    </button>\n' +
+            '    <button onclick="showTurnoffSingleDeviceConfirm(\'' + deviceId + '\')" class="btn btn-action-device" title="Tắt thiết bị" style="display: none" >\n' +
+            '        <fa class="fa fa-power-off text-danger"></fa>\n' +
+            '    </button>\n' +
+            '    <button onclick="showModalRunOneScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Thiết lập kịch bản" >\n' +
+            '        <i class="icon-cog text-dark"></i>\n' +
+            '    </button>\n' +
+            '    <button onclick="viewLog(\'' + deviceId + '\')" class="btn btn-action-device" title="Xem log">\n' +
+            '        <fa class="far fa-file-alt text-info"></fa>\n' +
+            '    </button>\n' +
+            '</div>\n' +
+            '</div>';
+    } else if (isActived == false) {
         if (isStaring == true) {
             button =
                 '<div id="overlay_spinner_1">\n' +
@@ -416,32 +475,61 @@ function genButtonActionDevice(script, account, status, deviceId, isActived, isS
                 '</div>\n' +
                 '</div>';
         } else {
-            button =
-                ' <div class="list-icons">\n' +
-                '<div x-placement="bottom-start">\n' +
-                '    <button onclick="viewDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Xem màn hình thiết bị" disabled>\n' +
-                '        <i class="icon-mobile text-grey"></i>\n' +
-                '    </button>\n' +
-                '    <button onclick="startScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Chạy kịch bản" disabled>\n' +
-                '        <i class="icon-play4 text-grey" style="font-size: 18px !important;"></i>\n' +
-                '    </button>\n' +
-                '    <button onclick="showStopScriptConfirm(\'' + deviceId + '\')" class="btn btn-action-device" title="Dừng chạy kịch bản" disabled>\n' +
-                '        <i class="icon-square text-grey font-size-sm"></i>\n' +
-                '    </button>\n' +
-                '    <button onclick="turnonDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Bật thiết bị">\n' +
-                '        <fa class="fa fa-power-off text-success"></fa>\n' +
-                '    </button>\n' +
-                '    <button onclick="showTurnoffSingleDeviceConfirm(\'' + deviceId + '\')" class="btn btn-action-device" title="Tắt thiết bị" style="display: none" >\n' +
-                '        <fa class="fa fa-power-off text-danger"></fa>\n' +
-                '    </button>\n' +
-                '    <button onclick="showModalRunOneScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Thiết lập kịch bản" disabled >\n' +
-                '        <i class="icon-cog text-dark"></i>\n' +
-                '    </button>\n' +
-                '    <button onclick="viewLog(\'' + deviceId + '\')" class="btn btn-action-device" title="Xem log">\n' +
-                '        <fa class="far fa-file-alt text-info"></fa>\n' +
-                '    </button>\n' +
-                '</div>\n' +
-                '</div>';
+            if (status == "wait") {
+                button =
+                    ' <div class="list-icons">\n' +
+                    '<div x-placement="bottom-start">\n' +
+                    '    <button onclick="viewDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Xem màn hình thiết bị" disabled>\n' +
+                    '        <i class="icon-mobile text-grey"></i>\n' +
+                    '    </button>\n' +
+                    '    <button onclick="startScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Chạy kịch bản" disabled>\n' +
+                    '        <i class="icon-play4 text-grey" style="font-size: 18px !important;"></i>\n' +
+                    '    </button>\n' +
+                    '    <button onclick="showStopScriptConfirm(\'' + deviceId + '\')" class="btn btn-action-device" title="Dừng chạy kịch bản">\n' +
+                    '        <i class="icon-square text-warning font-size-sm"></i>\n' +
+                    '    </button>\n' +
+                    '    <button onclick="turnonDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Bật thiết bị" disabled>\n' +
+                    '        <fa class="fa fa-power-off text-success"></fa>\n' +
+                    '    </button>\n' +
+                    '    <button onclick="showTurnoffSingleDeviceConfirm(\'' + deviceId + '\')" class="btn btn-action-device" title="Tắt thiết bị" style="display: none" >\n' +
+                    '        <fa class="fa fa-power-off text-danger"></fa>\n' +
+                    '    </button>\n' +
+                    '    <button onclick="showModalRunOneScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Thiết lập kịch bản" >\n' +
+                    '        <i class="icon-cog text-dark"></i>\n' +
+                    '    </button>\n' +
+                    '    <button onclick="viewLog(\'' + deviceId + '\')" class="btn btn-action-device" title="Xem log">\n' +
+                    '        <fa class="far fa-file-alt text-info"></fa>\n' +
+                    '    </button>\n' +
+                    '</div>\n' +
+                    '</div>';
+            } else {
+                button =
+                    ' <div class="list-icons">\n' +
+                    '<div x-placement="bottom-start">\n' +
+                    '    <button onclick="viewDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Xem màn hình thiết bị" disabled>\n' +
+                    '        <i class="icon-mobile text-grey"></i>\n' +
+                    '    </button>\n' +
+                    '    <button onclick="startScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Chạy kịch bản" disabled>\n' +
+                    '        <i class="icon-play4 text-grey" style="font-size: 18px !important;"></i>\n' +
+                    '    </button>\n' +
+                    '    <button onclick="showStopScriptConfirm(\'' + deviceId + '\')" class="btn btn-action-device" title="Dừng chạy kịch bản" disabled>\n' +
+                    '        <i class="icon-square text-grey font-size-sm"></i>\n' +
+                    '    </button>\n' +
+                    '    <button onclick="turnonDevice(\'' + deviceId + '\')" class="btn btn-action-device" title="Bật thiết bị">\n' +
+                    '        <fa class="fa fa-power-off text-success"></fa>\n' +
+                    '    </button>\n' +
+                    '    <button onclick="showTurnoffSingleDeviceConfirm(\'' + deviceId + '\')" class="btn btn-action-device" title="Tắt thiết bị" style="display: none" >\n' +
+                    '        <fa class="fa fa-power-off text-danger"></fa>\n' +
+                    '    </button>\n' +
+                    '    <button onclick="showModalRunOneScript(\'' + deviceId + '\')" class="btn btn-action-device" title="Thiết lập kịch bản" >\n' +
+                    '        <i class="icon-cog text-dark"></i>\n' +
+                    '    </button>\n' +
+                    '    <button onclick="viewLog(\'' + deviceId + '\')" class="btn btn-action-device" title="Xem log">\n' +
+                    '        <fa class="far fa-file-alt text-info"></fa>\n' +
+                    '    </button>\n' +
+                    '</div>\n' +
+                    '</div>';
+            }
         }
     } else {
         if ((script == '') || (account == '')) {
@@ -500,7 +588,7 @@ function genButtonActionDevice(script, account, status, deviceId, isActived, isS
                     '    </button>\n' +
                     '</div>\n' +
                     '</div>';
-            } else if (status == 'running' || (status == 'fail') || status == 'complete' || status == 'wait') {
+            } else if (status == 'running' || (status == 'fail') || status == 'complete') {
                 button =
                     ' <div class="list-icons">\n' +
                     '<div x-placement="bottom-start">\n' +
@@ -527,7 +615,7 @@ function genButtonActionDevice(script, account, status, deviceId, isActived, isS
                     '    </button>\n' +
                     '</div>\n' +
                     '</div>';
-            } else if ( status == 'stopped' || status == 'finished') {
+            } else if (status == 'stopped' || status == 'finished') {
                 button =
                     ' <div class="list-icons">\n' +
                     '<div x-placement="bottom-start">\n' +
@@ -609,7 +697,14 @@ function showStopScriptConfirm(deviceID) {
     $('#btn_stop_script').prop("onclick", null).off("click");
     let deviceStatistics = dataOriginal.deviceStatistics.find(dv => dv.deviceId === deviceID);
 
-    if(deviceStatistics.status == "wait"){
+    if (deviceStatistics.status == "sleeping") {
+        $('#btn_finish_script').show();
+        $('#btn_finish_script').html("Cancel sleep");
+        $('#btn_finish_script').click(function () {
+            postRequestDevice(deviceID, "/api/cancel_sleep");
+        });
+        $('#btn_stop_script').hide();
+    } else if (deviceStatistics.status == "wait") {
         $('#btn_finish_script').show();
         $('#btn_finish_script').html("Hủy đợi");
         $('#btn_finish_script').click(function () {
@@ -617,13 +712,12 @@ function showStopScriptConfirm(deviceID) {
         });
         $('#btn_stop_script').hide();
     } else {
+        $('#btn_finish_script').show();
+        $('#btn_finish_script').html("Kết thúc");
         if (deviceStatistics.scriptChain == null) {
-            // $('#btn_finish_script').prop('disabled', true);
-            $('#btn_finish_script').hide();
+            $('#btn_stop_script').hide();
         } else {
-            $('#btn_finish_script').show();
-            $('#btn_finish_script').html("Kết thúc");
-            // $('#btn_finish_script').prop('disabled', false);
+            $('#btn_stop_script').show();
         }
         $('#btn_stop_script').show();
 
@@ -1074,7 +1168,7 @@ function runScriptForMultiDivice() {
     }
 }
 
-function runScript(requestScriptList, scriptChainId) {
+function runScript(requestScriptList, scriptChainId, repeatTime) {
     $.ajax({
         type: "POST",
         url: "/api/run_script_device",
@@ -1086,7 +1180,8 @@ function runScript(requestScriptList, scriptChainId) {
         data: JSON.stringify(
             {
                 "requestScriptList": requestScriptList,
-                "scriptChainId": scriptChainId
+                "scriptChainId": scriptChainId,
+                "repeatTime": repeatTime
             }),
         success: function (deviceListOffResp) {
             if (deviceListOffResp.length != 0) {
@@ -1131,7 +1226,21 @@ function viewLog(deviceID) {
                 if (data.data != null) {
                     for (var i = 0; i < data.data.length; i++) {
                         var row = data.data[i];
-                        if (row.isActive == false) {
+                        if (row.status == "sleeping") {
+                            content = content +
+                                '<tr>' +
+                                '<td style=" width: 8%;">' + timeConverter(row.time) + '</td>\n' +
+                                '<td style=" width: 6%;">' + genActive(row.isActive) + '</td>\n' +
+                                '<td style=" width: 7%;">' + genStatus(row.status) + '</td>\n' +
+                                '<td style=" width: 9%;"></td>\n' +
+                                '<td style=" width: 10%;"></td>\n' +
+                                '<td style=" width: 10%;"></td>\n' +
+                                '<td style=" width: 11%;"></td>\n' +
+                                '<td style=" width: 10%;"></td>\n' +
+                                '<td style=" width: 14%;"></td>\n' +
+                                '<td style=" width: 14.7%;"></td>\n' +
+                                '</tr>';
+                        } else if (row.isActive == false) {
                             content = content +
                                 '<tr>' +
                                 '<td style=" width: 8%;">' + timeConverter(row.time) + '</td>\n' +
@@ -1146,7 +1255,7 @@ function viewLog(deviceID) {
                                 '<td style=" width: 14.7%;"></td>\n' +
                                 '</tr>';
                         } else {
-                            if (row.script == "" || row.account == "" || row.status == "finished") {
+                            if (row.script == "" || row.account == "" || row.status == "finished" || row.status == "wait") {
                                 content = content +
                                     '<tr>' +
                                     '<td style=" width: 8%;">' + timeConverter(row.time) + '</td>\n' +

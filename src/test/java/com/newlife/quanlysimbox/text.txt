@@ -1,0 +1,1555 @@
+
+C:\Users\admin\Desktop>java -Djava.library.path="C:\ch-rxtx-2.2-20081207-win-x64\;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\dotnet\;C:\Program Files\Git\cmd;C:\Program Files (x86)\Java\jre1.8.0_271\bin;C:\Program Files\Java\jdk1.8.0_181\bin;C:\Program Files (x86)\dotnet\;C:\Windows\Microsoft.NET\Framework64\v4.0.30319;C:\Program Files\dotnet;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\Users\admin\AppData\Local\Microsoft\WindowsApps;C:\Users\admin\.dotnet\tools;C:\Program Files (x86)\Java\jre1.8.0_271\bin;C:\Program Files\Java\jdk1.8.0_181\bin;" -jar quanlysimbox-0.0.1-SNAPSHOT.jar
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v2.3.5.RELEASE)
+
+2021-01-01 00:13:45.250  INFO 11084 --- [           main] com.newlife.QuanlysimboxApplication      : Starting QuanlysimboxApplication v0.0.1-SNAPSHOT on DESKTOP-01JF3PI with PID 11084 (C:\Users\admin\Desktop\quanlysimbox-0.0.1-SNAPSHOT.jar started by admin in C:\Users\admin\Desktop)
+2021-01-01 00:13:45.253  INFO 11084 --- [           main] com.newlife.QuanlysimboxApplication      : No active profile set, falling back to default profiles: default
+2021-01-01 00:13:47.117  INFO 11084 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFERRED mode.
+2021-01-01 00:13:47.345  INFO 11084 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 212ms. Found 7 JPA repository interfaces.
+2021-01-01 00:13:48.437  INFO 11084 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2021-01-01 00:13:48.454  INFO 11084 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2021-01-01 00:13:48.454  INFO 11084 --- [           main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.39]
+2021-01-01 00:13:48.593  INFO 11084 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2021-01-01 00:13:48.593  INFO 11084 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2962 ms
+2021-01-01 00:13:48.923  INFO 11084 --- [           main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2021-01-01 00:13:49.058  INFO 11084 --- [         task-1] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2021-01-01 00:13:49.397  INFO 11084 --- [         task-1] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.4.22.Final
+Stable Library
+2021-01-01 00:13:49.829  INFO 11084 --- [         task-1] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.0.Final}
+=========================================
+Native lib Version = RXTX-2.2-20081207 Cloudhopper Build rxtx.cloudhopper.net
+Java lib Version   = RXTX-2.1-7
+WARNING:  RXTX Version mismatch
+        Jar version = RXTX-2.1-7
+        native lib Version = RXTX-2.2-20081207 Cloudhopper Build rxtx.cloudhopper.net
+2021-01-01 00:13:50.063  INFO 11084 --- [         task-1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2021-01-01 00:13:50.109  INFO 11084 --- [         task-1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2021-01-01 00:13:50.201  INFO 11084 --- [         task-1] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.MySQL8Dialect
+2021-01-01 00:13:50.504  WARN 11084 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2021-01-01 00:13:50.837  INFO 11084 --- [           main] pertySourcedRequestMappingHandlerMapping : Mapped URL path [/v2/api-docs] onto method [springfox.documentation.swagger2.web.Swagger2Controller#getDocumentation(String, HttpServletRequest)]
+2021-01-01 00:13:51.845  INFO 11084 --- [         task-1] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2021-01-01 00:13:51.866  INFO 11084 --- [         task-1] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2021-01-01 00:13:52.385  INFO 11084 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2021-01-01 00:13:52.386  INFO 11084 --- [           main] d.s.w.p.DocumentationPluginsBootstrapper : Context refreshed
+2021-01-01 00:13:52.426  INFO 11084 --- [           main] d.s.w.p.DocumentationPluginsBootstrapper : Found 1 custom documentation plugin(s)
+2021-01-01 00:13:52.507  INFO 11084 --- [           main] s.d.s.w.s.ApiListingReferenceScanner     : Scanning for api listing references
+2021-01-01 00:13:52.758  INFO 11084 --- [           main] DeferredRepositoryInitializationListener : Triggering deferred initialization of Spring Data repositoriesà
+2021-01-01 00:13:53.506  INFO 11084 --- [           main] DeferredRepositoryInitializationListener : Spring Data repositories initialized!
+2021-01-01 00:13:53.520  INFO 11084 --- [           main] com.newlife.QuanlysimboxApplication      : Started QuanlysimboxApplication in 8.916 seconds (JVM running for 9.563)
+size: 17
+COM15 : lastCmd: AT
+COM15 : outString: OK
+COM16 : lastCmd: AT
+COM16 : outString: OK
+COM17 : lastCmd: AT
+COM17 : outString: OK
+COM18 : lastCmd: AT
+COM18 : outString: OK
+COM15 : lastCmd: AT+CIMI
+COM15 : outString: 452019946517742
+COM16 : lastCmd: AT+CIMI
+COM16 : outString: 452019946517743
+COM17 : lastCmd: AT+CIMI
+COM17 : outString: 452019946517741
+COM18 : lastCmd: AT+CIMI
+COM18 : outString: 452019946517744
+COM15 : lastCmd: AT+COPS?
+COM15 : outString: OK
+COM16 : lastCmd: AT+COPS?
+COM16 : outString: OK
+COM17 : lastCmd: AT+COPS?
+COM17 : outString: OK
+COM15 : lastCmd: AT+COPS?
+COM15 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM16 : lastCmd: AT+COPS?
+COM16 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM17 : lastCmd: AT+COPS?
+COM17 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM18 : lastCmd: AT+COPS?
+COM18 : outString: OK
+COM18 : lastCmd: AT+COPS?
+COM18 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM17 : lastCmd: AT
+COM16 : outString: OK
+COM17 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT
+COM17 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM15 : lastCmd: AT
+COM15 : outString: OK
+COM15 : lastCmd: AT
+COM15 : outString: OK
+COM16 : lastCmd: AT
+COM16 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT
+COM16 : outString: OK
+COM18 : lastCmd: AT
+COM18 : outString: OK
+COM18 : lastCmd: AT
+COM18 : outString: OK
+COM17 : lastCmd: AT+CIMI
+COM17 : outString: 452019946517741
+COM15 : lastCmd: AT+CIMI
+COM15 : outString: 452019946517742
+COM16 : lastCmd: AT+CIMI
+COM16 : outString: 452019946517743
+COM18 : lastCmd: AT+CIMI
+COM18 : outString: 452019946517744
+COM17 : lastCmd: AT+COPS?
+COM17 : outString: OK
+COM15 : lastCmd: AT+COPS?
+COM15 : outString: OK
+COM15 : lastCmd: AT+COPS?
+COM15 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM17 : lastCmd: AT+COPS?
+COM17 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM16 : lastCmd: AT+COPS?
+COM16 : outString: OK
+COM16 : lastCmd: AT+COPS?
+COM16 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM18 : lastCmd: AT+COPS?
+COM18 : outString: OK
+COM18 : lastCmd: AT+COPS?
+COM18 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+2021-01-01 00:14:32.821  INFO 11084 --- [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2021-01-01 00:14:32.821  INFO 11084 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2021-01-01 00:14:32.838  INFO 11084 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 16 ms
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM17 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM15 : lastCmd: AT
+COM15 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM15 : lastCmd: AT
+COM15 : outString: OK
+COM17 : lastCmd: AT
+COM17 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM16 : lastCmd: AT
+COM16 : outString: OK
+COM17 : lastCmd: AT
+COM17 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM16 : lastCmd: AT
+COM16 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT
+COM18 : outString: OK
+COM18 : lastCmd: AT
+COM18 : outString: OK
+COM15 : lastCmd: AT+CIMI
+COM15 : outString: 452019946517742
+COM17 : lastCmd: AT+CIMI
+COM17 : outString: 452019946517741
+COM16 : lastCmd: AT+CIMI
+COM16 : outString: 452019946517743
+COM18 : lastCmd: AT+CIMI
+COM18 : outString: 452019946517744
+COM15 : lastCmd: AT+COPS?
+COM15 : outString: OK
+COM17 : lastCmd: AT+COPS?
+COM17 : outString: OK
+COM15 : lastCmd: AT+COPS?
+COM15 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM16 : lastCmd: AT+COPS?
+COM16 : outString: OK
+COM17 : lastCmd: AT+COPS?
+COM17 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM18 : lastCmd: AT+COPS?
+COM18 : outString: OK
+COM16 : lastCmd: AT+COPS?
+COM16 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM18 : lastCmd: AT+COPS?
+COM18 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+Action: Wait
+Progress: 0
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM15 : lastCmd: AT
+COM15 : outString: OK
+COM15 : lastCmd: AT
+COM15 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT
+COM17 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM17 : lastCmd: AT
+COM17 : outString: OK
+COM16 : lastCmd: AT
+COM16 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT
+COM16 : outString: OK
+COM18 : lastCmd: AT
+COM18 : outString: OK
+COM18 : lastCmd: AT
+COM18 : outString: OK
+COM15 : lastCmd: AT+CIMI
+COM15 : outString: 452019946517742
+COM17 : lastCmd: AT+CIMI
+COM17 : outString: 452019946517741
+COM16 : lastCmd: AT+CIMI
+COM16 : outString: 452019946517743
+COM18 : lastCmd: AT+CIMI
+COM18 : outString: 452019946517744
+COM15 : lastCmd: AT+COPS?
+COM15 : outString: OK
+COM15 : lastCmd: AT+COPS?
+COM15 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM17 : lastCmd: AT+COPS?
+COM17 : outString: OK
+COM16 : lastCmd: AT+COPS?
+COM18 : lastCmd: AT+COPS?
+COM16 : outString: OK
+COM18 : outString: OK
+COM17 : lastCmd: AT+COPS?
+COM17 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM16 : lastCmd: AT+COPS?
+COM16 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM18 : lastCmd: AT+COPS?
+COM18 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+Action: Open Line
+Progress: 10
+
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+click login
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+click phonenumber
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM15 : lastCmd: AT
+COM15 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM15 : lastCmd: AT
+COM15 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM16 : lastCmd: AT
+COM16 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM17 : outString: OK
+COM16 : lastCmd: AT
+COM16 : outString: OK
+COM18 : lastCmd: AT
+COM18 : outString: OK
+COM17 : lastCmd: AT
+COM17 : outString: OK
+COM18 : lastCmd: AT
+COM18 : outString: OK
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM15 : lastCmd: AT+CIMI
+COM15 : outString: 452019946517742
+COM16 : lastCmd: AT+CIMI
+COM16 : outString: 452019946517743
+COM18 : lastCmd: AT+CIMI
+COM18 : outString: 452019946517744
+COM17 : lastCmd: AT+CIMI
+COM17 : outString: 452019946517741
+COM15 : lastCmd: AT+COPS?
+COM15 : outString: OK
+COM15 : lastCmd: AT+COPS?
+COM15 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM16 : lastCmd: AT+COPS?
+COM16 : outString: OK
+COM17 : lastCmd: AT+COPS?
+COM17 : outString: OK
+COM16 : lastCmd: AT+COPS?
+COM16 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM18 : lastCmd: AT+COPS?
+COM18 : outString: OK
+COM17 : lastCmd: AT+COPS?
+COM17 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM18 : lastCmd: AT+COPS?
+COM18 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+Parameter is not valid.
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+delete het
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+click phonenumber
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+click next
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+click ok
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM15 : lastCmd: AT
+COM15 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM15 : lastCmd: AT
+COM15 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM16 : lastCmd: AT
+COM16 : outString: OK
+COM16 : lastCmd: AT
+COM16 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT
+COM17 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT
+COM17 : outString: OK
+COM18 : lastCmd: AT
+COM18 : outString: OK
+COM18 : lastCmd: AT
+COM18 : outString: OK
+COM15 : lastCmd: AT+CIMI
+COM15 : outString: 452019946517742
+COM16 : lastCmd: AT+CIMI
+COM16 : outString: 452019946517743
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM17 : lastCmd: AT+CIMI
+COM17 : outString: 452019946517741
+COM18 : lastCmd: AT+CIMI
+COM18 : outString: 452019946517744
+COM15 : lastCmd: AT+COPS?
+COM15 : outString: OK
+COM15 : lastCmd: AT+COPS?
+COM15 : outString: +COPS: 0,0,"VN MOBIFONE"
+Action: Auth Method
+Progress: 20
+
+COM16 : lastCmd: AT+COPS?
+COM16 : outString: OK
+COM16 : lastCmd: AT+COPS?
+COM16 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM17 : lastCmd: AT+COPS?
+COM17 : outString: OK
+COM18 : lastCmd: AT+COPS?
+COM18 : outString: OK
+COM17 : lastCmd: AT+COPS?
+COM17 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM18 : lastCmd: AT+COPS?
+COM18 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CMTI: "SM",2
+COM16: ---> new message: +CMTI: "SM",2
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CMGR=2
+COM16 : outString: +CSQ: 30,99
+COM16 : lastCmd: AT+CMGR=2
+COM16 : outString: OK
+COM16 : lastCmd: AT+CMGR=2
+COM16 : outString: +CMGR: "REC UNREAD","LINE",,"21/01/01,00:16:19+28"
+COM16 : lastCmd: AT+CMGR=2
+COM16 : outString: <#> Please enter 872906 into LINE within the next 30 mins.
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM16 : lastCmd: AT+CMGR=2
+COM16 : outString: JFoQLtyexga
+COM16 : lastCmd: AT+CMGR=2
+COM16 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM16: ---> parse new consoleMessage
+COM16: list: [+CMGR: "REC UNREAD","LINE",,"21/01/01,00:16:19+28", <#> Please enter 872906 into LINE within the next 30 mins., JFoQLtyexga]
+java.lang.IllegalArgumentException: contains illegal character for hexBinary: <#> Please enter 872906 into LINE within the next 30 mins. JFoQLtyexga
+        at javax.xml.bind.DatatypeConverterImpl.parseHexBinary(Unknown Source)
+        at javax.xml.bind.DatatypeConverter.parseHexBinary(Unknown Source)
+        at com.newlife.base.StringUtil.hexStringToText(StringUtil.java:8)
+        at com.newlife.quanlysimbox.communicator.SerialPortCommunicator.parseNewMessages(SerialPortCommunicator.java:410)
+        at com.newlife.quanlysimbox.communicator.SerialPortCommunicator.lambda$readNewMessage$2(SerialPortCommunicator.java:364)
+        at java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+        at java.lang.Thread.run(Unknown Source)
+2,REC UNREAD,LINE,Fri Jan 01 00:16:19 ICT 2021,<#> Please enter 872906 into LINE within the next 30 mins. JFoQLtyexga
+COM16 : lastCmd: AT
+COM16 : outString: OK
+COM16 : lastCmd: AT+CIMI
+COM16 : outString: 452019946517743
+COM16 : lastCmd: AT+COPS?
+COM16 : outString: OK
+COM16 : lastCmd: AT+COPS?
+COM16 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+Message: <#> Please enter 872906 into LINE within the next 30 mins. JFoQLtyexga
+Message: <#> Please enter 872906 into LINE within the next 30 mins  JFoQLtyexga
+Code: 872906
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM15 : lastCmd: AT
+COM15 : outString: OK
+COM15 : lastCmd: AT
+COM15 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT
+COM18 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT
+COM17 : outString: OK
+COM18 : lastCmd: AT
+COM18 : outString: OK
+COM17 : lastCmd: AT
+COM17 : outString: OK
+COM15 : lastCmd: AT+CIMI
+COM15 : outString: 452019946517742
+COM18 : lastCmd: AT+CIMI
+COM18 : outString: 452019946517744
+COM17 : lastCmd: AT+CIMI
+COM17 : outString: 452019946517741
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM15 : lastCmd: AT+COPS?
+COM15 : outString: OK
+COM15 : lastCmd: AT+COPS?
+COM15 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM18 : lastCmd: AT+COPS?
+COM18 : outString: OK
+COM18 : lastCmd: AT+COPS?
+COM18 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM17 : lastCmd: AT+COPS?
+COM17 : outString: OK
+COM17 : lastCmd: AT+COPS?
+COM17 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+Action: Input code
+Progress: 30
+
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM16 : lastCmd: AT
+COM16 : outString: OK
+COM16 : lastCmd: AT
+COM16 : outString: OK
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM16 : lastCmd: AT+CIMI
+COM16 : outString: 452019946517743
+COM16 : lastCmd: AT+COPS?
+COM16 : outString: OK
+COM16 : lastCmd: AT+COPS?
+COM16 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+click continue
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM15 : lastCmd: AT
+COM15 : outString: OK
+COM15 : lastCmd: AT
+COM15 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT
+COM18 : outString: OK
+COM18 : lastCmd: AT
+COM18 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT
+COM17 : outString: OK
+COM17 : lastCmd: AT
+COM17 : outString: OK
+COM15 : lastCmd: AT+CIMI
+COM15 : outString: 452019946517742
+COM18 : lastCmd: AT+CIMI
+COM18 : outString: 452019946517744
+COM17 : lastCmd: AT+CIMI
+COM17 : outString: 452019946517741
+COM15 : lastCmd: AT+COPS?
+COM15 : outString: OK
+COM15 : lastCmd: AT+COPS?
+COM15 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM18 : lastCmd: AT+COPS?
+COM18 : outString: OK
+COM18 : lastCmd: AT+COPS?
+COM18 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM17 : lastCmd: AT+COPS?
+COM17 : outString: OK
+COM17 : lastCmd: AT+COPS?
+COM17 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+Parameter is not valid.
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+status : running
+127.0.0.1:62025: True
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM16 : lastCmd: AT
+COM16 : outString: OK
+COM16 : lastCmd: AT
+COM16 : outString: OK
+COM16 : lastCmd: AT+CIMI
+COM16 : outString: 452019946517743
+COM16 : lastCmd: AT+COPS?
+COM16 : outString: OK
+COM16 : lastCmd: AT+COPS?
+COM16 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM15 : lastCmd: AT
+COM15 : outString: OK
+COM15 : lastCmd: AT
+COM15 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT
+COM18 : outString: OK
+COM18 : lastCmd: AT
+COM18 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT
+COM17 : outString: OK
+COM17 : lastCmd: AT
+COM17 : outString: OK
+COM15 : lastCmd: AT+CIMI
+COM15 : outString: 452019946517742
+COM18 : lastCmd: AT+CIMI
+COM18 : outString: 452019946517744
+COM17 : lastCmd: AT+CIMI
+COM17 : outString: 452019946517741
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM15 : lastCmd: AT+COPS?
+COM15 : outString: OK
+COM15 : lastCmd: AT+COPS?
+COM15 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM18 : lastCmd: AT+COPS?
+COM18 : outString: OK
+COM18 : lastCmd: AT+COPS?
+COM18 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM17 : lastCmd: AT+COPS?
+COM17 : outString: OK
+COM17 : lastCmd: AT+COPS?
+COM17 : outString: +COPS: 0,0,"VN MOBIFONE"
+Action: Logout Line
+Progress: 75
+
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM16 : lastCmd: AT
+COM16 : outString: OK
+COM16 : lastCmd: AT
+COM16 : outString: OK
+COM16 : lastCmd: AT+CIMI
+COM16 : outString: 452019946517743
+COM16 : lastCmd: AT+COPS?
+COM16 : outString: OK
+COM16 : lastCmd: AT+COPS?
+COM16 : outString: +COPS: 0,0,"VN MOBIFONE"
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+SELECT status FROM device_status WHERE device_id = '127.0.0.1:62025' ORDER BY id DESC LIMIT 1
+status : running
+127.0.0.1:62025: True
+Action: Complete
+Progress: 100
+
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM15 : lastCmd: AT
+COM15 : outString: OK
+COM15 : lastCmd: AT
+COM15 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT
+COM18 : outString: OK
+COM18 : lastCmd: AT
+COM18 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT
+COM17 : outString: OK
+COM17 : lastCmd: AT
+COM17 : outString: OK
+COM15 : lastCmd: AT+CIMI
+COM15 : outString: 452019946517742
+COM18 : lastCmd: AT+CIMI
+COM18 : outString: 452019946517744
+COM17 : lastCmd: AT+CIMI
+COM17 : outString: 452019946517741
+COM15 : lastCmd: AT+COPS?
+COM15 : outString: OK
+COM15 : lastCmd: AT+COPS?
+COM15 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM18 : lastCmd: AT+COPS?
+COM18 : outString: OK
+COM18 : lastCmd: AT+COPS?
+COM18 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM17 : lastCmd: AT+COPS?
+COM17 : outString: OK
+COM17 : lastCmd: AT+COPS?
+COM17 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM16 : lastCmd: AT
+COM16 : outString: OK
+COM16 : lastCmd: AT
+COM16 : outString: OK
+COM16 : lastCmd: AT+CIMI
+COM16 : outString: 452019946517743
+COM16 : lastCmd: AT+COPS?
+COM16 : outString: OK
+COM16 : lastCmd: AT+COPS?
+COM16 : outString: +COPS: 0,0,"VN MOBIFONE"
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: OK
+COM15 : lastCmd: AT+CSQ
+COM15 : outString: +CSQ: 31,99
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: OK
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: OK
+COM16 : lastCmd: AT+CSQ
+COM16 : outString: +CSQ: 30,99
+COM18 : lastCmd: AT+CSQ
+COM18 : outString: +CSQ: 31,99
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: OK
+COM17 : lastCmd: AT+CSQ
+COM17 : outString: +CSQ: 31,99
+2021-01-01 00:18:30.874  INFO 11084 --- [extShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2021-01-01 00:18:30.878  INFO 11084 --- [extShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2021-01-01 00:18:30.879  INFO 11084 --- [extShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2021-01-01 00:18:30.893  INFO 11084 --- [extShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+Terminate batch job (Y/N)?

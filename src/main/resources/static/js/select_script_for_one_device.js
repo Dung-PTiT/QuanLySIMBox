@@ -64,6 +64,13 @@ function showModalRunOneScript(deviceID) {
                 checkRadioGroup();
                 loadData();
                 $('#run_script_one_device_title').html(selectedDevice.deviceId);
+                if(selectedDevice.repeatTime > -1){
+                    $('#run_repeat_checkbox').attr('checked',true);
+                    $('#repeat_time').val(selectedDevice.repeatTime);
+                } else {
+                    $('#run_repeat_checkbox').attr('checked',false);
+                    $('#repeat_time').val(300);
+                }
             } else {
                 genToastError(response.error)
                 $('#run_script_one_device_dialog').modal('hide');
@@ -288,6 +295,7 @@ function validateSelection() {
             valid = fillAll;
         }
     }
+
     if(valid == true){
         $('#btn_runOneScript').prop('disabled', false)
     } else {
@@ -300,6 +308,10 @@ function runOneScript() {
         alert("Thiết bị đang chạy kịch bản khác. Hãy dừng việc chạy kịch bản đó lại để tiếp chạy kịch bản mới !")
         return;
     }
+    let repeatTime = -1;
+    if($('#run_repeat_checkbox').is(":checked")){
+        repeatTime = $('#repeat_time').val();
+    }
     let scriptRequestList = [];
     let type = $("input[name='script_type']:checked").val()
     if (type == "single_script") {
@@ -311,7 +323,7 @@ function runOneScript() {
             "scriptId": scriptId
         });
         $('#run_script_one_device_dialog').modal('hide');
-        runScript(scriptRequestList, 0)
+        runScript(scriptRequestList, 0, repeatTime)
     } else {
         scriptAccountMap.forEach((value, key) => {
             scriptRequestList.push({
@@ -321,6 +333,6 @@ function runOneScript() {
             });
         })
         $('#run_script_one_device_dialog').modal('hide');
-        runScript(scriptRequestList, selectedScriptChain.id)
+        runScript(scriptRequestList, selectedScriptChain.id, repeatTime)
     }
 }

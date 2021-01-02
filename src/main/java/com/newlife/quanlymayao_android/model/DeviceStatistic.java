@@ -12,7 +12,7 @@ public class DeviceStatistic {
     public DeviceStatistic(String deviceId, String status, long time, int index, boolean isActive,
                            String account, String app, String action, int progress, String info, String script,
                            String simId, boolean isStarting, String message, String code, ScriptChain scriptChain,
-                           ArrayList<RequestScript> requestScripts) {
+                           ArrayList<RequestScript> requestScripts, long repeatTime) {
         this.deviceId = deviceId;
         this.status = status;
         this.time = time;
@@ -30,6 +30,7 @@ public class DeviceStatistic {
         this.code = code;
         this.scriptChain = scriptChain;
         this.requestScripts = requestScripts;
+        this.repeatTime = repeatTime;
 
         switch (this.app){
             case "Facebook":
@@ -53,6 +54,9 @@ public class DeviceStatistic {
             case "Whatsapp":
                 this.appIcon = Contract.WHATSAPP_ICON;
                 break;
+            case "Gmail":
+                this.appIcon = Contract.GMAIL_ICON;
+                break;
         }
     }
 
@@ -74,5 +78,6 @@ public class DeviceStatistic {
     public String code;
     public ScriptChain scriptChain;
     public ArrayList<RequestScript> requestScripts;
+    public long repeatTime;
 
 }
